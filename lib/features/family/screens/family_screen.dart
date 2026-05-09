@@ -9,15 +9,23 @@ class FamilyScreen extends StatefulWidget {
   State<FamilyScreen> createState() => _FamilyScreenState();
 }
 
-class _FamilyScreenState extends State<FamilyScreen> {
+class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderStateMixin {
   final _api = FamilyApi();
   List<dynamic> _members = [];
   bool _loading = true;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -30,43 +38,84 @@ class _FamilyScreenState extends State<FamilyScreen> {
     }
   }
 
-  void _showAddMemberDialog() {
+  void _showAddMemberDialog({bool isChild = false}) {
     final phoneCtrl = TextEditingController();
     final nameCtrl = TextEditingController();
-    final relCtrl = TextEditingController();
-    bool canViewAlerts = false;
+    final relCtrl = TextEditingController(text: isChild ? 'Child' : '');
+    bool canViewAlerts = !isChild;
     bool canTriggerPanic = false;
+    bool isChildProfile = isChild;
+    bool contentFilterEnabled = isChild;
+    bool cyberbullyingAlerts = isChild;
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDlg) => AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Add Family Member', style: TextStyle(color: AppTheme.textPrimary)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(children: [
+            Icon(isChild ? Icons.child_care : Icons.person_add, color: AppTheme.accent),
+            const SizedBox(width: 8),
+            Text(isChild ? 'Add Child Profile' : 'Add Family Member', style: const TextStyle(color: AppTheme.textPrimary)),
+          ]),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(controller: phoneCtrl, decoration: const InputDecoration(labelText: 'Phone Number'), keyboardType: TextInputType.phone),
+                TextField(controller: phoneCtrl,
+                  style: const TextStyle(color: AppTheme.textPrimary),
+                  decoration: const InputDecoration(labelText: 'Phone Number', labelStyle: TextStyle(color: AppTheme.textSecondary)),
+                  keyboardType: TextInputType.phone),
                 const SizedBox(height: 8),
-                TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Nickname')),
+                TextField(controller: nameCtrl,
+                  style: const TextStyle(color: AppTheme.textPrimary),
+                  decoration: const InputDecoration(labelText: 'Name / Nickname', labelStyle: TextStyle(color: AppTheme.textSecondary))),
                 const SizedBox(height: 8),
-                TextField(controller: relCtrl, decoration: const InputDecoration(labelText: 'Relationship (e.g. Parent, Child)')),
-                const SizedBox(height: 8),
-                CheckboxListTile(
-                  value: canViewAlerts,
-                  onChanged: (v) => setStateDlg(() => canViewAlerts = v ?? false),
-                  title: const Text('Can view my alerts', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-                  activeColor: AppTheme.accent,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                CheckboxListTile(
-                  value: canTriggerPanic,
-                  onChanged: (v) => setStateDlg(() => canTriggerPanic = v ?? false),
-                  title: const Text('Can trigger panic alert', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-                  activeColor: AppTheme.accent,
-                  contentPadding: EdgeInsets.zero,
-                ),
+                TextField(controller: relCtrl,
+                  style: const TextStyle(color: AppTheme.textPrimary),
+                  decoration: const InputDecoration(labelText: 'Relationship', labelStyle: TextStyle(color: AppTheme.textSecondary))),
+                const Divider(height: 20),
+                if (!isChild) ...[
+                  CheckboxListTile(
+                    value: canViewAlerts,
+                    onChanged: (v) => setStateDlg(() => canViewAlerts = v ?? false),
+                    title: const Text('Can view my alerts', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                    activeColor: AppTheme.accent,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  CheckboxListTile(
+                    value: canTriggerPanic,
+                    onChanged: (v) => setStateDlg(() => canTriggerPanic = v ?? false),
+                    title: const Text('Can trigger panic alert', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                    activeColor: AppTheme.accent,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
+                if (isChild) ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text('Child profiles have additional safety features enabled by default.', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                  ),
+                  CheckboxListTile(
+                    value: contentFilterEnabled,
+                    onChanged: (v) => setStateDlg(() => contentFilterEnabled = v ?? false),
+                    title: const Text('Content filter (block unsafe links)', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                    activeColor: const Color(0xFF7C4DFF),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  CheckboxListTile(
+                    value: cyberbullyingAlerts,
+                    onChanged: (v) => setStateDlg(() => cyberbullyingAlerts = v ?? false),
+                    title: const Text('Cyberbullying alerts', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                    activeColor: const Color(0xFF7C4DFF),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
               ],
             ),
           ),
@@ -82,18 +131,28 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     relationship: relCtrl.text.trim().isEmpty ? null : relCtrl.text.trim(),
                     canViewAlerts: canViewAlerts,
                     canTriggerPanic: canTriggerPanic,
+                    isChildProfile: isChildProfile,
+                    contentFilterEnabled: contentFilterEnabled,
+                    cyberbullyingAlerts: cyberbullyingAlerts,
                   );
                   await _load();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Family member added'), backgroundColor: AppTheme.success),
+                      SnackBar(
+                        content: Text(isChild ? 'Child profile added with safety features' : 'Family member added'),
+                        backgroundColor: AppTheme.success,
+                      ),
                     );
                   }
                 } catch (e) {
                   if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                 }
               },
-              child: const Text('Add'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isChild ? const Color(0xFF7C4DFF) : AppTheme.accent,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(isChild ? 'Add Child' : 'Add Member'),
             ),
           ],
         ),
@@ -103,72 +162,158 @@ class _FamilyScreenState extends State<FamilyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final adults = _members.where((m) => m['is_child_profile'] != true).toList();
+    final children = _members.where((m) => m['is_child_profile'] == true).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Family Dashboard'),
-        actions: [IconButton(icon: const Icon(Icons.person_add), onPressed: _showAddMemberDialog)],
+        title: const Text('Family Safety Dashboard'),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppTheme.accent,
+          labelColor: AppTheme.accent,
+          unselectedLabelColor: AppTheme.textSecondary,
+          tabs: [
+            Tab(icon: const Icon(Icons.family_restroom), text: 'Family (${adults.length})'),
+            Tab(icon: const Icon(Icons.child_care), text: 'Kids (${children.length})'),
+          ],
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.person_add),
+            onSelected: (v) => _showAddMemberDialog(isChild: v == 'child'),
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'adult', child: Row(children: [Icon(Icons.person, size: 16), SizedBox(width: 8), Text('Add Adult Member')])),
+              const PopupMenuItem(value: 'child', child: Row(children: [Icon(Icons.child_care, size: 16), SizedBox(width: 8), Text('Add Child Profile')])),
+            ],
+          ),
+        ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.accent))
-          : _members.isEmpty
-              ? Center(
+          : TabBarView(
+              controller: _tabController,
+              children: [
+                _buildMemberList(adults, isChildTab: false),
+                _buildChildList(children),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildMemberList(List<dynamic> members, {required bool isChildTab}) {
+    if (members.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(isChildTab ? Icons.child_care : Icons.family_restroom, size: 64, color: AppTheme.accent),
+            const SizedBox(height: 16),
+            Text(isChildTab ? 'No child profiles added' : 'No family members added', style: const TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
+            const SizedBox(height: 8),
+            Text(
+              isChildTab ? 'Add child profiles to enable safety features' : 'Add family members to share safety alerts',
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => _showAddMemberDialog(isChild: isChildTab),
+              icon: Icon(isChildTab ? Icons.child_care : Icons.person_add),
+              label: Text(isChildTab ? 'Add Child Profile' : 'Add Member'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: members.length,
+      itemBuilder: (context, i) => _memberCard(members[i] as Map<String, dynamic>),
+    );
+  }
+
+  Widget _buildChildList(List<dynamic> children) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          color: const Color(0xFF7C4DFF).withOpacity(0.1),
+          child: const Row(children: [
+            Icon(Icons.shield, color: Color(0xFF7C4DFF), size: 18),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Child profiles have content filtering and cyberbullying detection enabled',
+                style: TextStyle(color: Color(0xFF7C4DFF), fontSize: 12),
+              ),
+            ),
+          ]),
+        ),
+        Expanded(child: _buildMemberList(children, isChildTab: true)),
+      ],
+    );
+  }
+
+  Widget _memberCard(Map<String, dynamic> member) {
+    final isChild = member['is_child_profile'] as bool? ?? false;
+    final hasContentFilter = member['content_filter_enabled'] as bool? ?? false;
+    final hasBullyingAlert = member['cyberbullying_alerts'] as bool? ?? false;
+    final accentColor = isChild ? const Color(0xFF7C4DFF) : AppTheme.primary;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: accentColor,
+                  child: Icon(
+                    isChild ? Icons.child_care : Icons.person,
+                    color: isChild ? const Color(0xFF7C4DFF) : AppTheme.accent,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.family_restroom, size: 64, color: AppTheme.accent),
-                      const SizedBox(height: 16),
-                      const Text('No family members added', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
-                      const Text('Add family members to share safety alerts', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(onPressed: _showAddMemberDialog, icon: const Icon(Icons.person_add), label: const Text('Add Member')),
+                      Text(member['nickname'] as String? ?? 'Unknown', style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600)),
+                      if (member['relationship'] != null)
+                        Text(member['relationship'] as String, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
                     ],
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _members.length,
-                  itemBuilder: (context, i) {
-                    final member = _members[i] as Map<String, dynamic>;
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: AppTheme.primary,
-                          child: Text(
-                            (member['nickname'] as String? ?? '?')[0].toUpperCase(),
-                            style: const TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        title: Text(member['nickname'] as String? ?? 'Unknown', style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w500)),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (member['relationship'] != null)
-                              Text(member['relationship'] as String, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                if (member['can_view_alerts'] == true)
-                                  _badge(Icons.notifications, 'Alerts', AppTheme.accent),
-                                const SizedBox(width: 4),
-                                if (member['can_trigger_panic'] == true)
-                                  _badge(Icons.sos, 'Panic', AppTheme.errorColor),
-                              ],
-                            ),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: AppTheme.errorColor),
-                          onPressed: () async {
-                            await _api.removeMember(member['id'] as String);
-                            await _load();
-                          },
-                        ),
-                        isThreeLine: true,
-                      ),
-                    );
+                ),
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline, color: AppTheme.errorColor, size: 20),
+                  onPressed: () async {
+                    await _api.removeMember(member['id'] as String);
+                    await _load();
                   },
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                if (member['can_view_alerts'] == true) _badge(Icons.notifications, 'Alerts', AppTheme.accent),
+                if (member['can_trigger_panic'] == true) _badge(Icons.sos, 'Panic', AppTheme.errorColor),
+                if (isChild) _badge(Icons.child_care, 'Child Profile', const Color(0xFF7C4DFF)),
+                if (hasContentFilter) _badge(Icons.filter_alt, 'Content Filter', AppTheme.success),
+                if (hasBullyingAlert) _badge(Icons.security, 'Bullying Alert', AppTheme.warning),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

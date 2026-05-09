@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
+import '../../../core/services/notification_service.dart';
+import '../../../core/security/fake_app_detector.dart';
 import '../app_scanner_api.dart';
 
 class AppScannerScreen extends StatefulWidget {
@@ -67,17 +69,56 @@ class _AppScannerScreenState extends State<AppScannerScreen> {
         },
       ];
 
-      // Use a mock device ID for demo
-      const deviceId = '00000000-0000-0000-0000-000000000001';
-      final result = await _api.scanApps(deviceId: deviceId, apps: mockApps);
+      final result = await _api.scanApps(apps: mockApps);
       await _loadResults();
 
       if (mounted) {
         final highRisk = result['high_risk_count'] as int? ?? 0;
+        final criticalRisk = result['critical_risk_count'] as int? ?? 0;
+
+        // Check for fake/clone apps and trigger notifications
+        final detailedResults = (result['detailed_results'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
+
+        for (final appResult in detailedResults) {
+          final packageName = appResult['package_name'] as String? ?? '';
+          final appName = appResult['app_name'] as String? ?? '';
+          final riskLevel = appResult['risk_level'] as String? ?? 'safe';
+
+          // Check for fake app
+          if (packageName.isNotEmpty) {
+            final fakeAnalysis = FakeAppDetector.analyze(packageName, appName);
+            if (fakeAnalysis.risk != FakeAppRisk.notFake && fakeAnalysis.impersonatesApp != null) {
+              await NotificationService.showFakeAppAlert(
+                appName: appName,
+                impersonatesApp: fakeAnalysis.impersonatesApp!,
+                packageName: packageName,
+                reason: fakeAnalysis.reasons.isNotEmpty ? fakeAnalysis.reasons.first : 'Name impersonation',
+              );
+            }
+          }
+
+          // Check for critical/high risk and notify
+          if (riskLevel == 'critical') {
+            final reasons = (appResult['reasons'] as List<dynamic>?)?.cast<String>() ?? [];
+            await NotificationService.showSecurityWarning(
+              title: '🚨 Critical Risk: $appName',
+              message: reasons.isNotEmpty ? reasons.first : 'Critical security threat detected',
+              action: 'Review',
+            );
+          } else if (riskLevel == 'high') {
+            final reasons = (appResult['reasons'] as List<dynamic>?)?.cast<String>() ?? [];
+            await NotificationService.showSecurityWarning(
+              title: '⚠️ High Risk: $appName',
+              message: reasons.isNotEmpty ? reasons.first : 'High security risk detected',
+              action: 'Review',
+            );
+          }
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Scan complete! ${result['total_apps']} apps, $highRisk high risk'),
-            backgroundColor: highRisk > 0 ? AppTheme.warning : AppTheme.success,
+            content: Text('Scan complete! ${result['total_apps']} apps, $criticalRisk critical, $highRisk high risk'),
+            backgroundColor: criticalRisk > 0 ? const Color(0xFFFF1744) : (highRisk > 0 ? AppTheme.warning : AppTheme.success),
           ),
         );
       }
@@ -120,10 +161,10 @@ class _AppScannerScreenState extends State<AppScannerScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.apps, size: 64, color: AppTheme.textSecondary),
+                  const Icon(Icons.apps, size: 64, color: AppTheme.accent),
                   const SizedBox(height: 16),
-                  const Text('No scan results yet', style: TextStyle(color: AppTheme.textSecondary)),
-                  const Text('Tap "Scan All Apps" to begin', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  const Text('No scan results yet', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                  const Text('Tap "Scan All Apps" to begin', style: TextStyle(color: Colors.white70, fontSize: 12)),
                 ],
               ),
             ),
@@ -161,18 +202,19 @@ class _AppTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withOpacity(0.2),
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: color.withOpacity(0.4), width: 1),
           ),
           child: Icon(Icons.android, color: color, size: 24),
         ),
         title: Text(
           app['app_name'] as String? ?? '',
-          style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w500),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           app['package_name'] as String? ?? '',
-          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+          style: const TextStyle(color: Colors.white70, fontSize: 11),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -181,15 +223,19 @@ class _AppTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withOpacity(0.5)),
+                border: Border.all(color: color.withOpacity(0.6), width: 1),
               ),
               child: Text(
                 riskLevel.toUpperCase(),
-                style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 4),

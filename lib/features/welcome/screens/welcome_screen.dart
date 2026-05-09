@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme.dart';
+import '../../../core/widgets/security_tips_banner.dart';
+import '../../../features/auth/auth_provider.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Feature card model
@@ -11,7 +14,7 @@ class _CardData {
   final String   title;
   final String   subtitle;
   final Color    color;
-  final String?  badge;       // e.g. "RECOMMENDED"
+  final String?  badge;
   final bool     fullWidth;
   final VoidCallback? action;
 
@@ -27,39 +30,41 @@ class _CardData {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Welcome Screen — first screen the user sees (no auth required)
+// Welcome Screen — auth-aware, dynamic login/logout/register
 // ────────────────────────────────────────────────────────────────────────────
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final cards = _buildCards(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(authProvider.select((s) => s.isAuthenticated));
+    final cards = _buildCards(context, ref, isLoggedIn);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // ── App header ─────────────────────────────────────────────────
-            SliverToBoxAdapter(child: _Header()),
+            // ── App header ────────────────────────────────────────────────
+            SliverToBoxAdapter(child: _Header(isLoggedIn: isLoggedIn)),
 
-            // ── Smart tip banner ───────────────────────────────────────────
-            SliverToBoxAdapter(child: _SmartBanner()),
+            // ── Animated security tips banner ─────────────────────────────
+            const SliverToBoxAdapter(
+              child: SecurityTipsBanner(interval: Duration(seconds: 7)),
+            ),
 
-            // ── Section: Get Started ───────────────────────────────────────
-            _sectionLabel('Get Started'),
+            // ── Section: Get Started / Account ────────────────────────────
+            _sectionLabel(isLoggedIn ? 'Your Account' : 'Get Started'),
             _CardGrid(cards: cards['getStarted']!),
 
-            // ── Section: Safety Tools ──────────────────────────────────────
+            // ── Section: Safety Tools ─────────────────────────────────────
             _sectionLabel('Safety Tools'),
             _CardGrid(cards: cards['safetyTools']!),
 
-            // ── Section: Support & Help ────────────────────────────────────
+            // ── Section: Support & Help ───────────────────────────────────
             _sectionLabel('Support & Help'),
             _CardGrid(cards: cards['support']!),
 
-            // Bottom padding
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
           ],
         ),
@@ -67,9 +72,39 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Map<String, List<_CardData>> _buildCards(BuildContext context) {
-    return {
-      'getStarted': [
+  Map<String, List<_CardData>> _buildCards(
+      BuildContext context, WidgetRef ref, bool isLoggedIn) {
+    final getStartedCards = <_CardData>[];
+
+    if (isLoggedIn) {
+      // ── Authenticated user cards ────────────────────────────────────────
+      getStartedCards.addAll([
+        _CardData(
+          icon:     Icons.dashboard_rounded,
+          title:    'Dashboard',
+          subtitle: 'View your security reports',
+          color:    AppTheme.accent,
+          action:   () => context.go('/home'),
+        ),
+        _CardData(
+          icon:     Icons.person_rounded,
+          title:    'My Profile',
+          subtitle: 'Edit details & emergency contacts',
+          color:    const Color(0xFF69F0AE),
+          action:   () => context.push('/profile'),
+        ),
+        _CardData(
+          icon:      Icons.logout_rounded,
+          title:     'Logout',
+          subtitle:  'Sign out of your account',
+          color:     AppTheme.errorColor,
+          fullWidth: true,
+          action:    () => _confirmLogout(context, ref),
+        ),
+      ]);
+    } else {
+      // ── Unauthenticated user cards ──────────────────────────────────────
+      getStartedCards.addAll([
         _CardData(
           icon:     Icons.lock_open_rounded,
           title:    'Login',
@@ -82,7 +117,7 @@ class WelcomeScreen extends StatelessWidget {
           title:    'Register',
           subtitle: 'Create your free account',
           color:    const Color(0xFF69F0AE),
-          action:   () => context.push('/login'),
+          action:   () => context.push('/register'),
         ),
         _CardData(
           icon:      Icons.radar_rounded,
@@ -93,7 +128,11 @@ class WelcomeScreen extends StatelessWidget {
           fullWidth: true,
           action:    () => context.push('/device-scan'),
         ),
-      ],
+      ]);
+    }
+
+    return {
+      'getStarted': getStartedCards,
       'safetyTools': [
         _CardData(
           icon:     Icons.tips_and_updates_rounded,
@@ -113,7 +152,7 @@ class WelcomeScreen extends StatelessWidget {
           icon:     Icons.video_call_rounded,
           title:    'Share Evidence',
           subtitle: 'Send fraud video via WhatsApp',
-          color:    const Color(0xFF25D366), // WhatsApp green
+          color:    const Color(0xFF25D366),
           action:   () => _shareOnWhatsApp(context),
         ),
         _CardData(
@@ -137,7 +176,45 @@ class WelcomeScreen extends StatelessWidget {
     };
   }
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+  // ── Actions ───────────────────────────────────────────────────────────────
+
+  static Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(children: [
+          Icon(Icons.logout_rounded, color: AppTheme.errorColor, size: 22),
+          SizedBox(width: 10),
+          Text('Logout', style: TextStyle(color: AppTheme.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+        ]),
+        content: const Text(
+          'Are you sure you want to logout?\nYour session will be ended.',
+          style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.accent)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.errorColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await ref.read(authProvider.notifier).logout();
+    }
+  }
+
   static Future<void> _showSosDialog(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -155,17 +232,13 @@ class WelcomeScreen extends StatelessWidget {
         'Please help me get justice. '
         '\n\nNational Helpline: 1930'
         '\nPortal: cybercrime.gov.in';
-
-    final uri = Uri.parse(
-        'https://wa.me/?text=${Uri.encodeComponent(message)}');
+    final uri = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(message)}');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('WhatsApp is not installed')),
-        );
-      }
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('WhatsApp is not installed')),
+      );
     }
   }
 
@@ -188,23 +261,25 @@ class WelcomeScreen extends StatelessWidget {
     );
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No email app found on this device')),
-        );
-      }
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No email app found on this device')),
+      );
     }
   }
 
-  // Helper: section label sliver
   SliverToBoxAdapter _sectionLabel(String text) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           child: Row(
             children: [
-              Container(width: 3, height: 16, color: AppTheme.accent,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(2))),
+              Container(
+                width: 3, height: 16,
+                decoration: BoxDecoration(
+                  color: AppTheme.accent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const SizedBox(width: 8),
               Text(
                 text.toUpperCase(),
@@ -222,9 +297,12 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// App header widget
+// App header — shows logged-in indicator when authenticated
 // ────────────────────────────────────────────────────────────────────────────
 class _Header extends StatelessWidget {
+  final bool isLoggedIn;
+  const _Header({required this.isLoggedIn});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -238,10 +316,8 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Shield logo
           Container(
-            width: 52,
-            height: 52,
+            width: 52, height: 52,
             decoration: BoxDecoration(
               color: AppTheme.primary,
               borderRadius: BorderRadius.circular(14),
@@ -253,11 +329,9 @@ class _Header extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Icon(Icons.security_rounded,
-                size: 30, color: AppTheme.accent),
+            child: const Icon(Icons.security_rounded, size: 30, color: AppTheme.accent),
           ),
           const SizedBox(width: 14),
-          // Title + tagline
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,50 +355,24 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// Smart tip banner — rotates through awareness messages
-// ────────────────────────────────────────────────────────────────────────────
-class _SmartBanner extends StatelessWidget {
-  static const _tips = [
-    ('🛡️', 'Never share your OTP — not even with bank officials'),
-    ('🔍', 'Scan your mobile first to check for hidden threats'),
-    ('📞', 'Dial 1930 immediately if you fall victim to cyber fraud'),
-    ('⚠️', 'Verify any link before clicking — fake sites steal data'),
-    ('🔐', 'Use strong, unique passwords for every account'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    // Pick a tip based on current minute (rotates every minute)
-    final tip = _tips[DateTime.now().minute % _tips.length];
-    return Container(
-      margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.accent.withOpacity(0.07),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.accent.withOpacity(0.25)),
-      ),
-      child: Row(
-        children: [
-          Text(tip.$1, style: const TextStyle(fontSize: 22)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              tip.$2,
-              style: const TextStyle(
-                color: AppTheme.textPrimary,
-                fontSize: 12,
-                height: 1.4,
+          // Auth status badge
+          if (isLoggedIn)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppTheme.success.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.success.withOpacity(0.4)),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.verified_rounded, size: 12, color: AppTheme.success),
+                  SizedBox(width: 4),
+                  Text('Active', style: TextStyle(color: AppTheme.success, fontSize: 10, fontWeight: FontWeight.w700)),
+                ],
               ),
             ),
-          ),
         ],
       ),
     );
@@ -332,7 +380,7 @@ class _SmartBanner extends StatelessWidget {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// Card grid — renders 2-column grid, full-width cards span both columns
+// Card grid
 // ────────────────────────────────────────────────────────────────────────────
 class _CardGrid extends StatelessWidget {
   final List<_CardData> cards;
@@ -340,7 +388,17 @@ class _CardGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Split cards into rows manually to support full-width items
+    return SliverToBoxAdapter(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 500;
+          return _buildGrid(isWide);
+        },
+      ),
+    );
+  }
+
+  Widget _buildGrid(bool isWide) {
     final rows = <Widget>[];
     int i = 0;
     while (i < cards.length) {
@@ -352,30 +410,36 @@ class _CardGrid extends StatelessWidget {
         ));
         i++;
       } else {
-        // Pair with next card if available and not full-width
-        final next = (i + 1 < cards.length && !cards[i + 1].fullWidth)
-            ? cards[i + 1]
-            : null;
-        rows.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            child: Row(
-              children: [
-                Expanded(child: _FeatureCard(data: card)),
-                const SizedBox(width: 8),
-                Expanded(
-                    child: next != null
-                        ? _FeatureCard(data: next)
-                        : const SizedBox()),
-              ],
+        final group = <_CardData>[];
+        while (i < cards.length && !cards[i].fullWidth) {
+          group.add(cards[i]);
+          i++;
+        }
+        final cols = isWide ? 3 : 2;
+        for (int j = 0; j < group.length; j += cols) {
+          final rowCards = group.skip(j).take(cols).toList();
+          rows.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (int k = 0; k < cols; k++) ...[
+                    if (k > 0) const SizedBox(width: 8),
+                    Expanded(
+                      child: k < rowCards.length
+                          ? _FeatureCard(data: rowCards[k])
+                          : const SizedBox(),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-        );
-        i += next != null ? 2 : 1;
+          );
+        }
       }
     }
-
-    return SliverToBoxAdapter(child: Column(children: rows));
+    return Column(children: rows);
   }
 }
 
@@ -413,7 +477,6 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-// ── Half-width card (vertical layout) ────────────────────────────────────────
 class _HalfWidthContent extends StatelessWidget {
   final _CardData data;
   const _HalfWidthContent({required this.data});
@@ -423,10 +486,8 @@ class _HalfWidthContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Icon circle
         Container(
-          width: 48,
-          height: 48,
+          width: 48, height: 48,
           decoration: BoxDecoration(
             color: data.color.withOpacity(0.12),
             borderRadius: BorderRadius.circular(13),
@@ -434,31 +495,17 @@ class _HalfWidthContent extends StatelessWidget {
           child: Icon(data.icon, color: data.color, size: 26),
         ),
         const SizedBox(height: 12),
-        Text(
-          data.title,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
-          ),
-        ),
+        Text(data.title,
+          style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w700, fontSize: 13)),
         const SizedBox(height: 3),
-        Text(
-          data.subtitle,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
-            fontSize: 11,
-            height: 1.3,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
+        Text(data.subtitle,
+          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11, height: 1.3),
+          maxLines: 2, overflow: TextOverflow.ellipsis),
       ],
     );
   }
 }
 
-// ── Full-width card (horizontal layout) ──────────────────────────────────────
 class _FullWidthContent extends StatelessWidget {
   final _CardData data;
   const _FullWidthContent({required this.data});
@@ -467,10 +514,8 @@ class _FullWidthContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Icon circle
         Container(
-          width: 56,
-          height: 56,
+          width: 56, height: 56,
           decoration: BoxDecoration(
             color: data.color.withOpacity(0.12),
             borderRadius: BorderRadius.circular(15),
@@ -483,52 +528,35 @@ class _FullWidthContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    data.title,
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
+                  Flexible(
+                    child: Text(data.title,
+                      style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w700, fontSize: 15),
+                      overflow: TextOverflow.ellipsis),
                   ),
                   if (data.badge != null) ...[
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: data.color.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                            color: data.color.withOpacity(0.5)),
+                        border: Border.all(color: data.color.withOpacity(0.5)),
                       ),
-                      child: Text(
-                        data.badge!,
-                        style: TextStyle(
-                          color: data.color,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                      child: Text(data.badge!,
+                        style: TextStyle(color: data.color, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 0.3)),
                     ),
                   ],
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                data.subtitle,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 12,
-                ),
-              ),
+              Text(data.subtitle,
+                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
             ],
           ),
         ),
-        Icon(Icons.arrow_forward_ios_rounded,
-            size: 14, color: data.color.withOpacity(0.6)),
+        Icon(Icons.arrow_forward_ios_rounded, size: 14, color: data.color.withOpacity(0.6)),
       ],
     );
   }
@@ -542,164 +570,36 @@ class _SosSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewInsets.bottom + 28),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag handle
-          Container(
-            width: 36,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              color: AppTheme.textSecondary.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-
-          // SOS icon
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppTheme.errorColor.withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.sos_rounded,
-                size: 34, color: AppTheme.errorColor),
-          ),
+          Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(color: AppTheme.textSecondary.withOpacity(0.4), borderRadius: BorderRadius.circular(2))),
+          const Icon(Icons.sos_rounded, color: AppTheme.errorColor, size: 44),
           const SizedBox(height: 12),
-          const Text(
-            'Emergency — Cyber Crime SOS',
-            style: TextStyle(
-              color: AppTheme.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Choose an action below',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-          ),
-          const SizedBox(height: 24),
-
-          // Action buttons
-          _SosAction(
-            icon:    Icons.phone_rounded,
-            label:   'Call 1930',
-            sub:     'National Cyber Crime Helpline (India)',
-            color:   AppTheme.errorColor,
-            onTap:   () => _call('1930', context),
-          ),
-          const SizedBox(height: 10),
-          _SosAction(
-            icon:    Icons.emergency_rounded,
-            label:   'Call 112',
-            sub:     'Police Emergency',
-            color:   AppTheme.warning,
-            onTap:   () => _call('112', context),
-          ),
-          const SizedBox(height: 10),
-          _SosAction(
-            icon:    Icons.language_rounded,
-            label:   'Report Online',
-            sub:     'cybercrime.gov.in — National Portal',
-            color:   AppTheme.accent,
-            onTap:   () => _openUrl('https://cybercrime.gov.in', context),
-          ),
-          const SizedBox(height: 10),
-          _SosAction(
-            icon:    Icons.contact_phone_rounded,
-            label:   'View All Contacts',
-            sub:     'State cyber cells & helplines',
-            color:   const Color(0xFF7986CB),
-            onTap:   () {
-              Navigator.pop(context);
-              context.push('/contacts');
-            },
-          ),
+          const Text('Emergency Contacts', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          _sosTile('1930', 'National Cyber Crime Helpline', Icons.phone_rounded, AppTheme.errorColor),
+          _sosTile('100',  'Police Emergency',              Icons.local_police_rounded, AppTheme.accent),
+          _sosTile('112',  'All Emergency Services',        Icons.sos_rounded, AppTheme.warning),
+          const SizedBox(height: 12),
+          const Text('cybercrime.gov.in', style: TextStyle(color: AppTheme.accent, fontSize: 13, decoration: TextDecoration.underline)),
         ],
       ),
     );
   }
 
-  static Future<void> _call(String number, BuildContext context) async {
-    final uri = Uri(scheme: 'tel', path: number);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    }
-    if (context.mounted) Navigator.pop(context);
-  }
-
-  static Future<void> _openUrl(String url, BuildContext context) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-    if (context.mounted) Navigator.pop(context);
-  }
-}
-
-class _SosAction extends StatelessWidget {
-  final IconData icon;
-  final String   label;
-  final String   sub;
-  final Color    color;
-  final VoidCallback onTap;
-
-  const _SosAction({
-    required this.icon,
-    required this.label,
-    required this.sub,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label,
-                      style: TextStyle(
-                          color: color,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14)),
-                  Text(sub,
-                      style: const TextStyle(
-                          color: AppTheme.textSecondary, fontSize: 11)),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios_rounded,
-                size: 13, color: color.withOpacity(0.6)),
-          ],
-        ),
+  Widget _sosTile(String number, String label, IconData icon, Color color) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+        child: Icon(icon, color: color, size: 22),
       ),
+      title: Text(label, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13)),
+      trailing: Text(number, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 18)),
     );
   }
 }

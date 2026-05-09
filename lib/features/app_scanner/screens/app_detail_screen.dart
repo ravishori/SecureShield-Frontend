@@ -45,7 +45,7 @@ class AppDetailScreen extends StatelessWidget {
                   ),
                   Text(
                     'Risk Score: ${riskScore.toStringAsFixed(0)}/100',
-                    style: TextStyle(color: color.withOpacity(0.8), fontSize: 16),
+                    style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   if (isMalicious) ...[
                     const SizedBox(height: 8),
@@ -68,23 +68,29 @@ class AppDetailScreen extends StatelessWidget {
 
             // Threat tags
             if (threatTags.isNotEmpty) ...[
-              Text('Threat Tags', style: Theme.of(context).textTheme.titleMedium),
+              Text('Threat Tags', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              )),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: threatTags.map((tag) => Chip(
                   label: Text(tag.replaceAll('_', ' ').toUpperCase()),
-                  backgroundColor: AppTheme.errorColor.withOpacity(0.1),
-                  side: const BorderSide(color: AppTheme.errorColor),
-                  labelStyle: const TextStyle(color: AppTheme.errorColor, fontSize: 11),
+                  backgroundColor: AppTheme.errorColor.withOpacity(0.2),
+                  side: BorderSide(color: AppTheme.errorColor.withOpacity(0.6), width: 1),
+                  labelStyle: const TextStyle(color: AppTheme.errorColor, fontSize: 11, fontWeight: FontWeight.bold),
                 )).toList(),
               ),
               const SizedBox(height: 20),
             ],
 
             // Permissions
-            Text('Permissions (${permissions.length})', style: Theme.of(context).textTheme.titleMedium),
+            Text('Permissions (${permissions.length})', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            )),
             const SizedBox(height: 8),
             ...permissions.map((perm) {
               final isDangerous = _isDangerous(perm);
@@ -110,8 +116,9 @@ class AppDetailScreen extends StatelessWidget {
                       child: Text(
                         perm.split('.').last,
                         style: TextStyle(
-                          color: isDangerous ? AppTheme.warning : AppTheme.textSecondary,
+                          color: isDangerous ? AppTheme.warning : const Color.fromARGB(222, 255, 255, 255),
                           fontSize: 12,
+                          fontWeight: isDangerous ? FontWeight.w500 : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -132,11 +139,14 @@ class AppDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Recommendation', style: Theme.of(context).textTheme.titleMedium),
+                  Text('Recommendation', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  )),
                   const SizedBox(height: 8),
                   Text(
                     _getRecommendation(riskLevel, isMalicious),
-                    style: const TextStyle(color: AppTheme.textSecondary, height: 1.5),
+                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), height: 1.5),
                   ),
                 ],
               ),

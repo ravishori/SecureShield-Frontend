@@ -80,6 +80,81 @@ const _sections = [
     ],
   ),
   _Section(
+    title:    'Government Security Tools',
+    subtitle: 'Sanchar Saathi — Fraud prevention & device verification',
+    icon:     Icons.verified_user_rounded,
+    contacts: [
+      _Contact(
+        name:        'CHAKSHU — Fraud Reporting',
+        detail:      'https://sancharsaathi.gov.in/sfc/',
+        description: 'Official fraud reporting portal by Department of Telecom. '
+                     'Report financial fraud, UPI scams, and telecom fraud instantly.',
+        icon:  Icons.report_problem_rounded,
+        color: AppTheme.errorColor,
+        type:  _ActionType.web,
+        badge: 'OFFICIAL',
+      ),
+      _Contact(
+        name:        'CEIR — Block Lost Devices',
+        detail:      'https://ceir.sancharsaathi.gov.in/',
+        description: 'Central Equipment Identity Register. Block lost/stolen phones immediately. '
+                     'Prevents unauthorized use and protects your data.',
+        icon:  Icons.phone_locked_rounded,
+        color: const Color(0xFF4FC3F7),
+        type:  _ActionType.web,
+        badge: 'OFFICIAL',
+      ),
+      _Contact(
+        name:        'TAFCOP — Track Active SIMs',
+        detail:      'https://tafcop.sancharsaathi.gov.in/telecomUser/',
+        description: 'Track All Telecom Frequencies on Personal mobile number. '
+                     'Verify active SIM cards on your number instantly.',
+        icon:  Icons.sim_card_rounded,
+        color: const Color(0xFF69F0AE),
+        type:  _ActionType.web,
+        badge: 'OFFICIAL',
+      ),
+      _Contact(
+        name:        'KYM — Check IMEI Status',
+        detail:      'https://ceir.sancharsaathi.gov.in/Device/SancharSaathiKym.jsp',
+        description: 'Know Your Mobile — Verify device IMEI and check if phone is stolen/blacklisted. '
+                     'Ensure your device is legitimate.',
+        icon:  Icons.phonelink_setup_rounded,
+        color: const Color(0xFF7986CB),
+        type:  _ActionType.web,
+        badge: 'OFFICIAL',
+      ),
+      _Contact(
+        name:        'Sanchar Saathi Portal',
+        detail:      'https://sancharsaathi.gov.in/',
+        description: 'Main Sanchar Saathi portal — Gateway to all government security tools. '
+                     'Access all fraud prevention resources in one place.',
+        icon:  Icons.shield_rounded,
+        color: AppTheme.accent,
+        type:  _ActionType.web,
+        badge: 'MAIN PORTAL',
+      ),
+      _Contact(
+        name:        'Sanchar Saathi — Android App',
+        detail:      'https://play.google.com/store/apps/details?id=com.dot.app.sancharsaathi',
+        description: 'Download the official Sanchar Saathi mobile app. '
+                     'Instant access to fraud prevention and device security tools on the go.',
+        icon:  Icons.android_rounded,
+        color: const Color(0xFF69F0AE),
+        type:  _ActionType.web,
+      ),
+      _Contact(
+        name:        'Sanchar Saathi — iOS App',
+        detail:      'https://apps.apple.com/in/app/sanchar-saathi/id6739700695',
+        description: 'Download Sanchar Saathi from Apple App Store. '
+                     'Mobile-first access to security tools and fraud alerts.',
+        icon:  Icons.apple_rounded,
+        color: const Color(0xFFFF6D00),
+        type:  _ActionType.web,
+      ),
+    ],
+  ),
+  _Section(
     title:    'Online Reporting Portals',
     subtitle: 'File a formal complaint online',
     icon:     Icons.language_rounded,
@@ -222,21 +297,25 @@ class _TopBanner extends StatelessWidget {
         border: Border.all(color: AppTheme.errorColor.withOpacity(0.3)),
       ),
       child: Column(
-        children: const [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Row(
-            children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
               Icon(Icons.tips_and_updates_rounded,
                   color: AppTheme.warning, size: 20),
               SizedBox(width: 8),
-              Text('If you\'re under attack right now:',
-                  style: TextStyle(
-                      color: AppTheme.warning,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13)),
+              Flexible(
+                child: Text('If you\'re under attack right now:',
+                    style: TextStyle(
+                        color: AppTheme.warning,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13)),
+              ),
             ],
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             '1. Call 1930 IMMEDIATELY\n'
             '2. Note the transaction ID / reference number\n'
             '3. Do NOT transfer more money to "recover" losses\n'

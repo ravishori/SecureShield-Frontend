@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// (stored in SharedPreferences under key 'custom_server_url').
 class AppConfig {
   // ─── Configure your PC's LAN IP here ────────────────────────────────────
-  static const String deviceLanIp = '192.168.1.132'; // ← your PC's LAN IP
+  static const String deviceLanIp = '192.168.1.11'; // ← your PC's LAN IP
   static const int port = 8000;
   // ────────────────────────────────────────────────────────────────────────
 

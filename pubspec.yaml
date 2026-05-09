@@ -10,6 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Localisation
+  flutter_localizations:
+    sdk: flutter
+
   # Networking
   dio: ^5.7.0
 
@@ -37,10 +41,17 @@ dependencies:
   # App scanning
   installed_apps: ^1.4.2
 
+  # Wi-Fi scanning
+  wifi_scan: ^0.4.1
+  network_info_plus: ^5.0.0
+
+  # Video playback for screen recordings
+  video_player: ^2.9.2
+
   # Utilities
   url_launcher: ^6.3.0
   qr_flutter: ^4.1.0
-  intl: ^0.19.0
+  intl: ^0.20.0
   uuid: ^4.5.1
   crypto: ^3.0.5
   encrypt: ^5.0.3
@@ -51,9 +62,21 @@ dependencies:
   # File handling
   image_picker: ^1.1.2
   file_picker: ^8.1.2
+  path_provider: ^2.1.4
+
+  # Call recording & audio playback
+  record: ^6.0.0
+  audioplayers: ^6.0.0
+
+  # Sharing
+  share_plus: ^10.0.0
 
   # Notifications
   flutter_local_notifications: ^17.2.2
+  workmanager: ^0.6.0
+
+  # Typography
+  google_fonts: ^6.2.1
 
   # Icons
   cupertino_icons: ^1.0.8
@@ -67,3 +90,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true

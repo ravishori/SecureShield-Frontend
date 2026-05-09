@@ -1,4 +1,5 @@
 import 'device_scanner_service.dart';
+import 'fake_app_detector.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Risk levels (ordered low → high)
@@ -162,6 +163,19 @@ class AppRiskEngine {
     }
 
     // ── HIGH ─────────────────────────────────────────────────────────────────
+    // Fake/clone app detected (impersonating a legitimate app)
+    final fakeAnalysis = FakeAppDetector.analyze(app.packageName, app.appName);
+    if (fakeAnalysis.risk == FakeAppRisk.probablyFake) {
+      elevate(AppRiskLevel.critical,
+          '🚨 Fake app detected: Impersonating ${fakeAnalysis.impersonatesApp} (${fakeAnalysis.reasons.join(", ")})');
+    } else if (fakeAnalysis.risk == FakeAppRisk.likelyFake) {
+      elevate(AppRiskLevel.high,
+          '⚠️ Likely fake app: May be impersonating ${fakeAnalysis.impersonatesApp}');
+    } else if (fakeAnalysis.risk == FakeAppRisk.suspected) {
+      elevate(AppRiskLevel.medium,
+          '🔍 Suspected clone: Similar to ${fakeAnalysis.impersonatesApp} (manual verification recommended)');
+    }
+
     // Play Store app using accessibility but not whitelisted
     if (!sideloaded && app.usesAccessibility &&
         !_whitelistedAccessibility.contains(app.packageName) && !app.isSystem) {

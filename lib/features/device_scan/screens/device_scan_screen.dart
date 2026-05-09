@@ -119,14 +119,21 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
   // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    // Shrink radar on small screens
+    final screenH = MediaQuery.of(context).size.height;
+    final radarSize = screenH < 700 ? 150.0 : 200.0;
+    final topGap    = screenH < 700 ? 8.0   : 16.0;
+    final midGap    = screenH < 700 ? 16.0  : 32.0;
+    final headerGap = screenH < 700 ? 16.0  : 48.0;
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           child: Column(
             children: [
-              const SizedBox(height: 16),
+              SizedBox(height: topGap),
 
               // ── Header ──────────────────────────────────────────────────
               Text(
@@ -139,23 +146,25 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
               const SizedBox(height: 6),
               Text(
                 'Checking your device for security threats\nbefore you continue',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white70,
+                ) ?? const TextStyle(color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 48),
+              SizedBox(height: headerGap),
 
               // ── Radar / Shield animation ────────────────────────────────
               SizedBox(
-                width: 200,
-                height: 200,
+                width: radarSize,
+                height: radarSize,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Concentric rings
-                    _Ring(radius: 95, opacity: 0.08),
-                    _Ring(radius: 75, opacity: 0.12),
-                    _Ring(radius: 55, opacity: 0.18),
+                    // Concentric rings (scale with radarSize)
+                    _Ring(radius: radarSize * 0.475, opacity: 0.08),
+                    _Ring(radius: radarSize * 0.375, opacity: 0.12),
+                    _Ring(radius: radarSize * 0.275, opacity: 0.18),
 
                     // Rotating sweep
                     if (!_done)
@@ -164,7 +173,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                         builder: (_, __) => Transform.rotate(
                           angle: _radarCtrl.value * 2 * pi,
                           child: CustomPaint(
-                            size: const Size(190, 190),
+                            size: Size(radarSize * 0.95, radarSize * 0.95),
                             painter: _RadarSweepPainter(),
                           ),
                         ),
@@ -204,7 +213,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                 ),
               ),
 
-              const SizedBox(height: 32),
+              SizedBox(height: midGap),
 
               // ── Apps found counter ──────────────────────────────────────
               if (_appsFound > 0)
@@ -221,7 +230,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                   ),
                 ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // ── Phase list ─────────────────────────────────────────────
               ...List.generate(_phases.length, (i) {
@@ -253,7 +262,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                             ? AppTheme.success
                             : isActive
                                 ? AppTheme.accent
-                                : AppTheme.textSecondary.withOpacity(0.4),
+                                : Colors.white54,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -261,10 +270,10 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                           phase.label,
                           style: TextStyle(
                             color: isDone
-                                ? AppTheme.textSecondary
+                                ? Colors.white70
                                 : isActive
-                                    ? AppTheme.textPrimary
-                                    : AppTheme.textSecondary.withOpacity(0.4),
+                                    ? Colors.white
+                                    : Colors.white54,
                             fontWeight: isActive
                                 ? FontWeight.w600
                                 : FontWeight.normal,
@@ -315,15 +324,15 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                 ),
               ],
 
-              const Spacer(),
+              const SizedBox(height: 24),
 
               // ── Skip option ────────────────────────────────────────────
               TextButton(
                 onPressed: _skip,
-                child: Text(
+                child: const Text(
                   'Skip scan (not recommended)',
                   style: TextStyle(
-                    color: AppTheme.textSecondary.withOpacity(0.6),
+                    color: Colors.white60,
                     fontSize: 12,
                   ),
                 ),

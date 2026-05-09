@@ -5,12 +5,11 @@ class AppScannerApi {
   final _client = DioClient();
 
   Future<Map<String, dynamic>> scanApps({
-    required String deviceId,
     required List<Map<String, dynamic>> apps,
   }) async {
     final response = await _client.dio.post(
       AppConstants.appScan,
-      data: {'device_id': deviceId, 'apps': apps},
+      data: {'apps': apps},
     );
     return response.data as Map<String, dynamic>;
   }

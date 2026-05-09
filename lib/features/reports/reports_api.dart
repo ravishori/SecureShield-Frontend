@@ -13,4 +13,9 @@ class ReportsApi {
     final response = await _client.dio.get(AppConstants.reportHistory);
     return response.data as List<dynamic>;
   }
+
+  Future<Map<String, dynamic>> getWeeklyInsights() async {
+    final response = await _client.dio.get('/reports/weekly-insights');
+    return response.data as Map<String, dynamic>;
+  }
 }

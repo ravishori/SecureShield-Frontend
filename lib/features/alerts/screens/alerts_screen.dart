@@ -46,12 +46,12 @@ class _AlertsScreenState extends State<AlertsScreen> {
         title: const Text('Panic Alert', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
         content: const Text(
           'This will send an emergency alert to your family members and log a critical alert. Are you sure?',
-          style: TextStyle(color: AppTheme.textSecondary),
+          style: TextStyle(color: const Color.fromARGB(222, 255, 255, 255)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.accent)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorColor),
@@ -101,8 +101,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     children: [
                       const Icon(Icons.check_circle, size: 64, color: AppTheme.success),
                       const SizedBox(height: 16),
-                      const Text('No alerts', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
-                      const Text('You are safe!', style: TextStyle(color: AppTheme.textSecondary)),
+                      const Text('No alerts', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
+                      const Text('You are safe!', style: TextStyle(color: Colors.white70)),
                     ],
                   ),
                 )
@@ -174,8 +174,9 @@ class _AlertCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color.withOpacity(0.4), width: 1),
               ),
               child: Icon(icon, color: color, size: 20),
             ),
@@ -207,16 +208,17 @@ class _AlertCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     alert['message'] as String? ?? '',
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.4),
+                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
+                      color: color.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: color.withOpacity(0.5), width: 1),
                     ),
                     child: Text(
                       severity.toUpperCase(),

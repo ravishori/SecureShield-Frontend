@@ -25,7 +25,7 @@ android {
         applicationId = "com.secureshield.secureshield_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21  // flutter_local_notifications requires API 21+
+        minSdk = flutter.minSdkVersion  // flutter_local_notifications requires API 21+
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

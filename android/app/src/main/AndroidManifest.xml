@@ -54,6 +54,22 @@
     <!-- Vibration for alerts -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Notification listener for bank OTP detection -->
+    <uses-permission
+        android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Screen recording -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+
+    <!-- Background processing -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- VPN for traffic monitoring -->
+    <uses-permission android:name="android.permission.BIND_VPN_SERVICE"
+        tools:ignore="ProtectedPermissions" />
+
     <application
         android:label="SecureShield AI"
         android:name="${applicationName}"
@@ -80,6 +96,55 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Notification Listener Service for bank OTP detection -->
+        <service
+            android:name=".SecureShieldNotificationListener"
+            android:label="SecureShield Notification Monitor"
+            android:exported="false"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Screen Record Foreground Service -->
+        <service
+            android:name=".ScreenRecordService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- Package install receiver for new app detection -->
+        <receiver
+            android:name=".PackageInstallReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <!-- WorkManager for background scanning -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+        <!-- VPN Traffic Monitor Service -->
+        <service
+            android:name=".SecureShieldVpnService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="flutterEmbedding"

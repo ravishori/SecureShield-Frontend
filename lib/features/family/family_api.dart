@@ -15,6 +15,9 @@ class FamilyApi {
     String? nickname,
     bool canViewAlerts = false,
     bool canTriggerPanic = false,
+    bool isChildProfile = false,
+    bool contentFilterEnabled = false,
+    bool cyberbullyingAlerts = false,
   }) async {
     final response = await _client.dio.post(
       AppConstants.familyMembers,
@@ -24,6 +27,9 @@ class FamilyApi {
         if (nickname != null) 'nickname': nickname,
         'can_view_alerts': canViewAlerts,
         'can_trigger_panic': canTriggerPanic,
+        'is_child_profile': isChildProfile,
+        'content_filter_enabled': contentFilterEnabled,
+        'cyberbullying_alerts': cyberbullyingAlerts,
       },
     );
     return response.data as Map<String, dynamic>;
