@@ -6,6 +6,7 @@ import '../../../core/data/india_locations.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
 import '../profile_api.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Profile Screen — edit profile + manage emergency contacts
@@ -280,14 +281,14 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             const SizedBox(height: 20),
 
             // ── Personal Info ────────────────────────────────────────────────
-            _sectionHeader(accent, Icons.person_outlined, 'Personal Information'),
+            _sectionHeader(accent, Icons.person_outlined, AppLocalizations.of(context).personalInformation),
             const SizedBox(height: 12),
 
             Row(
               children: [
                 Expanded(child: _field(
                   controller: _firstNameCtrl,
-                  label: 'First Name',
+                  label: AppLocalizations.of(context).firstName,
                   icon: Icons.badge_outlined,
                   accent: accent,
                   validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null,
@@ -295,7 +296,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                 const SizedBox(width: 12),
                 Expanded(child: _field(
                   controller: _lastNameCtrl,
-                  label: 'Last Name',
+                  label: AppLocalizations.of(context).lastName,
                   icon: Icons.badge_outlined,
                   accent: accent,
                 )),
@@ -337,7 +338,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Mobile Number', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                        Text(AppLocalizations.of(context).mobileNumber, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
                         const SizedBox(height: 2),
                         Text(
                           _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
@@ -367,7 +368,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             DropdownButtonFormField<String>(
               initialValue: _selectedState,
               decoration: InputDecoration(
-                labelText: 'State',
+                labelText: AppLocalizations.of(context).selectState,
                 prefixIcon: Icon(Icons.map_outlined, color: accent, size: 18),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -383,7 +384,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             DropdownButtonFormField<String>(
               initialValue: _selectedCity,
               decoration: InputDecoration(
-                labelText: 'City',
+                labelText: AppLocalizations.of(context).selectCity,
                 prefixIcon: Icon(Icons.location_city_outlined, color: accent, size: 18),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),

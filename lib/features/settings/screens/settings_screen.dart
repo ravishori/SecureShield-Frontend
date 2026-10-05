@@ -13,6 +13,7 @@ import '../../../features/auth/auth_provider.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -190,7 +191,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 20),
 
                   // ── Appearance section ──────────────────────────────────
-                  Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).appearance, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
 
                   // Theme dropdown
@@ -201,7 +202,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     final accent = AppTheme.accentOf(context);
                     return _settingTile(
                       icon: isDark ? Icons.nights_stay_rounded : Icons.wb_sunny_rounded,
-                      label: 'App Theme',
+                      label: AppLocalizations.of(context).appTheme,
                       subtitle: isDark ? 'Dark Mode' : 'Light Mode',
                       trailing: DropdownButton<ThemeMode>(
                         value: themeMode,
@@ -256,12 +257,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   }),
 
                   const SizedBox(height: 16),
-                  Text('Security Settings', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).securitySettings, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   _settingTile(
                     icon: Icons.elderly,
-                    label: 'Senior Citizen Mode',
-                    subtitle: 'Larger text, simplified UI',
+                    label: AppLocalizations.of(context).seniorCitizenMode,
+                    subtitle: AppLocalizations.of(context).seniorModeSubtitle,
                     trailing: Switch(
                       value: _seniorMode,
                       onChanged: _toggleSeniorMode,
@@ -270,14 +271,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   _settingTile(
                     icon: Icons.folder_special,
-                    label: 'Evidence Locker',
-                    subtitle: 'Manage your evidence files',
+                    label: AppLocalizations.of(context).evidenceLocker,
+                    subtitle: AppLocalizations.of(context).evidenceLockerSubtitle,
                     onTap: () => context.push('/evidence'),
                   ),
                   _settingTile(
                     icon: Icons.family_restroom,
-                    label: 'Family Dashboard',
-                    subtitle: 'Manage family members',
+                    label: AppLocalizations.of(context).familyDashboard,
+                    subtitle: AppLocalizations.of(context).familyDashboardSubtitle,
                     onTap: () => context.push('/family'),
                   ),
                   _settingTile(
@@ -324,13 +325,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 8),
                   _settingTile(
                     icon: Icons.info_outline,
-                    label: 'App Version',
+                    label: AppLocalizations.of(context).appVersion,
                     subtitle: '1.0.0',
                   ),
                   _settingTile(
                     icon: Icons.shield,
-                    label: 'Cybercrime Helpline',
-                    subtitle: '1930 (India National Cybercrime Helpline)',
+                    label: AppLocalizations.of(context).cybercrimeHelpline,
+                    subtitle: AppLocalizations.of(context).cybercrimeHelplineNumber,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
@@ -486,10 +487,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('Select Language',
-                  style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(AppLocalizations.of(context).selectLanguage,
+                  style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
             ),
             const Divider(color: Color(0xFF2A3560)),
             ...supportedLanguages.map((lang) => ListTile(

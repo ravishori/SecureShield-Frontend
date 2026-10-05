@@ -8,6 +8,7 @@ import '../../../core/widgets/premium/premium.dart';
 import '../../../core/widgets/security_tips_banner.dart';
 import '../../../features/auth/auth_provider.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Feature card model
@@ -138,7 +139,7 @@ class WelcomeScreen extends ConsumerWidget {
         ),
         _CardData(
           icon:      Icons.radar_rounded,
-          title:     'Scan My Mobile',
+          title:     AppLocalizations.of(context).welcomeScanTitle,
           subtitle:  'Check your phone for threats in 30 seconds',
           color:     AppTheme.success,
           badge:     'RECOMMENDED',
@@ -153,14 +154,14 @@ class WelcomeScreen extends ConsumerWidget {
       'safetyTools': [
         _CardData(
           icon:     Icons.tips_and_updates_rounded,
-          title:    'Cyber Safety Tips',
+          title:    AppLocalizations.of(context).welcomeTipsTitle,
           subtitle: 'Daily fraud prevention guides',
           color:    const Color(0xFFCE93D8),
           action:   () => context.push('/tips'),
         ),
         _CardData(
           icon:     Icons.sos_rounded,
-          title:    'SOS Emergency',
+          title:    AppLocalizations.of(context).welcomeSosTitle,
           subtitle: 'Report cyber crime instantly',
           color:    AppTheme.errorColor,
           action:   () => _showSosDialog(context),

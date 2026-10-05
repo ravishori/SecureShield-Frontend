@@ -6,6 +6,7 @@ import '../../../core/theme.dart';
 import '../../../core/security/device_scanner_service.dart';
 import '../../../core/security/app_risk_engine.dart';
 import '../scan_provider.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Scan phase definitions
@@ -137,7 +138,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
 
               // ── Header ──────────────────────────────────────────────────
               Text(
-                'Device Security Scan',
+                AppLocalizations.of(context).scanTitle,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: AppTheme.accent,
                       fontWeight: FontWeight.bold,

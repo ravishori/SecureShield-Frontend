@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Data models
@@ -259,7 +260,7 @@ class ContactsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: const Text('Cyber Crime Contacts'),
+        title: Text(AppLocalizations.of(context).welcomeContactsTitle),
         backgroundColor: AppTheme.surface,
         leading: const BackButton(color: AppTheme.accent),
       ),

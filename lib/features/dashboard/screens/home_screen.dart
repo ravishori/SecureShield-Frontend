@@ -13,6 +13,7 @@ import '../../../core/widgets/premium/premium.dart';
 import '../../../features/auth/auth_provider.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
 import '../dashboard_api.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ─────────────────────────────────────────────
 //  Feature catalogue — single source of truth
@@ -843,12 +844,12 @@ class HomeScreen extends ConsumerWidget {
       // ── App bar ──────────────────────────────────────────────────────
       appBar: AppBar(
         titleSpacing: 0,
-        title: const FittedBox(
+        title: FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
           child: Text(
-            'SecureShield AI',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            AppLocalizations.of(context).appName,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             maxLines: 1,
           ),
         ),
@@ -940,7 +941,7 @@ class _AppDrawer extends ConsumerWidget {
                   child: Icon(Icons.security, color: accent, size: 28),
                 ),
                 const SizedBox(height: 12),
-                const Text('SecureShield AI', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(AppLocalizations.of(context).appName, style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
                 Text(authState.identifier ?? 'Cyber Safety Suite', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
               ],
             ),
@@ -964,7 +965,7 @@ class _AppDrawer extends ConsumerWidget {
                   const _DrawerItem(Icons.description,    'FIR Draft',           '/fir-draft',          Color(0xFFFF9800), badge: 'AI'),
                   const _DrawerItem(Icons.mic,            'Call Recorder',       '/call-recorder',      Color(0xFFFF5252)),
                   const _DrawerItem(Icons.share,          'Emergency Share',     '/emergency-share',    Color(0xFFFF5252)),
-                  const _DrawerItem(Icons.folder_special, 'Evidence Locker',     '/evidence',           Color(0xFF7C4DFF)),
+                  _DrawerItem(Icons.folder_special, AppLocalizations.of(context).evidenceLocker,     '/evidence',           const Color(0xFF7C4DFF)),
                   const _DrawerItem(Icons.email,          'Complaint Email',     '/complaint-email',    Color(0xFF4CAF50), badge: 'AI'),
                 ]),
                 _drawerSection(context, '🔐  Identity & Privacy', [
@@ -978,7 +979,7 @@ class _AppDrawer extends ConsumerWidget {
                   const _DrawerItem(Icons.videocam_off,   'Screen Rec Detect',   '/screen-recorder',    Color(0xFF00E5FF)),
                 ]),
                 _drawerSection(context, '👨‍👩‍👧  Family Safety', [
-                  const _DrawerItem(Icons.family_restroom,'Family Dashboard',    '/family',             Color(0xFF9C27B0)),
+                  _DrawerItem(Icons.family_restroom,AppLocalizations.of(context).familyDashboard,    '/family',             const Color(0xFF9C27B0)),
                   const _DrawerItem(Icons.sms,            'Job / Msg Analyzer',  '/message-analyzer',   Color(0xFFFF9800), badge: 'AI'),
                 ]),
                 _drawerSection(context, '📱  Device Security', [
@@ -1007,11 +1008,11 @@ class _AppDrawer extends ConsumerWidget {
               children: [
                 const Icon(Icons.phone_in_talk, color: AppTheme.errorColor, size: 18),
                 const SizedBox(width: 10),
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Cybercrime Helpline', style: TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
-                    Text('1930', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold, fontSize: 20)),
+                    Text(AppLocalizations.of(context).cybercrimeHelpline, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
+                    const Text('1930', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold, fontSize: 20)),
                   ],
                 ),
                 const Spacer(),

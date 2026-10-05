@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../core/theme.dart';
 import '../video_call_api.dart';
 import 'fir_draft_screen.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class VideoCallScreen extends StatefulWidget {
   const VideoCallScreen({super.key});
@@ -182,7 +183,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               const Text('Emergency Contacts', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
               ...[
-                {'label': 'Cybercrime Helpline', 'value': _policeContacts!['cybercrime_helpline'], 'icon': Icons.phone_in_talk},
+                {'label': AppLocalizations.of(context).cybercrimeHelpline, 'value': _policeContacts!['cybercrime_helpline'], 'icon': Icons.phone_in_talk},
                 {'label': 'Police', 'value': _policeContacts!['police'], 'icon': Icons.local_police},
                 {'label': 'National Emergency', 'value': _policeContacts!['national_emergency'], 'icon': Icons.emergency},
               ].map((c) => Container(

@@ -11,6 +11,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/data/india_locations.dart';
 import '../auth_provider.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ── Country codes ─────────────────────────────────────────────────────────────
 class _Country {
@@ -259,7 +260,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       children: [
 
                         // ── SECTION: Personal Info ────────────────────────
-                        _sectionLabel(accent, Icons.person_rounded, 'Personal Information'),
+                        _sectionLabel(accent, Icons.person_rounded, AppLocalizations.of(context).personalInformation),
                         Sp.gapMd,
 
                         // First + Last name
@@ -277,7 +278,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           Expanded(
                             child: AppTextField(
                               controller: _lastNameCtrl,
-                              label: 'Last Name',
+                              label: AppLocalizations.of(context).lastName,
                               prefixIcon: Icons.badge_outlined,
                               textCapitalization: TextCapitalization.words,
                               validator: (_) => null,
@@ -543,7 +544,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Create Account',
+                      AppLocalizations.of(context).registerTitle,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 22,
@@ -656,7 +657,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           Expanded(
             child: AppTextField(
               controller: _flatCtrl,
-              label: 'Flat / House No.',
+              label: AppLocalizations.of(context).flatHouseNo,
               prefixIcon: Icons.home_outlined,
             ),
           ),
@@ -664,7 +665,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           Expanded(
             child: AppTextField(
               controller: _buildingCtrl,
-              label: 'Building / Society',
+              label: AppLocalizations.of(context).buildingSociety,
               prefixIcon: Icons.apartment_outlined,
             ),
           ),
@@ -672,7 +673,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Sp.gapMd,
         AppTextField(
           controller: _streetCtrl,
-          label: 'Street / Area',
+          label: AppLocalizations.of(context).streetArea,
           prefixIcon: Icons.add_road_outlined,
           textCapitalization: TextCapitalization.words,
         ),
@@ -680,7 +681,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         DropdownButtonFormField<String>(
           initialValue: _selectedState,
           decoration: InputDecoration(
-            labelText: 'State',
+            labelText: AppLocalizations.of(context).selectState,
             prefixIcon: Icon(Icons.map_outlined, color: accent),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -700,7 +701,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         DropdownButtonFormField<String>(
           initialValue: _selectedCity,
           decoration: InputDecoration(
-            labelText: 'City',
+            labelText: AppLocalizations.of(context).selectCity,
             prefixIcon: Icon(Icons.location_city_outlined, color: accent),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),

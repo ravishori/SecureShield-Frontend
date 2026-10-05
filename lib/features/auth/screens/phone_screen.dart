@@ -6,6 +6,7 @@ import '../../../core/theme.dart';
 import '../../../core/security/biometric_service.dart';
 import '../../../core/security/google_auth_service.dart';
 import '../auth_provider.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ── Country codes ─────────────────────────────────────────────────────────────
 
@@ -288,7 +289,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                     child: Row(
                       children: [
                         _modeTab(_InputMode.phone, Icons.phone_rounded, 'Phone', accent),
-                        _modeTab(_InputMode.email, Icons.email_rounded,  'Email', accent),
+                        _modeTab(_InputMode.email, Icons.email_rounded,  AppLocalizations.of(context).emailTab, accent),
                       ],
                     ),
                   ),
@@ -329,7 +330,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             style: TextStyle(color: onSurf, fontSize: 15),
                             decoration: InputDecoration(
-                              labelText: 'Mobile Number',
+                              labelText: AppLocalizations.of(context).mobileNumber,
                               prefixIcon: Icon(Icons.phone_rounded, color: accent, size: 20),
                             ),
                             validator: (v) {
@@ -401,12 +402,12 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                                 strokeWidth: 2.5, color: Colors.white,
                               ),
                             )
-                          : const Row(
+                          : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('Send OTP'),
-                                SizedBox(width: 8),
-                                Icon(Icons.arrow_forward_rounded, size: 18),
+                                Text(AppLocalizations.of(context).sendOtp),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.arrow_forward_rounded, size: 18),
                               ],
                             ),
                     ),
@@ -430,7 +431,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                     _altButton(
                       onTap:  _biometricLogin,
                       icon:   Icons.fingerprint_rounded,
-                      label:  'Login with Biometrics',
+                      label:  AppLocalizations.of(context).loginWithBiometric,
                       color:  AppTheme.success,
                     ),
                   if (_isBioAvailable) const SizedBox(height: 12),

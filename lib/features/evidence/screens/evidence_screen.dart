@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../core/theme.dart';
 import '../evidence_api.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class EvidenceScreen extends StatefulWidget {
   const EvidenceScreen({super.key});
@@ -108,7 +109,7 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Evidence Locker'),
+        title: Text(AppLocalizations.of(context).evidenceLocker),
         actions: [
           IconButton(icon: const Icon(Icons.add), onPressed: _upload),
         ],

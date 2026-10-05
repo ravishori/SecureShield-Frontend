@@ -7,6 +7,7 @@ import '../../../core/data/india_locations.dart';
 import '../../../core/utils/validators.dart';
 import '../user_api.dart';
 import '../user_profile_provider.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class ProfileDetailsScreen extends ConsumerStatefulWidget {
   const ProfileDetailsScreen({super.key});
@@ -105,7 +106,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
     final accent = AppTheme.accentOf(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Complete Your Profile'),
+        title: Text(AppLocalizations.of(context).completeYourProfile),
         automaticallyImplyLeading: false,
         actions: [
           TextButton(
@@ -125,7 +126,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                 // Header
                 _SectionHeader(
                   icon: Icons.person_outline_rounded,
-                  title: 'Personal Information',
+                  title: AppLocalizations.of(context).personalInformation,
                   accent: accent,
                 ),
                 const SizedBox(height: 12),
@@ -156,7 +157,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
 
                 _Field(
                   controller: _altPhoneCtrl,
-                  label: 'Alternate Phone (optional)',
+                  label: AppLocalizations.of(context).altPhone,
                   icon: Icons.phone_outlined,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -166,7 +167,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
 
                 _Field(
                   controller: _emailCtrl,
-                  label: 'Email Address (optional)',
+                  label: AppLocalizations.of(context).emailAddress,
                   icon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) {
@@ -182,7 +183,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                 const SizedBox(height: 24),
                 _SectionHeader(
                   icon: Icons.location_on_outlined,
-                  title: 'Complete Address',
+                  title: AppLocalizations.of(context).completeAddress,
                   accent: accent,
                 ),
                 const SizedBox(height: 12),
@@ -197,14 +198,14 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
 
                 _Field(
                   controller: _buildingCtrl,
-                  label: 'Building / Society',
+                  label: AppLocalizations.of(context).buildingSociety,
                   icon: Icons.apartment_outlined,
                 ),
                 const SizedBox(height: 12),
 
                 _Field(
                   controller: _streetCtrl,
-                  label: 'Street / Area',
+                  label: AppLocalizations.of(context).streetArea,
                   icon: Icons.streetview_outlined,
                 ),
                 const SizedBox(height: 12),
@@ -234,7 +235,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                   onChanged: (v) => setState(() => _selectedCity = v),
                   validator: (v) => v == null ? 'Please select a city' : null,
                   enabled: _selectedState != null,
-                  disabledHint: 'Select state first',
+                  disabledHint: AppLocalizations.of(context).selectStatFirst,
                 ),
                 const SizedBox(height: 12),
 
@@ -287,7 +288,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : const Icon(Icons.check_rounded, size: 20),
-                    label: Text(_saving ? 'Saving…' : 'Save & Continue'),
+                    label: Text(_saving ? 'Saving…' : AppLocalizations.of(context).saveAndContinue),
                   ),
                 ),
 
@@ -296,9 +297,9 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                 Center(
                   child: TextButton(
                     onPressed: _skip,
-                    child: const Text(
-                      'Fill this in later',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context).fillThisLater,
+                      style: const TextStyle(
                         color: AppTheme.textSecondary,
                         fontSize: 12,
                       ),

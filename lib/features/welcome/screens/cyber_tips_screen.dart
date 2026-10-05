@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Data model
@@ -161,7 +162,7 @@ class _CyberTipsScreenState extends State<CyberTipsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: const Text('Cyber Safety Tips'),
+        title: Text(AppLocalizations.of(context).welcomeTipsTitle),
         backgroundColor: AppTheme.surface,
         leading: const BackButton(color: AppTheme.accent),
       ),
