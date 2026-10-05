@@ -89,33 +89,56 @@ class DioClient {
           }
 
           // ─ 2. JWT auto-refresh on 401 ──────────────────────────────────
-          if (error.response?.statusCode == 401) {
-            final refreshToken =
-                await _storage.read(key: AppConstants.refreshTokenKey);
-            if (refreshToken != null) {
+          // Refresh tokens are single-use (the server revokes the whole login if one is replayed),
+          // so concurrent 401s must share ONE refresh call and the new refresh token must be stored.
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.extra['retried'] != true) {
+            final newToken = await _refreshAccessToken();
+            if (newToken != null) {
               try {
-                final response = await Dio().post(
-                  '${AppConstants.baseUrl}${AppConstants.refreshToken}',
-                  data: {'refresh_token': refreshToken},
-                );
-                final newToken = response.data['access_token'];
-                await _storage.write(
-                  key: AppConstants.accessTokenKey,
-                  value: newToken,
-                );
                 error.requestOptions.headers['Authorization'] =
                     'Bearer $newToken';
+                error.requestOptions.extra['retried'] = true;
                 final retryResponse = await dio.fetch(error.requestOptions);
                 return handler.resolve(retryResponse);
-              } catch (_) {
-                await _storage.deleteAll();
-              }
+              } catch (_) {/* fall through to the original error */}
             }
           }
           return handler.next(error);
         },
       ),
     );
+  }
+
+  static Future<String?>? _refreshInFlight;
+
+  Future<String?> _refreshAccessToken() {
+    return _refreshInFlight ??= _doRefresh().whenComplete(() => _refreshInFlight = null);
+  }
+
+  Future<String?> _doRefresh() async {
+    final refreshToken = await _storage.read(key: AppConstants.refreshTokenKey);
+    if (refreshToken == null) return null;
+    try {
+      final response = await Dio().post(
+        '${AppConstants.baseUrl}${AppConstants.refreshToken}',
+        data: {'refresh_token': refreshToken},
+      );
+      final access = response.data['access_token'] as String;
+      final newRefresh = response.data['refresh_token'] as String?;
+      await _storage.write(key: AppConstants.accessTokenKey, value: access);
+      if (newRefresh != null) {
+        await _storage.write(key: AppConstants.refreshTokenKey, value: newRefresh);
+      }
+      return access;
+    } on DioException catch (e) {
+      // Only a definitive rejection ends the session; a flaky network must not log the user out.
+      final code = e.response?.statusCode;
+      if (code == 401 || code == 400) await _storage.deleteAll();
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Invalidate the singleton so it's recreated with a new base URL.
