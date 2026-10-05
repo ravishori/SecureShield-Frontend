@@ -199,7 +199,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
   Future<void> _googleLogin() async {
     if (!kGoogleAuthEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google Sign-In setup required. See google_auth_service.dart')),
+        const SnackBar(content: Text('Google Sign-In is not set up in this build.')),
       );
       return;
     }

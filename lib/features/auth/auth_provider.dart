@@ -1,3 +1,4 @@
+import '../../core/security/google_auth_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -270,7 +271,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // ── Google Sign-In (stub) ────────────────────────────────────────────────
 
-  Future<bool> signInWithGoogle() async => false;
+  /// Signs in with a Google ID token verified by the backend. Returns false when Google Sign-In is not
+  /// configured in this build, was cancelled, or the backend rejected the token.
+  Future<bool> signInWithGoogle({Map<String, dynamic>? deviceInfo}) async {
+    final google = await GoogleAuthService.signIn();
+    if (google == null) return false;
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final body = <String, dynamic>{'id_token': google.idToken};
+      if (deviceInfo != null) body.addAll(deviceInfo);
+      final response = await _dioClient.dio.post(AppConstants.googleAuth, data: body);
+      final accessToken = response.data['access_token'] as String;
+      final refreshToken = response.data['refresh_token'] as String;
+      await _storage.write(key: AppConstants.accessTokenKey, value: accessToken);
+      await _storage.write(key: AppConstants.refreshTokenKey, value: refreshToken);
+      state = AuthState(
+        isAuthenticated: true,
+        isLoading: false,
+        loginSuccess: true,
+        userId: JwtDecoder.getUserId(accessToken),
+        identifier: JwtDecoder.getIdentifier(accessToken),
+      );
+      return true;
+    } on DioException catch (e) {
+      await GoogleAuthService.signOut();
+      state = state.copyWith(isLoading: false, error: e.friendlyMessage);
+      return false;
+    } catch (e) {
+      await GoogleAuthService.signOut();
+      state = state.copyWith(isLoading: false, error: 'Google sign-in failed. Please try again.');
+      return false;
+    }
+  }
 
   // ── Logout ───────────────────────────────────────────────────────────────
 

@@ -30,6 +30,7 @@ dependencies:
 
   # Auth & security
   local_auth: ^2.3.0
+  google_sign_in: ^6.2.2
 
   # Permissions
   permission_handler: ^11.3.1
