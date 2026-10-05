@@ -176,7 +176,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
     if (_loading) return const DashboardHeroSkeleton();
 
     final riskScore   = (_report?['overall_risk_score'] as num?)?.toDouble() ?? 0.0;
-    final safeScore   = (100 - riskScore).clamp(0.0, 100.0);
+    // Prefer the server's computed security_score; fall back to the inverse of the risk score.
+    final safeScore   = ((_report?['security_score'] as num?)?.toDouble() ?? (100 - riskScore)).clamp(0.0, 100.0);
     final threats     = _report?['threats_detected'] ?? 0;
     final safeColor   = safeScore >= 70 ? AppTheme.success : safeScore >= 40 ? AppTheme.warning : AppTheme.errorColor;
     final safeLabel   = safeScore >= 70 ? 'PROTECTED' : safeScore >= 40 ? 'FAIR' : 'AT RISK';

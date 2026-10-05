@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'network_activity_reporter.dart';
+
 class TrafficEvent {
   final String destIp;
   final String destDomain;
@@ -147,11 +149,21 @@ class TrafficLogNotifier extends StateNotifier<List<TrafficEvent>> {
   void clear() => state = [];
 }
 
+final networkActivityReporterProvider = Provider<NetworkActivityReporter>((ref) {
+  final reporter = NetworkActivityReporter();
+  ref.onDispose(reporter.dispose);
+  return reporter;
+});
+
 final trafficLogProvider =
     StateNotifierProvider<TrafficLogNotifier, List<TrafficEvent>>((ref) {
   final notifier = TrafficLogNotifier();
+  final reporter = ref.watch(networkActivityReporterProvider);
   ref.listen(vpnTrafficStreamProvider, (_, next) {
-    next.whenData(notifier.add);
+    next.whenData((e) {
+      notifier.add(e);
+      reporter.add(destIp: e.destIp, destDomain: e.destDomain);
+    });
   });
   return notifier;
 });
