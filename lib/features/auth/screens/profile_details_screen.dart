@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
-import '../../../core/app_spacing.dart';
 import '../../../core/data/india_locations.dart';
 import '../../../core/utils/validators.dart';
 import '../user_api.dart';
@@ -244,9 +243,9 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                   height: 54,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: accent.withOpacity(0.05),
+                    color: accent.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: accent.withOpacity(0.3)),
+                    border: Border.all(color: accent.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
@@ -256,7 +255,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                       const SizedBox(width: 8),
                       Text('India', style: TextStyle(color: accent, fontWeight: FontWeight.w600)),
                       const Spacer(),
-                      Text('Fixed', style: TextStyle(color: accent.withOpacity(0.5), fontSize: 11)),
+                      Text('Fixed', style: TextStyle(color: accent.withValues(alpha: 0.5), fontSize: 11)),
                     ],
                   ),
                 ),
@@ -297,7 +296,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
                 Center(
                   child: TextButton(
                     onPressed: _skip,
-                    child: Text(
+                    child: const Text(
                       'Fill this in later',
                       style: TextStyle(
                         color: AppTheme.textSecondary,
@@ -409,14 +408,14 @@ class _DropdownField<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = AppTheme.accentOf(context);
     return DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, size: 20),
       ),
       hint: Text(
         enabled ? 'Select…' : disabledHint,
-        style: TextStyle(color: AppTheme.textSecondary.withOpacity(0.6), fontSize: 13),
+        style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.6), fontSize: 13),
       ),
       isExpanded: true,
       icon: Icon(Icons.arrow_drop_down_rounded, color: enabled ? accent : Colors.grey),

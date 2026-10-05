@@ -43,4 +43,12 @@ class CommunityScamApi {
   Future<void> upvote(String reportId) async {
     await _client.dio.post('/community-scams/$reportId/upvote');
   }
+
+  Future<Map<String, dynamic>> getScamNewsFeed({String? city}) async {
+    final response = await _client.dio.get(
+      '/community-scams/news-feed',
+      queryParameters: {if (city != null) 'city': city},
+    );
+    return response.data as Map<String, dynamic>;
+  }
 }

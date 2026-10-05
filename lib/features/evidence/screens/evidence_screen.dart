@@ -179,7 +179,7 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: AppTheme.accent.withOpacity(0.1),
+                                color: AppTheme.accent.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(_typeIcon(fileType), color: AppTheme.accent, size: 22),

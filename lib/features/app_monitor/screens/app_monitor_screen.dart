@@ -94,8 +94,8 @@ class _AppMonitorScreenState extends ConsumerState<AppMonitorScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
-          (running ? AppTheme.success : AppTheme.textSecondary).withOpacity(0.8),
-          (running ? AppTheme.success : AppTheme.textSecondary).withOpacity(0.4),
+          (running ? AppTheme.success : AppTheme.textSecondary).withValues(alpha: 0.8),
+          (running ? AppTheme.success : AppTheme.textSecondary).withValues(alpha: 0.4),
         ]),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -150,9 +150,9 @@ class _AppMonitorScreenState extends ConsumerState<AppMonitorScreen> {
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(children: [
         Text(value, style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.bold)),
@@ -169,9 +169,9 @@ class _AppMonitorScreenState extends ConsumerState<AppMonitorScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.35)),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -240,7 +240,7 @@ class _AppMonitorScreenState extends ConsumerState<AppMonitorScreen> {
     Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: AppTheme.accent.withOpacity(0.15),
+        color: AppTheme.accent.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(10)),
       child: Text('$count', style: const TextStyle(color: AppTheme.accent,
           fontSize: 12, fontWeight: FontWeight.bold)),
@@ -262,9 +262,9 @@ class _AppMonitorScreenState extends ConsumerState<AppMonitorScreen> {
   Widget _badge(String text, Color color) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
     decoration: BoxDecoration(
-      color: color.withOpacity(0.15),
+      color: color.withValues(alpha: 0.15),
       borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: color.withOpacity(0.4)),
+      border: Border.all(color: color.withValues(alpha: 0.4)),
     ),
     child: Text(text, style: TextStyle(color: color, fontSize: 9,
         fontWeight: FontWeight.bold)),

@@ -163,7 +163,7 @@ class _CyberTipsScreenState extends State<CyberTipsScreen> {
       appBar: AppBar(
         title: const Text('Cyber Safety Tips'),
         backgroundColor: AppTheme.surface,
-        leading: BackButton(color: AppTheme.accent),
+        leading: const BackButton(color: AppTheme.accent),
       ),
       body: Column(
         children: [
@@ -214,7 +214,7 @@ class _CyberTipsScreenState extends State<CyberTipsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
                 color: selected
-                    ? cat.color.withOpacity(0.15)
+                    ? cat.color.withValues(alpha: 0.15)
                     : AppTheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
@@ -249,16 +249,16 @@ class _CyberTipsScreenState extends State<CyberTipsScreen> {
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cat.color.withOpacity(0.07),
+        color: cat.color.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cat.color.withOpacity(0.25)),
+        border: Border.all(color: cat.color.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: cat.color.withOpacity(0.15),
+              color: cat.color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(cat.icon, color: cat.color, size: 24),
@@ -312,7 +312,7 @@ class _TipCard extends StatelessWidget {
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: expanded ? color.withOpacity(0.5) : const Color(0xFF2A3560),
+            color: expanded ? color.withValues(alpha: 0.5) : const Color(0xFF2A3560),
           ),
         ),
         child: Column(
@@ -352,7 +352,7 @@ class _TipCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Divider(color: color.withOpacity(0.2)),
+                    Divider(color: color.withValues(alpha: 0.2)),
                     const SizedBox(height: 8),
                     Text(
                       tip.body,

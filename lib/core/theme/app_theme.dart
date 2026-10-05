@@ -1,409 +1,123 @@
-/// Complete ThemeData builders for all 5 themes
+/// SecureShield ThemeData factory.
 ///
-/// Provides Material 3 themed applications with comprehensive component styling
-/// for Light, Dark, Cybersecurity, Senior Citizen, and Nature Green themes.
+/// A single generic builder produces the ThemeData for all 7 themes — every
+/// theme just supplies a `ColorPalette` + `Brightness` and gets a consistent,
+/// enterprise-grade Material 3 theme back. This replaces the previous
+/// approach of 5 near-identical `_buildXTheme()` copy-pasted functions.
+///
+/// Design rules baked into the builder (aligned with Microsoft Defender,
+/// CrowdStrike, Bitdefender):
+///   • Cards: 1 px hairline borders, subtle drop shadow, NO coloured glow
+///   • Buttons: solid fills for primary CTAs, minimum 48-dp touch targets
+///   • Inputs: filled with `card` color, 1.5 px focused ring
+///   • App bar: no elevation, no scroll shadow, respects surface color
+///   • Chips: neutral background, accent border, no glow
 library;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_theme_enum.dart';
 import 'app_colors.dart';
+import 'app_theme_enum.dart';
 import 'app_theme_extensions.dart';
 
-// ──────────────────────────────────────────────────────────────────────────
-// MAIN THEME CLASS
-// ──────────────────────────────────────────────────────────────────────────
-
-/// Central theme provider for all 5 themes
 class AppTheme {
-  /// Get ThemeData for a specific theme type
-  ///
-  /// Returns a complete Material 3 ThemeData configured for the given theme.
-  static ThemeData getTheme(AppThemeType themeType) {
-    return switch (themeType) {
-      AppThemeType.light => _buildLightTheme(),
-      AppThemeType.dark => _buildDarkTheme(),
-      AppThemeType.cybersecurity => _buildCybersecurityTheme(),
-      AppThemeType.seniorCitizen => _buildSeniorCitizenTheme(),
-      AppThemeType.natureGreen => _buildNatureGreenTheme(),
-    };
-  }
+  AppTheme._();
 
-  // ──────────────────────────────────────────────────────────────────────
-  // THEME BUILDERS
-  // ──────────────────────────────────────────────────────────────────────
+  /// Returns the ThemeData for the given [AppThemeType].
+  static ThemeData getTheme(AppThemeType themeType) => _build(
+        brightness: themeType.isDark ? Brightness.dark : Brightness.light,
+        palette:    themeType.palette,
+        a11y:       themeType.accessibility,
+      );
 
-  /// Light Theme - Professional, clean, accessibility-focused
-  static ThemeData _buildLightTheme() {
-    final palette = AppColors.lightPalette;
-    final a11y = AppThemeType.light.accessibility;
+  // ── One builder to rule them all ─────────────────────────────────────────
+  static ThemeData _build({
+    required Brightness brightness,
+    required ColorPalette palette,
+    required ThemeAccessibility a11y,
+  }) {
+    final isDark = brightness == Brightness.dark;
 
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme(
-        brightness: Brightness.light,
-        primary: palette.primary,
-        onPrimary: Colors.white,
-        primaryContainer: palette.primary.withOpacity(0.1),
-        onPrimaryContainer: palette.primary,
-        secondary: palette.accent,
-        onSecondary: Colors.white,
-        secondaryContainer: palette.accent.withOpacity(0.1),
-        onSecondaryContainer: palette.accent,
-        tertiary: palette.secondary,
-        onTertiary: Colors.white,
-        tertiaryContainer: palette.secondary.withOpacity(0.1),
-        onTertiaryContainer: palette.secondary,
-        surface: palette.surface,
-        onSurface: palette.textPrimary,
-        surfaceContainerHighest: palette.card,
-        error: palette.threat,
-        onError: Colors.white,
-        errorContainer: palette.threat.withOpacity(0.1),
-        onErrorContainer: palette.threat,
-        outline: palette.borderColor,
-        outlineVariant: palette.dividerColor,
-        scrim: Colors.black26,
-      ),
-      scaffoldBackgroundColor: palette.background,
-      cardTheme: _buildCardTheme(palette, a11y),
-      appBarTheme: _buildAppBarTheme(palette, a11y),
-      textTheme: _buildTextTheme(a11y, palette.textPrimary),
-      inputDecorationTheme: _buildInputDecorationTheme(palette, a11y),
-      elevatedButtonTheme: _buildElevatedButtonTheme(palette, a11y),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(palette, a11y),
-      textButtonTheme: _buildTextButtonTheme(palette, a11y),
-      floatingActionButtonTheme: _buildFabTheme(palette, a11y),
-      chipTheme: _buildChipTheme(palette, a11y),
-      dividerTheme: DividerThemeData(
-        color: palette.dividerColor,
-        thickness: 1.0,
-        space: 1.0,
-      ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: palette.accent,
-        linearTrackColor: palette.dividerColor,
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent;
-          }
-          return palette.textSecondary;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent.withOpacity(0.4);
-          }
-          return palette.dividerColor;
-        }),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: palette.surface,
-        selectedItemColor: palette.accent,
-        unselectedItemColor: palette.textSecondary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: palette.surface,
-        indicatorColor: palette.accent.withOpacity(0.1),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final isSelected = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 12,
-            color: isSelected ? palette.accent : palette.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          );
-        }),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: palette.surface,
-        contentTextStyle: TextStyle(color: palette.textPrimary),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        behavior: SnackBarBehavior.floating,
-      ),
+    final scheme = ColorScheme(
+      brightness: brightness,
+      primary:               palette.primary,
+      onPrimary:             _onColorFor(palette.primary),
+      primaryContainer:      palette.primary.withValues(alpha: isDark ? 0.20 : 0.10),
+      onPrimaryContainer:    palette.primary,
+      secondary:             palette.accent,
+      onSecondary:           _onColorFor(palette.accent),
+      secondaryContainer:    palette.accent.withValues(alpha: isDark ? 0.18 : 0.10),
+      onSecondaryContainer:  palette.accent,
+      tertiary:              palette.secondary,
+      onTertiary:            _onColorFor(palette.secondary),
+      tertiaryContainer:     palette.secondary.withValues(alpha: 0.15),
+      onTertiaryContainer:   palette.secondary,
+      surface:               palette.surface,
+      onSurface:             palette.textPrimary,
+      surfaceContainerHighest: palette.card,
+      error:                 palette.threat,
+      onError:               Colors.white,
+      errorContainer:        palette.threat.withValues(alpha: 0.15),
+      onErrorContainer:      palette.threat,
+      outline:               palette.borderColor,
+      outlineVariant:        palette.dividerColor,
+      scrim:                 isDark ? Colors.black87 : Colors.black26,
     );
-  }
-
-  /// Dark Theme - Original dark mode with cyan accents
-  static ThemeData _buildDarkTheme() {
-    final palette = AppColors.darkPalette;
-    final a11y = AppThemeType.dark.accessibility;
 
     return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme(
-        brightness: Brightness.dark,
-        primary: palette.primary,
-        onPrimary: palette.textPrimary,
-        primaryContainer: palette.primary.withOpacity(0.5),
-        onPrimaryContainer: palette.accent,
-        secondary: palette.accent,
-        onSecondary: Colors.black,
-        secondaryContainer: palette.accent.withOpacity(0.2),
-        onSecondaryContainer: palette.accent,
-        tertiary: palette.secondary,
-        onTertiary: palette.textPrimary,
-        tertiaryContainer: palette.secondary.withOpacity(0.2),
-        onTertiaryContainer: palette.secondary,
-        surface: palette.surface,
-        onSurface: palette.textPrimary,
-        surfaceContainerHighest: palette.card,
-        error: palette.threat,
-        onError: Colors.white,
-        errorContainer: palette.threat.withOpacity(0.2),
-        onErrorContainer: palette.threat,
-        outline: palette.borderColor,
-        outlineVariant: palette.dividerColor,
-        scrim: Colors.black87,
-      ),
+      useMaterial3:            true,
+      brightness:              brightness,
+      colorScheme:             scheme,
       scaffoldBackgroundColor: palette.background,
-      cardTheme: _buildCardTheme(palette, a11y),
-      appBarTheme: _buildAppBarTheme(palette, a11y),
-      textTheme: _buildTextTheme(a11y, palette.textPrimary),
-      inputDecorationTheme: _buildInputDecorationTheme(palette, a11y),
-      elevatedButtonTheme: _buildElevatedButtonTheme(palette, a11y),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(palette, a11y),
-      textButtonTheme: _buildTextButtonTheme(palette, a11y),
-      floatingActionButtonTheme: _buildFabTheme(palette, a11y),
-      chipTheme: _buildChipTheme(palette, a11y),
-      dividerTheme: DividerThemeData(
-        color: palette.dividerColor,
-        thickness: 1.0,
-        space: 1.0,
-      ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: palette.accent,
-        linearTrackColor: palette.dividerColor,
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent;
-          }
-          return palette.textSecondary;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent.withOpacity(0.4);
-          }
-          return palette.dividerColor;
-        }),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: palette.surface,
-        selectedItemColor: palette.accent,
-        unselectedItemColor: palette.textSecondary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: palette.surface,
-        indicatorColor: palette.accent.withOpacity(0.1),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final isSelected = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 12,
-            color: isSelected ? palette.accent : palette.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          );
-        }),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: palette.surface,
-        contentTextStyle: TextStyle(color: palette.textPrimary),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  /// Cybersecurity Theme - Dark with neon security colors
-  static ThemeData _buildCybersecurityTheme() {
-    final palette = AppColors.cybersecurityPalette;
-    final a11y = AppThemeType.cybersecurity.accessibility;
-
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme(
-        brightness: Brightness.dark,
-        primary: palette.primary,
-        onPrimary: palette.accent,
-        primaryContainer: palette.primary.withOpacity(0.5),
-        onPrimaryContainer: palette.accent,
-        secondary: palette.accent,
-        onSecondary: Colors.black,
-        secondaryContainer: palette.accent.withOpacity(0.2),
-        onSecondaryContainer: palette.accent,
-        tertiary: palette.safe,
-        onTertiary: Colors.black,
-        tertiaryContainer: palette.safe.withOpacity(0.2),
-        onTertiaryContainer: palette.safe,
-        surface: palette.surface,
-        onSurface: palette.textPrimary,
-        surfaceContainerHighest: palette.card,
-        error: palette.threat,
-        onError: Colors.white,
-        errorContainer: palette.threat.withOpacity(0.2),
-        onErrorContainer: palette.threat,
-        outline: palette.accent,
-        outlineVariant: palette.dividerColor,
-        scrim: Colors.black87,
-      ),
-      scaffoldBackgroundColor: palette.background,
-      cardTheme: _buildCardTheme(palette, a11y),
-      appBarTheme: _buildAppBarTheme(palette, a11y),
-      textTheme: _buildTextTheme(a11y, palette.textPrimary),
-      inputDecorationTheme: _buildInputDecorationTheme(palette, a11y),
-      elevatedButtonTheme: _buildElevatedButtonTheme(palette, a11y),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(palette, a11y),
-      textButtonTheme: _buildTextButtonTheme(palette, a11y),
-      floatingActionButtonTheme: _buildFabTheme(palette, a11y),
-      chipTheme: _buildChipTheme(palette, a11y),
-      dividerTheme: DividerThemeData(
-        color: palette.accent.withOpacity(0.3),
-        thickness: 1.0,
-        space: 1.0,
-      ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: palette.safe,
-        linearTrackColor: palette.dividerColor,
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.safe;
-          }
-          return palette.threat;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.safe.withOpacity(0.4);
-          }
-          return palette.threat.withOpacity(0.3);
-        }),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: palette.surface,
-        selectedItemColor: palette.accent,
-        unselectedItemColor: palette.textSecondary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: palette.surface,
-        indicatorColor: palette.accent.withOpacity(0.2),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final isSelected = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 12,
-            color: isSelected ? palette.accent : palette.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          );
-        }),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: palette.surface,
-        contentTextStyle: TextStyle(color: palette.textPrimary),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  /// Senior Citizen Theme - Large fonts, high contrast, simplified UI
-  static ThemeData _buildSeniorCitizenTheme() {
-    final palette = AppColors.seniorCitizenPalette;
-    final a11y = AppThemeType.seniorCitizen.accessibility;
-
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme(
-        brightness: Brightness.light,
-        primary: palette.primary,
-        onPrimary: Colors.white,
-        primaryContainer: palette.primary.withOpacity(0.1),
-        onPrimaryContainer: palette.primary,
-        secondary: palette.secondary,
-        onSecondary: Colors.white,
-        secondaryContainer: palette.secondary.withOpacity(0.1),
-        onSecondaryContainer: palette.secondary,
-        tertiary: palette.accent,
-        onTertiary: Colors.white,
-        tertiaryContainer: palette.accent.withOpacity(0.1),
-        onTertiaryContainer: palette.accent,
-        surface: palette.surface,
-        onSurface: palette.textPrimary,
-        surfaceContainerHighest: palette.card,
-        error: palette.threat,
-        onError: Colors.white,
-        errorContainer: palette.threat.withOpacity(0.1),
-        onErrorContainer: palette.threat,
-        outline: palette.borderColor,
-        outlineVariant: palette.dividerColor,
-        scrim: Colors.black26,
-      ),
-      scaffoldBackgroundColor: palette.background,
-      cardTheme: _buildCardTheme(palette, a11y),
-      appBarTheme: _buildAppBarTheme(palette, a11y),
-      textTheme: _buildTextTheme(a11y, palette.textPrimary),
-      inputDecorationTheme: _buildInputDecorationTheme(palette, a11y),
-      elevatedButtonTheme: _buildElevatedButtonTheme(palette, a11y),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(palette, a11y),
-      textButtonTheme: _buildTextButtonTheme(palette, a11y),
-      floatingActionButtonTheme: _buildFabTheme(palette, a11y),
-      chipTheme: _buildChipTheme(palette, a11y),
-      dividerTheme: DividerThemeData(
-        color: palette.dividerColor,
+      cardTheme:               _cardTheme(palette, a11y),
+      appBarTheme:             _appBarTheme(palette, a11y),
+      textTheme:               _textTheme(a11y, palette.textPrimary),
+      inputDecorationTheme:    _inputTheme(palette, a11y),
+      elevatedButtonTheme:     _elevatedButtonTheme(palette, a11y),
+      outlinedButtonTheme:     _outlinedButtonTheme(palette, a11y),
+      textButtonTheme:         _textButtonTheme(palette, a11y),
+      floatingActionButtonTheme: _fabTheme(palette),
+      chipTheme:               _chipTheme(palette, a11y),
+      dividerTheme:            DividerThemeData(
+        color:     palette.dividerColor,
         thickness: a11y.outlineWidth,
-        space: 1.0,
+        space:     1,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: palette.accent,
+        color:            palette.accent,
         linearTrackColor: palette.dividerColor,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent;
-          }
-          return palette.textSecondary;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent.withOpacity(0.4);
-          }
-          return palette.dividerColor;
-        }),
+        thumbColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected) ? palette.accent : palette.textSecondary),
+        trackColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? palette.accent.withValues(alpha: 0.4)
+                : palette.dividerColor),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: palette.surface,
-        selectedItemColor: palette.primary,
-        unselectedItemColor: palette.textSecondary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        backgroundColor:      palette.surface,
+        selectedItemColor:    palette.accent,
+        unselectedItemColor:  palette.textSecondary,
+        type:                 BottomNavigationBarType.fixed,
+        elevation:            isDark ? 0 : 4,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: palette.surface,
-        indicatorColor: palette.primary.withOpacity(0.1),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final isSelected = states.contains(WidgetState.selected);
+        indicatorColor:  palette.accent.withValues(alpha: 0.15),
+        labelTextStyle:  WidgetStateProperty.resolveWith((s) {
+          final selected = s.contains(WidgetState.selected);
           return TextStyle(
-            fontSize: a11y.buttonFontSize,
-            color: isSelected ? palette.primary : palette.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            fontSize:  a11y.buttonFontSize * 0.85,
+            color:     selected ? palette.accent : palette.textSecondary,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
           );
         }),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: palette.surface,
+        backgroundColor:  palette.surface,
         contentTextStyle: TextStyle(
-          color: palette.textPrimary,
+          color:    palette.textPrimary,
           fontSize: a11y.baseFontSize,
         ),
         shape: RoundedRectangleBorder(
@@ -415,341 +129,154 @@ class AppTheme {
     );
   }
 
-  /// Nature Green Theme - Calming green palette, outdoor-inspired
-  static ThemeData _buildNatureGreenTheme() {
-    final palette = AppColors.natureGreenPalette;
-    final a11y = AppThemeType.natureGreen.accessibility;
+  // ── Component builders (previously duplicated 5x) ────────────────────────
 
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme(
-        brightness: Brightness.light,
-        primary: palette.primary,
-        onPrimary: Colors.white,
-        primaryContainer: palette.primary.withOpacity(0.1),
-        onPrimaryContainer: palette.primary,
-        secondary: palette.secondary,
-        onSecondary: Colors.white,
-        secondaryContainer: palette.secondary.withOpacity(0.1),
-        onSecondaryContainer: palette.secondary,
-        tertiary: palette.accent,
-        onTertiary: Colors.white,
-        tertiaryContainer: palette.accent.withOpacity(0.1),
-        onTertiaryContainer: palette.accent,
-        surface: palette.surface,
-        onSurface: palette.textPrimary,
-        surfaceContainerHighest: palette.card,
-        error: palette.threat,
-        onError: Colors.white,
-        errorContainer: palette.threat.withOpacity(0.1),
-        onErrorContainer: palette.threat,
-        outline: palette.borderColor,
-        outlineVariant: palette.dividerColor,
-        scrim: Colors.black12,
-      ),
-      scaffoldBackgroundColor: palette.background,
-      cardTheme: _buildCardTheme(palette, a11y),
-      appBarTheme: _buildAppBarTheme(palette, a11y),
-      textTheme: _buildTextTheme(a11y, palette.textPrimary),
-      inputDecorationTheme: _buildInputDecorationTheme(palette, a11y),
-      elevatedButtonTheme: _buildElevatedButtonTheme(palette, a11y),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(palette, a11y),
-      textButtonTheme: _buildTextButtonTheme(palette, a11y),
-      floatingActionButtonTheme: _buildFabTheme(palette, a11y),
-      chipTheme: _buildChipTheme(palette, a11y),
-      dividerTheme: DividerThemeData(
-        color: palette.dividerColor,
-        thickness: 1.0,
-        space: 1.0,
-      ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: palette.accent,
-        linearTrackColor: palette.dividerColor,
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent;
-          }
-          return palette.textSecondary;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return palette.accent.withOpacity(0.4);
-          }
-          return palette.dividerColor;
-        }),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: palette.surface,
-        selectedItemColor: palette.primary,
-        unselectedItemColor: palette.textSecondary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: palette.surface,
-        indicatorColor: palette.accent.withOpacity(0.1),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final isSelected = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 12,
-            color: isSelected ? palette.primary : palette.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          );
-        }),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: palette.surface,
-        contentTextStyle: TextStyle(color: palette.textPrimary),
+  static CardThemeData _cardTheme(ColorPalette p, ThemeAccessibility a) =>
+      CardThemeData(
+        color:       p.card,
+        elevation:   1,                       // NO coloured glow anywhere
+        shadowColor: p.shadowColor,
+        margin:      const EdgeInsets.symmetric(vertical: 4),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // More rounded for nature feel
-          side: BorderSide(color: palette.borderColor, width: 1),
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: p.borderColor, width: a.outlineWidth),
         ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+      );
 
-  // ──────────────────────────────────────────────────────────────────────
-  // SHARED COMPONENT THEME BUILDERS
-  // ──────────────────────────────────────────────────────────────────────
-
-  static CardThemeData _buildCardTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return CardThemeData(
-      color: palette.card,
-      elevation: 2,
-      shadowColor: palette.shadowColor,
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: palette.borderColor, width: a11y.outlineWidth),
-      ),
-    );
-  }
-
-  static AppBarThemeData _buildAppBarTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return AppBarThemeData(
-      backgroundColor: palette.surface,
-      foregroundColor: palette.textPrimary,
-      elevation: 2,
-      scrolledUnderElevation: 4,
-      centerTitle: false,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+  static AppBarThemeData _appBarTheme(ColorPalette p, ThemeAccessibility a) =>
+      AppBarThemeData(
+        backgroundColor:       p.surface,
+        foregroundColor:       p.textPrimary,
+        elevation:             0,             // flat — matches Defender/CrowdStrike
+        scrolledUnderElevation: 0,
+        centerTitle:           false,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize:  a.headlineFontSize * 0.75,
+          fontWeight: FontWeight.w700,
+          color:     p.textPrimary,
+          letterSpacing: -0.2,
         ),
-        side: BorderSide(color: palette.borderColor, width: 0.5),
-      ),
-      titleTextStyle: GoogleFonts.poppins(
-        fontSize: a11y.headlineFontSize,
-        fontWeight: FontWeight.w600,
-        color: palette.textPrimary,
-      ),
-    );
-  }
+      );
 
-  static TextTheme _buildTextTheme(ThemeAccessibility a11y, Color textColor) {
-    final baseStyle = GoogleFonts.poppins(color: textColor);
-
+  static TextTheme _textTheme(ThemeAccessibility a, Color textColor) {
+    final base = GoogleFonts.inter(color: textColor);
     return TextTheme(
-      displayLarge: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize * 2,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.5,
-      ),
-      displayMedium: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize * 1.75,
-        fontWeight: FontWeight.w700,
-      ),
-      displaySmall: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize * 1.5,
-        fontWeight: FontWeight.w700,
-      ),
-      headlineLarge: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize,
-        fontWeight: FontWeight.w700,
-      ),
-      headlineMedium: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize * 0.9,
-        fontWeight: FontWeight.w700,
-      ),
-      headlineSmall: baseStyle.copyWith(
-        fontSize: a11y.headlineFontSize * 0.8,
-        fontWeight: FontWeight.w600,
-      ),
-      titleLarge: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 1.3,
-        fontWeight: FontWeight.w600,
-      ),
-      titleMedium: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 1.1,
-        fontWeight: FontWeight.w600,
-      ),
-      titleSmall: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize,
-        fontWeight: FontWeight.w500,
-      ),
-      bodyLarge: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 1.1,
-        fontWeight: FontWeight.w500,
-        height: 1.5,
-      ),
-      bodyMedium: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
-      ),
-      bodySmall: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 0.9,
-        fontWeight: FontWeight.w400,
-        height: 1.4,
-      ),
-      labelLarge: baseStyle.copyWith(
-        fontSize: a11y.buttonFontSize,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
-      ),
-      labelMedium: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 0.85,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.5,
-      ),
-      labelSmall: baseStyle.copyWith(
-        fontSize: a11y.baseFontSize * 0.75,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.5,
-      ),
+      displayLarge:   base.copyWith(fontSize: a.headlineFontSize * 1.7, fontWeight: FontWeight.w700, letterSpacing: -0.5, height: 1.1),
+      displayMedium:  base.copyWith(fontSize: a.headlineFontSize * 1.4, fontWeight: FontWeight.w700, letterSpacing: -0.4, height: 1.15),
+      displaySmall:   base.copyWith(fontSize: a.headlineFontSize * 1.2, fontWeight: FontWeight.w700, letterSpacing: -0.3, height: 1.2),
+      headlineLarge:  base.copyWith(fontSize: a.headlineFontSize,        fontWeight: FontWeight.w700, letterSpacing: -0.3, height: 1.2),
+      headlineMedium: base.copyWith(fontSize: a.headlineFontSize * 0.85, fontWeight: FontWeight.w700, letterSpacing: -0.2, height: 1.25),
+      headlineSmall:  base.copyWith(fontSize: a.headlineFontSize * 0.7,  fontWeight: FontWeight.w600, letterSpacing: -0.1, height: 1.3),
+      titleLarge:     base.copyWith(fontSize: a.baseFontSize * 1.2,      fontWeight: FontWeight.w600, height: 1.3),
+      titleMedium:    base.copyWith(fontSize: a.baseFontSize * 1.05,     fontWeight: FontWeight.w600, height: 1.35),
+      titleSmall:     base.copyWith(fontSize: a.baseFontSize * 0.92,     fontWeight: FontWeight.w600, height: 1.4),
+      bodyLarge:      base.copyWith(fontSize: a.baseFontSize * 1.05,     fontWeight: FontWeight.w400, height: 1.5),
+      bodyMedium:     base.copyWith(fontSize: a.baseFontSize,            fontWeight: FontWeight.w400, height: 1.5),
+      bodySmall:      base.copyWith(fontSize: a.baseFontSize * 0.85,     fontWeight: FontWeight.w400, height: 1.45),
+      labelLarge:     base.copyWith(fontSize: a.buttonFontSize,          fontWeight: FontWeight.w600, letterSpacing: 0.2),
+      labelMedium:    base.copyWith(fontSize: a.baseFontSize * 0.82,     fontWeight: FontWeight.w500, letterSpacing: 0.3),
+      labelSmall:     base.copyWith(fontSize: a.baseFontSize * 0.72,     fontWeight: FontWeight.w500, letterSpacing: 0.4),
     );
   }
 
-  static InputDecorationTheme _buildInputDecorationTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return InputDecorationTheme(
-      filled: true,
-      fillColor: palette.card,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: a11y.baseFontSize * 0.75,
-      ),
-      labelStyle: GoogleFonts.poppins(
-        fontSize: a11y.baseFontSize,
-        color: palette.textSecondary,
-      ),
-      hintStyle: GoogleFonts.poppins(
-        fontSize: a11y.baseFontSize,
-        color: palette.textSecondary.withOpacity(0.6),
-      ),
-      prefixIconColor: WidgetStateColor.resolveWith((states) {
-        if (states.contains(WidgetState.focused)) {
-          return palette.accent;
-        }
-        return palette.textSecondary;
-      }),
-      suffixIconColor: WidgetStateColor.resolveWith((states) {
-        if (states.contains(WidgetState.focused)) {
-          return palette.accent;
-        }
-        return palette.textSecondary;
-      }),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: palette.borderColor, width: a11y.outlineWidth),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: palette.borderColor, width: a11y.outlineWidth),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: palette.accent, width: a11y.outlineWidth * 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: palette.threat, width: a11y.outlineWidth),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: palette.threat, width: a11y.outlineWidth * 1.5),
-      ),
-    );
-  }
+  static InputDecorationTheme _inputTheme(ColorPalette p, ThemeAccessibility a) =>
+      InputDecorationTheme(
+        filled:      true,
+        fillColor:   p.card,
+        contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: a.baseFontSize * 0.8),
+        labelStyle:  GoogleFonts.inter(fontSize: a.baseFontSize,       color: p.textSecondary),
+        hintStyle:   GoogleFonts.inter(fontSize: a.baseFontSize * 0.95, color: p.textSecondary.withValues(alpha: 0.6)),
+        prefixIconColor: p.textSecondary,
+        suffixIconColor: p.textSecondary,
+        border:        _inputBorder(p.borderColor, a.outlineWidth),
+        enabledBorder: _inputBorder(p.borderColor, a.outlineWidth),
+        focusedBorder: _inputBorder(p.accent,       a.outlineWidth * 1.5),
+        errorBorder:   _inputBorder(p.threat,       a.outlineWidth),
+        focusedErrorBorder: _inputBorder(p.threat, a.outlineWidth * 1.5),
+      );
 
-  static ElevatedButtonThemeData _buildElevatedButtonTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: palette.accent,
-        foregroundColor: Colors.black87,
-        padding: a11y.buttonPadding,
-        minimumSize: a11y.buttonMinSize,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        textStyle: GoogleFonts.poppins(
-          fontSize: a11y.buttonFontSize,
-          fontWeight: FontWeight.w600,
+  static OutlineInputBorder _inputBorder(Color color, double width) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide:   BorderSide(color: color, width: width),
+      );
+
+  static ElevatedButtonThemeData _elevatedButtonTheme(
+          ColorPalette p, ThemeAccessibility a) =>
+      ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: p.primary,
+          foregroundColor: _onColorFor(p.primary),
+          padding:         a.buttonPadding,
+          minimumSize:     a.buttonMinSize,
+          elevation:       0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: GoogleFonts.inter(
+            fontSize:  a.buttonFontSize,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-    );
-  }
+      );
 
-  static OutlinedButtonThemeData _buildOutlinedButtonTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: palette.accent,
-        side: BorderSide(color: palette.accent, width: a11y.outlineWidth),
-        padding: a11y.buttonPadding,
-        minimumSize: a11y.buttonMinSize,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        textStyle: GoogleFonts.poppins(
-          fontSize: a11y.buttonFontSize,
-          fontWeight: FontWeight.w600,
+  static OutlinedButtonThemeData _outlinedButtonTheme(
+          ColorPalette p, ThemeAccessibility a) =>
+      OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: p.primary,
+          side:            BorderSide(color: p.primary, width: a.outlineWidth),
+          padding:         a.buttonPadding,
+          minimumSize:     a.buttonMinSize,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: GoogleFonts.inter(
+            fontSize:  a.buttonFontSize,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-    );
-  }
+      );
 
-  static TextButtonThemeData _buildTextButtonTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: palette.accent,
-        padding: a11y.buttonPadding,
-        minimumSize: a11y.buttonMinSize,
-        textStyle: GoogleFonts.poppins(
-          fontSize: a11y.buttonFontSize,
-          fontWeight: FontWeight.w600,
+  static TextButtonThemeData _textButtonTheme(
+          ColorPalette p, ThemeAccessibility a) =>
+      TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: p.accent,
+          padding:         a.buttonPadding,
+          minimumSize:     a.buttonMinSize,
+          textStyle: GoogleFonts.inter(
+            fontSize:  a.buttonFontSize,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-    );
-  }
+      );
 
-  static FloatingActionButtonThemeData _buildFabTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return FloatingActionButtonThemeData(
-      backgroundColor: palette.accent,
-      foregroundColor: Colors.black87,
-      elevation: 4,
-      highlightElevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
-    );
-  }
+  static FloatingActionButtonThemeData _fabTheme(ColorPalette p) =>
+      FloatingActionButtonThemeData(
+        backgroundColor:   p.primary,
+        foregroundColor:   _onColorFor(p.primary),
+        elevation:         2,
+        highlightElevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      );
 
-  static ChipThemeData _buildChipTheme(ColorPalette palette, ThemeAccessibility a11y) {
-    return ChipThemeData(
-      backgroundColor: palette.card,
-      labelStyle: GoogleFonts.poppins(
-        fontSize: a11y.baseFontSize * 0.9,
-        color: palette.textPrimary,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: palette.borderColor, width: a11y.outlineWidth),
-      ),
-      selectedColor: palette.accent.withOpacity(0.2),
-      secondarySelectedColor: palette.accent.withOpacity(0.2),
-      deleteIconColor: palette.textSecondary,
-    );
-  }
+  static ChipThemeData _chipTheme(ColorPalette p, ThemeAccessibility a) =>
+      ChipThemeData(
+        backgroundColor: p.card,
+        labelStyle: GoogleFonts.inter(
+          fontSize: a.baseFontSize * 0.9,
+          color:    p.textPrimary,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(999),
+          side: BorderSide(color: p.borderColor, width: a.outlineWidth),
+        ),
+        selectedColor:           p.accent.withValues(alpha: 0.20),
+        secondarySelectedColor:  p.accent.withValues(alpha: 0.20),
+        deleteIconColor:         p.textSecondary,
+      );
+
+  /// Chooses white or near-black for text placed on a solid color background,
+  /// based on the color's relative luminance. Guarantees the "on X" text
+  /// meets contrast requirements without hard-coding per-palette overrides.
+  static Color _onColorFor(Color bg) =>
+      bg.computeLuminance() > 0.5 ? const Color(0xFF0F172A) : Colors.white;
 }

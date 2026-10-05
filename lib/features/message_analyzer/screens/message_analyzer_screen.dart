@@ -179,7 +179,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
       // Trigger notification if fraud is detected
       if (fraudAnalysis.suspicionScore > 0.5) {
         await NotificationService.showFraudAlert(
-          fraudType: fraudAnalysis.category?.label ?? 'Unknown Fraud',
+          fraudType: fraudAnalysis.category.label,
           message: messageText.length > 100 ? '${messageText.substring(0, 97)}...' : messageText,
           matchedKeywords: fraudAnalysis.matchedKeywords.join(', '),
         );
@@ -451,7 +451,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
                 SizedBox(height: 6),
                 Text(
                   'Legitimate employers never ask for money. If asked for registration/training fee — it is 100% a scam.',
-                  style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
+                  style: TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
                 ),
               ],
             ),
@@ -477,7 +477,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
+              style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
             ),
           ),
         ],
@@ -552,7 +552,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
           const SizedBox(height: 6),
           Text(
             content,
-            style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 13, height: 1.4),
+            style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 13, height: 1.4),
           ),
         ],
       ),
@@ -594,7 +594,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
                 Expanded(
                   child: Text(
                     f.toString(),
-                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12),
+                    style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12),
                   ),
                 ),
               ],

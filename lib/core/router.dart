@@ -20,7 +20,6 @@ import '../features/settings/screens/settings_screen.dart';
 import '../features/call_recording/screens/recording_screen.dart';
 import '../features/call_recording/screens/recording_preview_screen.dart';
 import '../features/call_recording/screens/emergency_share_screen.dart';
-import '../features/device_scan/scan_provider.dart';
 import '../features/device_scan/screens/device_scan_screen.dart';
 import '../features/device_scan/screens/scan_result_screen.dart';
 import '../features/welcome/screens/welcome_screen.dart';
@@ -43,11 +42,21 @@ import '../features/elderly_protection/screens/elderly_mode_screen.dart';
 import '../features/video_call/screens/fir_draft_screen.dart';
 import '../features/profile/screens/profile_screen.dart';
 import '../features/banking_protection/screens/banking_protection_screen.dart';
+import '../features/digital_arrest/screens/digital_arrest_screen.dart';
+import '../features/fake_bank_sms/screens/fake_bank_sms_screen.dart';
+import '../features/qr_scanner/screens/qr_scanner_screen.dart';
+import '../features/payment_verifier/screens/payment_verifier_screen.dart';
+import '../features/scam_news/screens/scam_news_screen.dart';
 
 final _rootNavigatorKey  = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-/// Routes that never require auth — always accessible
+/// Routes that never require auth — always accessible.
+///
+/// Banking Protection and the new threat-detection utilities run purely
+/// on-device (no backend calls), so they're safe to expose pre-login.
+/// This also makes the welcome-screen "Banking risk detected" strip
+/// tappable for unauthenticated users.
 const _publicRoutes = {
   '/welcome',
   '/device-scan',
@@ -58,6 +67,11 @@ const _publicRoutes = {
   '/register',
   '/otp',
   '/profile-details',
+  '/banking-protection',
+  '/digital-arrest',
+  '/fake-bank-sms',
+  '/qr-scanner',
+  '/payment-verifier',
 };
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -120,7 +134,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       // ── Auth ───────────────────────────────────────────────────────────
       GoRoute(
         path: '/login',
-        builder: (_, __) => const PhoneScreen(),
+        builder: (_, state) {
+          // Allow callers to pre-fill the identifier — e.g. when the register
+          // screen sees a 409 "account already exists" and offers
+          // "Sign in instead", it passes the email/phone via `extra`.
+          final extra = state.extra;
+          String? identifier;
+          if (extra is Map) {
+            identifier = (extra['identifier'] as String?)
+                      ?? (extra['email']      as String?)
+                      ?? (extra['phone']      as String?);
+          } else if (extra is String) {
+            identifier = extra;
+          }
+          return PhoneScreen(initialIdentifier: identifier);
+        },
       ),
       GoRoute(
         path: '/register',
@@ -190,6 +218,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/fir-draft',            builder: (_, __) => const FirDraftScreen()),
       GoRoute(path: '/profile',              builder: (_, __) => const ProfileScreen()),
       GoRoute(path: '/banking-protection',   builder: (_, __) => const BankingProtectionScreen()),
+      GoRoute(path: '/digital-arrest',       builder: (_, __) => const DigitalArrestScreen()),
+      GoRoute(path: '/fake-bank-sms',        builder: (_, __) => const FakeBankSmsScreen()),
+      GoRoute(path: '/qr-scanner',           builder: (_, __) => const QrScannerScreen()),
+      GoRoute(path: '/payment-verifier',     builder: (_, __) => const PaymentVerifierScreen()),
+      GoRoute(path: '/scam-news',            builder: (_, __) => const ScamNewsScreen()),
       GoRoute(
         path: '/app-detail',
         builder: (context, state) {
@@ -202,7 +235,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) =>
-            HomeScreen(child: child, location: state.matchedLocation),
+            HomeScreen(location: state.matchedLocation, child: child),
         routes: [
           GoRoute(
             path: '/home',

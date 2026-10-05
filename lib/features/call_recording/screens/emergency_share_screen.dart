@@ -277,13 +277,13 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.errorColor.withOpacity(0.1),
+                  color: AppTheme.errorColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: AppTheme.errorColor.withOpacity(0.3)),
+                      color: AppTheme.errorColor.withValues(alpha: 0.3)),
                 ),
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.emergency_share_rounded,
                         color: AppTheme.errorColor, size: 28),
                     SizedBox(width: 12),
@@ -355,7 +355,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorColor.withOpacity(0.1),
+                        color: AppTheme.errorColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Icon(Icons.local_police, color: AppTheme.errorColor, size: 18),
@@ -424,7 +424,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                         dense: true,
                         leading: CircleAvatar(
                           radius: 18,
-                          backgroundColor: AppTheme.primary.withOpacity(0.3),
+                          backgroundColor: AppTheme.primary.withValues(alpha: 0.3),
                           child: Text(
                             name.isNotEmpty ? name[0].toUpperCase() : '?',
                             style: const TextStyle(
@@ -461,7 +461,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                   color: AppTheme.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                      color: AppTheme.primary.withOpacity(0.5)),
+                      color: AppTheme.primary.withValues(alpha: 0.5)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -471,7 +471,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppTheme.primary.withOpacity(0.2),
+                            color: AppTheme.primary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.cloud_upload_rounded,
@@ -509,16 +509,16 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppTheme.success.withOpacity(0.1),
+                          color: AppTheme.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                              color: AppTheme.success.withOpacity(0.3)),
+                              color: AppTheme.success.withValues(alpha: 0.3)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: const [
+                            const Row(
+                              children: [
                                 Icon(Icons.check_circle_rounded,
                                     color: AppTheme.success, size: 16),
                                 SizedBox(width: 6),
@@ -549,7 +549,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.accent,
                                 side: BorderSide(
-                                    color: AppTheme.accent.withOpacity(0.5)),
+                                    color: AppTheme.accent.withValues(alpha: 0.5)),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
@@ -564,7 +564,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.accent,
                                 side: BorderSide(
-                                    color: AppTheme.accent.withOpacity(0.5)),
+                                    color: AppTheme.accent.withValues(alpha: 0.5)),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
@@ -648,14 +648,14 @@ class _ShareOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 22),

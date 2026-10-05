@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
-import '../../../core/security/biometric_service.dart';
 import '../auth_provider.dart';
 
 // ── OtpScreen ─────────────────────────────────────────────────────────────────
@@ -63,8 +62,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
   @override
   void dispose() {
     _animCtrl.dispose();
-    for (final c in _controllers) c.dispose();
-    for (final f in _focusNodes)  f.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -114,7 +117,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
   }
 
   void _clearBoxes() {
-    for (final c in _controllers) c.clear();
+    for (final c in _controllers) {
+      c.clear();
+    }
     _focusNodes[0].requestFocus();
   }
 
@@ -261,9 +266,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
                     child: Container(
                       width: 38, height: 38,
                       decoration: BoxDecoration(
-                        color: accent.withOpacity(0.1),
+                        color: accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: accent.withOpacity(0.25)),
+                        border: Border.all(color: accent.withValues(alpha: 0.25)),
                       ),
                       child: Icon(Icons.arrow_back_ios_new_rounded, color: accent, size: 16),
                     ),
@@ -275,9 +280,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
                 Container(
                   width: 80, height: 80,
                   decoration: BoxDecoration(
-                    color: accent.withOpacity(0.12),
+                    color: accent.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accent.withOpacity(0.3), width: 2),
+                    border: Border.all(color: accent.withValues(alpha: 0.3), width: 2),
                   ),
                   child: Icon(
                     widget.isRegister ? Icons.how_to_reg_rounded : Icons.lock_rounded,
@@ -351,7 +356,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
                 Text(
                   'OTP expires in 10 minutes',
                   style: TextStyle(
-                    color: onSurf.withOpacity(0.4),
+                    color: onSurf.withValues(alpha: 0.4),
                     fontSize: 11,
                   ),
                 ),
@@ -374,7 +379,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
         border: Border.all(
           color: _controllers[index].text.isNotEmpty
               ? accent
-              : onSurf.withOpacity(0.25),
+              : onSurf.withValues(alpha: 0.25),
           width: _controllers[index].text.isNotEmpty ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -449,9 +454,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.06),
+        color: accent.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: accent.withOpacity(0.2)),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -478,7 +483,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
             const SizedBox(height: 6),
             Text(
               'OTP sent to both channels above',
-              style: TextStyle(color: onSurf.withOpacity(0.55), fontSize: 11),
+              style: TextStyle(color: onSurf.withValues(alpha: 0.55), fontSize: 11),
             ),
           ] else ...[
             Row(
@@ -491,7 +496,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
                 const SizedBox(width: 8),
                 Text(text,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: onSurf.withOpacity(0.7), fontSize: 12)),
+                  style: TextStyle(color: onSurf.withValues(alpha: 0.7), fontSize: 12)),
               ],
             ),
           ],
@@ -577,9 +582,9 @@ class _AutoDismissSuccessDialogState extends State<_AutoDismissSuccessDialog> {
               child: Container(
                 width: 80, height: 80,
                 decoration: BoxDecoration(
-                  color: widget.iconColor.withOpacity(0.12),
+                  color: widget.iconColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
-                  border: Border.all(color: widget.iconColor.withOpacity(0.3), width: 2),
+                  border: Border.all(color: widget.iconColor.withValues(alpha: 0.3), width: 2),
                 ),
                 child: Icon(widget.icon, size: 42, color: widget.iconColor),
               ),
@@ -590,14 +595,14 @@ class _AutoDismissSuccessDialogState extends State<_AutoDismissSuccessDialog> {
             const SizedBox(height: 8),
             Text(widget.message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: onSurf.withOpacity(0.6), fontSize: 13, height: 1.5)),
+              style: TextStyle(color: onSurf.withValues(alpha: 0.6), fontSize: 13, height: 1.5)),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
-                color: widget.badgeColor.withOpacity(0.08),
+                color: widget.badgeColor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: widget.badgeColor.withOpacity(0.25)),
+                border: Border.all(color: widget.badgeColor.withValues(alpha: 0.25)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -620,11 +625,11 @@ class _AutoDismissSuccessDialogState extends State<_AutoDismissSuccessDialog> {
               borderRadius: BorderRadius.circular(4),
               child: TweenAnimationBuilder<double>(
                 tween: Tween(begin: 1.0, end: 0.0),
-                duration: Duration(seconds: _totalSeconds),
+                duration: const Duration(seconds: _totalSeconds),
                 builder: (_, v, __) => LinearProgressIndicator(
                   value: v,
                   minHeight: 4,
-                  backgroundColor: widget.iconColor.withOpacity(0.12),
+                  backgroundColor: widget.iconColor.withValues(alpha: 0.12),
                   valueColor: AlwaysStoppedAnimation<Color>(widget.iconColor),
                 ),
               ),

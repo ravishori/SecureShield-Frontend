@@ -69,20 +69,20 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppTheme.primary, AppTheme.accent.withOpacity(0.3)],
+                  colors: [AppTheme.primary, AppTheme.accent.withValues(alpha: 0.3)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.videocam_rounded, color: AppTheme.accent, size: 36),
-                  const SizedBox(height: 12),
-                  const Text('Secure Video Call', style: TextStyle(color: AppTheme.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
-                  const Text(
+                  Icon(Icons.videocam_rounded, color: AppTheme.accent, size: 36),
+                  SizedBox(height: 12),
+                  Text('Secure Video Call', style: TextStyle(color: AppTheme.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 6),
+                  Text(
                     'Create an encrypted video room to report crime to police, record evidence, or connect with family during emergency.',
                     style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.4),
                   ),
@@ -100,10 +100,10 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: _selectedCallType == type['value'] ? AppTheme.accent.withOpacity(0.15) : AppTheme.cardColor,
+                  color: _selectedCallType == type['value'] ? AppTheme.accent.withValues(alpha: 0.15) : AppTheme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _selectedCallType == type['value'] ? AppTheme.accent : AppTheme.accent.withOpacity(0.2),
+                    color: _selectedCallType == type['value'] ? AppTheme.accent : AppTheme.accent.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -153,15 +153,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.cardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.warning.withOpacity(0.4)),
+                border: Border.all(color: AppTheme.warning.withValues(alpha: 0.4)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
-                    const Icon(Icons.description, color: AppTheme.warning, size: 20),
-                    const SizedBox(width: 8),
-                    const Text('Generate FIR Draft', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
+                  const Row(children: [
+                    Icon(Icons.description, color: AppTheme.warning, size: 20),
+                    SizedBox(width: 8),
+                    Text('Generate FIR Draft', style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold)),
                   ]),
                   const SizedBox(height: 6),
                   const Text('AI generates a formal First Information Report draft ready for police filing.', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
@@ -189,7 +189,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppTheme.errorColor.withOpacity(0.08),
+                  color: AppTheme.errorColor.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -217,17 +217,17 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.success.withOpacity(0.1),
+        color: AppTheme.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.success.withOpacity(0.4)),
+        border: Border.all(color: AppTheme.success.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            const Icon(Icons.check_circle, color: AppTheme.success, size: 18),
-            const SizedBox(width: 8),
-            const Text('Room Created!', style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold)),
+          const Row(children: [
+            Icon(Icons.check_circle, color: AppTheme.success, size: 18),
+            SizedBox(width: 8),
+            Text('Room Created!', style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold)),
           ]),
           const SizedBox(height: 12),
           Container(

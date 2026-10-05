@@ -43,8 +43,8 @@ class RemoteDetectorScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                data.hasThreat ? AppTheme.errorColor.withOpacity(0.8) : AppTheme.success.withOpacity(0.8),
-                data.hasThreat ? AppTheme.errorColor.withOpacity(0.4) : AppTheme.success.withOpacity(0.4),
+                data.hasThreat ? AppTheme.errorColor.withValues(alpha: 0.8) : AppTheme.success.withValues(alpha: 0.8),
+                data.hasThreat ? AppTheme.errorColor.withValues(alpha: 0.4) : AppTheme.success.withValues(alpha: 0.4),
               ]),
               borderRadius: BorderRadius.circular(16),
             ),
@@ -127,16 +127,16 @@ class RemoteDetectorScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.errorColor.withOpacity(0.1),
+        color: AppTheme.errorColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.errorColor.withOpacity(0.4)),
+        border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.errorColor.withOpacity(0.2),
+              color: AppTheme.errorColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(Icons.desktop_access_disabled, color: AppTheme.errorColor, size: 20),
@@ -179,9 +179,9 @@ class RemoteDetectorScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,9 +212,9 @@ class RemoteDetectorScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.15),
+                        color: color.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: color.withOpacity(0.4)),
+                        border: Border.all(color: color.withValues(alpha: 0.4)),
                       ),
                       child: Text(value,
                         style: TextStyle(
@@ -238,13 +238,13 @@ class RemoteDetectorScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.warning.withOpacity(0.08),
+        color: AppTheme.warning.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppTheme.warning.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.admin_panel_settings, color: AppTheme.warning, size: 20),
+          const Icon(Icons.admin_panel_settings, color: AppTheme.warning, size: 20),
           const SizedBox(width: 10),
           Expanded(child: Text(pkg,
             style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12))),
@@ -257,13 +257,13 @@ class RemoteDetectorScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.success.withOpacity(0.08),
+        color: AppTheme.success.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.success.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: AppTheme.success, size: 20),
+          const Icon(Icons.check_circle, color: AppTheme.success, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(text,

@@ -27,9 +27,9 @@ class AppDetailScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: color.withOpacity(0.4)),
+                border: Border.all(color: color.withValues(alpha: 0.4)),
               ),
               child: Column(
                 children: [
@@ -52,7 +52,7 @@ class AppDetailScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorColor.withOpacity(0.2),
+                        color: AppTheme.errorColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
@@ -78,8 +78,8 @@ class AppDetailScreen extends StatelessWidget {
                 runSpacing: 8,
                 children: threatTags.map((tag) => Chip(
                   label: Text(tag.replaceAll('_', ' ').toUpperCase()),
-                  backgroundColor: AppTheme.errorColor.withOpacity(0.2),
-                  side: BorderSide(color: AppTheme.errorColor.withOpacity(0.6), width: 1),
+                  backgroundColor: AppTheme.errorColor.withValues(alpha: 0.2),
+                  side: BorderSide(color: AppTheme.errorColor.withValues(alpha: 0.6), width: 1),
                   labelStyle: const TextStyle(color: AppTheme.errorColor, fontSize: 11, fontWeight: FontWeight.bold),
                 )).toList(),
               ),
@@ -98,10 +98,10 @@ class AppDetailScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isDangerous ? AppTheme.warning.withOpacity(0.08) : AppTheme.surface,
+                  color: isDangerous ? AppTheme.warning.withValues(alpha: 0.08) : AppTheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isDangerous ? AppTheme.warning.withOpacity(0.4) : const Color(0xFF2A3560),
+                    color: isDangerous ? AppTheme.warning.withValues(alpha: 0.4) : const Color(0xFF2A3560),
                   ),
                 ),
                 child: Row(
@@ -146,7 +146,7 @@ class AppDetailScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     _getRecommendation(riskLevel, isMalicious),
-                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), height: 1.5),
+                    style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), height: 1.5),
                   ),
                 ],
               ),

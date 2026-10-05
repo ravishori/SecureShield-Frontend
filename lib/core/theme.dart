@@ -6,16 +6,20 @@ import 'theme/app_theme_enum.dart';
 // ────────────────────────────────────────────────────────────────────────────
 // Shared colour constants (same in both themes unless overridden)
 // ────────────────────────────────────────────────────────────────────────────
+/// Legacy color constants used across the app. Values now match the premium
+/// enterprise palette defined in `lib/core/theme/app_colors.dart`; keeping
+/// these constants live means every screen that reads `AppTheme.accent`,
+/// `AppTheme.textPrimary`, etc. automatically inherits the new visuals.
 class AppColors {
-  // Brand
-  static const accentDark  = Color(0xFF00E5FF); // cyan
-  static const accentLight = Color(0xFF0066CC); // professional blue
+  // Brand — Electric blue primary + cyan secondary
+  static const accentDark  = Color(0xFF00C2FF); // Electric blue
+  static const accentLight = Color(0xFF0066CC); // (light theme unchanged)
 
-  // Backgrounds — dark
-  static const bgDark      = Color(0xFF0A0E27);
-  static const surfaceDark = Color(0xFF12172E);
-  static const cardDark    = Color(0xFF1A2040);
-  static const primaryDark = Color(0xFF1A237E);
+  // Backgrounds — dark (deep-navy SOC canvas)
+  static const bgDark      = Color(0xFF071321);
+  static const surfaceDark = Color(0xFF0D1B2A);
+  static const cardDark    = Color(0xFF14263D);
+  static const primaryDark = Color(0xFF0D1B2A); // Secondary background
 
   // Backgrounds — light
   static const bgLight      = Color(0xFFF5F7FF);
@@ -23,14 +27,17 @@ class AppColors {
   static const cardLight    = Color(0xFFEEF2FF);
   static const primaryLight = Color(0xFF1A237E);
 
-  // Status (same in both)
-  static const error   = Color(0xFFE53935);
-  static const warning = Color(0xFFFB8C00);
-  static const success = Color(0xFF00C853);
+  // Status (unified across themes)
+  static const error   = Color(0xFFEF4444); // Danger
+  static const warning = Color(0xFFF59E0B); // Warning
+  static const success = Color(0xFF22C55E); // Success
+
+  // Accent purple glow (new)
+  static const purpleGlow = Color(0xFF8B5CF6);
 
   // Text — dark
   static const textPrimaryDark   = Color(0xFFFFFFFF);
-  static const textSecondaryDark = Color(0xFF90A4AE);
+  static const textSecondaryDark = Color(0xFFB8C2D1); // Cool slate
 
   // Text — light
   static const textPrimaryLight   = Color(0xFF0D1B3E);
@@ -67,21 +74,22 @@ class AppTheme {
           ? AppColors.accentDark
           : AppColors.accentLight;
 
-  // ── Base text theme (Poppins) ──────────────────────────────────────────
+  // ── Base text theme (Inter — enterprise-grade hierarchy) ───────────────
+  // Slightly tighter letter-spacing on headlines, generous body line-height.
   static TextTheme _textTheme(Color primary, Color secondary) =>
-      GoogleFonts.poppinsTextTheme().copyWith(
-        headlineLarge:  GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w700, fontSize: 28),
-        headlineMedium: GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w700, fontSize: 22),
-        headlineSmall:  GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w600, fontSize: 18),
-        titleLarge:     GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w600, fontSize: 16),
-        titleMedium:    GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w500, fontSize: 14),
-        titleSmall:     GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w500, fontSize: 13),
-        bodyLarge:      GoogleFonts.poppins(color: primary, fontSize: 15),
-        bodyMedium:     GoogleFonts.poppins(color: secondary, fontSize: 13),
-        bodySmall:      GoogleFonts.poppins(color: secondary, fontSize: 11),
-        labelLarge:     GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w600, fontSize: 14),
-        labelMedium:    GoogleFonts.poppins(color: primary, fontWeight: FontWeight.w500, fontSize: 12),
-        labelSmall:     GoogleFonts.poppins(color: secondary, fontSize: 10, letterSpacing: 0.5),
+      GoogleFonts.interTextTheme().copyWith(
+        headlineLarge:  GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w700, fontSize: 30, letterSpacing: -0.5, height: 1.15),
+        headlineMedium: GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w700, fontSize: 24, letterSpacing: -0.3, height: 1.2),
+        headlineSmall:  GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w600, fontSize: 20, letterSpacing: -0.2, height: 1.25),
+        titleLarge:     GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w600, fontSize: 17, letterSpacing: -0.1, height: 1.3),
+        titleMedium:    GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w600, fontSize: 15, height: 1.35),
+        titleSmall:     GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w500, fontSize: 13, height: 1.4),
+        bodyLarge:      GoogleFonts.inter(color: primary,   fontSize: 15, height: 1.55),
+        bodyMedium:     GoogleFonts.inter(color: secondary, fontSize: 13, height: 1.5),
+        bodySmall:      GoogleFonts.inter(color: secondary, fontSize: 12, height: 1.45),
+        labelLarge:     GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w600, fontSize: 14, letterSpacing: 0.1),
+        labelMedium:    GoogleFonts.inter(color: primary,   fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.2),
+        labelSmall:     GoogleFonts.inter(color: secondary, fontWeight: FontWeight.w500, fontSize: 11, letterSpacing: 0.4),
       );
 
   // ── Dark theme ─────────────────────────────────────────────────────────
@@ -143,7 +151,7 @@ class AppTheme {
         foregroundColor:  textPrimary,
         elevation:        0,
         centerTitle:      true,
-        titleTextStyle:   GoogleFonts.poppins(
+        titleTextStyle:   GoogleFonts.inter(
           color: textPrimary,
           fontSize: 17,
           fontWeight: FontWeight.w600,
@@ -153,11 +161,11 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: card,
-        elevation: isDark ? 4 : 2,
-        shadowColor: isDark ? Colors.black38 : Colors.black12,
+        elevation: isDark ? 2 : 1, // Cleaner elevation, we rely on glass/border for depth
+        shadowColor: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.black12,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: border.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(20), // premium radius
+          side: BorderSide(color: border.withValues(alpha: 0.6)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -175,8 +183,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: accent, width: 2),
         ),
-        labelStyle: GoogleFonts.poppins(color: textSecondary, fontSize: 13),
-        hintStyle:  GoogleFonts.poppins(color: textSecondary.withOpacity(0.6), fontSize: 13),
+        labelStyle: GoogleFonts.inter(color: textSecondary, fontSize: 13),
+        hintStyle:  GoogleFonts.inter(color: textSecondary.withValues(alpha: 0.6), fontSize: 13),
         prefixIconColor: accent,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
@@ -187,7 +195,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
           elevation: isDark ? 4 : 2,
-          textStyle: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+          textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -196,13 +204,13 @@ class AppTheme {
           side: BorderSide(color: accent),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
-          textStyle: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+          textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: accent,
-          textStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500),
+          textStyle: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -210,12 +218,12 @@ class AppTheme {
         selectedItemColor:   accent,
         unselectedItemColor: textSecondary,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle:   GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11),
+        selectedLabelStyle:   GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: GoogleFonts.inter(fontSize: 11),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: card,
-        labelStyle: GoogleFonts.poppins(color: textPrimary, fontSize: 12),
+        labelStyle: GoogleFonts.inter(color: textPrimary, fontSize: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(color: border),
@@ -224,7 +232,7 @@ class AppTheme {
       dividerTheme: DividerThemeData(color: divider, thickness: 1),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: card,
-        contentTextStyle: GoogleFonts.poppins(color: textPrimary, fontSize: 13),
+        contentTextStyle: GoogleFonts.inter(color: textPrimary, fontSize: 13),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
@@ -234,8 +242,8 @@ class AppTheme {
             (s) => s.contains(WidgetState.selected) ? accent : Colors.grey),
         trackColor: WidgetStateProperty.resolveWith(
             (s) => s.contains(WidgetState.selected)
-                ? accent.withOpacity(0.4)
-                : Colors.grey.withOpacity(0.3)),
+                ? accent.withValues(alpha: 0.4)
+                : Colors.grey.withValues(alpha: 0.3)),
       ),
     );
   }

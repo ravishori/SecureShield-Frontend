@@ -120,35 +120,33 @@ class ThemeAccessibility {
 // THEME CONFIGURATION EXTENSIONS
 // ──────────────────────────────────────────────────────────────────────────
 
-/// Get accessibility configuration for each theme type
+/// Baseline accessibility per theme. NOTE: the *user-facing* Accessibility
+/// Mode toggle is orthogonal to this — see `accessibilityModeProvider` in
+/// `theme_provider.dart`. This getter only returns the built-in baseline
+/// each theme was designed for.
 extension ThemeAccessibilityConfig on AppThemeType {
-  /// Returns the accessibility settings for this theme
-  ThemeAccessibility get accessibility {
-    return switch (this) {
-      AppThemeType.light => ThemeAccessibility.light,
-      AppThemeType.dark => ThemeAccessibility.standard,
-      AppThemeType.cybersecurity => ThemeAccessibility.highContrast,
-      AppThemeType.seniorCitizen => ThemeAccessibility.senior,
-      AppThemeType.natureGreen => ThemeAccessibility.standard,
-    };
-  }
+  ThemeAccessibility get accessibility => switch (this) {
+        AppThemeType.defenderBlue      => ThemeAccessibility.standard,
+        AppThemeType.enterpriseDark    => ThemeAccessibility.standard,
+        AppThemeType.midnightSecurity  => ThemeAccessibility.standard,
+        AppThemeType.bankingSecure     => ThemeAccessibility.standard,
+        AppThemeType.cyberIntelligence => ThemeAccessibility.standard,
+        AppThemeType.corporateLight    => ThemeAccessibility.light,
+        AppThemeType.highContrast      => ThemeAccessibility.highContrast,
+      };
 
-  /// Returns the color palette for this theme
-  ColorPalette get palette {
-    return switch (this) {
-      AppThemeType.light => AppColors.lightPalette,
-      AppThemeType.dark => AppColors.darkPalette,
-      AppThemeType.cybersecurity => AppColors.cybersecurityPalette,
-      AppThemeType.seniorCitizen => AppColors.seniorCitizenPalette,
-      AppThemeType.natureGreen => AppColors.natureGreenPalette,
-    };
-  }
+  ColorPalette get palette => switch (this) {
+        AppThemeType.defenderBlue      => AppColors.defenderBluePalette,
+        AppThemeType.enterpriseDark    => AppColors.enterpriseDarkPalette,
+        AppThemeType.midnightSecurity  => AppColors.midnightSecurityPalette,
+        AppThemeType.bankingSecure     => AppColors.bankingSecurePalette,
+        AppThemeType.cyberIntelligence => AppColors.cyberIntelligencePalette,
+        AppThemeType.corporateLight    => AppColors.corporateLightPalette,
+        AppThemeType.highContrast      => AppColors.highContrastPalette,
+      };
 
-  /// Returns display name (for UI)
   String get display => displayName;
-
-  /// Returns emoji icon (for UI)
-  String get icon => emoji;
+  String get icon    => emoji;
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -199,6 +197,7 @@ extension SemanticColorsByTheme on AppThemeType {
 // ──────────────────────────────────────────────────────────────────────────
 
 /// Base class for all color palettes (same as in app_colors.dart)
+// ignore: unused_element
 abstract class _ColorPalette {
   Color get primary;
   Color get secondary;

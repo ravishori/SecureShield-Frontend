@@ -84,18 +84,18 @@ class _BankOtpScreenState extends ConsumerState<BankOtpScreen> {
                     margin: const EdgeInsets.all(16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppTheme.warning.withOpacity(0.15),
+                      color: AppTheme.warning.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.warning.withOpacity(0.5)),
+                      border: Border.all(color: AppTheme.warning.withValues(alpha: 0.5)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Icon(Icons.warning_amber, color: AppTheme.warning, size: 20),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Notification Access Required',
                               style: TextStyle(
                                 color: AppTheme.textPrimary,
@@ -132,14 +132,14 @@ class _BankOtpScreenState extends ConsumerState<BankOtpScreen> {
                     margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppTheme.success.withOpacity(0.15),
+                      color: AppTheme.success.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.check_circle, color: AppTheme.success, size: 18),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'OTP monitoring active',
                           style: TextStyle(color: AppTheme.success, fontWeight: FontWeight.w600),
                         ),
@@ -195,7 +195,7 @@ class _BankOtpScreenState extends ConsumerState<BankOtpScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.notifications_none,
-                                size: 64, color: AppTheme.textSecondary.withOpacity(0.3)),
+                                size: 64, color: AppTheme.textSecondary.withValues(alpha: 0.3)),
                               const SizedBox(height: 16),
                               const Text(
                                 'No OTPs detected yet',
@@ -240,14 +240,14 @@ class _OtpAlertCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.accent.withOpacity(0.2)),
+        border: Border.all(color: AppTheme.accent.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppTheme.accent.withOpacity(0.1),
+              color: AppTheme.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.lock_clock, color: AppTheme.accent, size: 22),
@@ -276,7 +276,7 @@ class _OtpAlertCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.accent.withOpacity(0.15),
+                  color: AppTheme.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/providers/language_provider.dart';
@@ -11,6 +12,7 @@ import '../../../core/network/dio_client.dart';
 import '../../../features/auth/auth_provider.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
+import '../../banking_protection/widgets/banking_threat_strip.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -70,6 +72,42 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Device safety summary (banking-threat strip) ────────
+                  // Wrapped in a Consumer so the strip rebuilds reactively
+                  // when any other screen invalidates the shared provider.
+                  Consumer(builder: (_, ref, __) {
+                    final report = ref.watch(bankingThreatReportProvider);
+                    if (report == null || !report.hasThreats) {
+                      return const SizedBox.shrink();
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4, bottom: 8),
+                            child: Text(
+                              'DEVICE SAFETY SUMMARY',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ),
+                          BankingThreatStrip(
+                            report: report,
+                            margin: EdgeInsets.zero,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
                   // Profile section
                   Container(
                     padding: const EdgeInsets.all(16),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/security/banking_threat_correlator.dart';
+import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
+import '../../banking_protection/widgets/banking_threat_strip.dart';
 import '../family_api.dart';
 
 class FamilyScreen extends StatefulWidget {
@@ -96,7 +100,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text('Child profiles have additional safety features enabled by default.', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
@@ -191,11 +195,25 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.accent))
-          : TabBarView(
-              controller: _tabController,
+          : Column(
               children: [
-                _buildMemberList(adults, isChildTab: false),
-                _buildChildList(children),
+                // ── Guardian alert strip ─────────────────────────────────
+                // When threats are present, this warns the family member /
+                // guardian that their primary device is currently exposed,
+                // which is critical for elderly-protection scenarios where
+                // the guardian is reviewing their parent's account remotely.
+                const _FamilyThreatAlert(),
+
+                // ── Original tab content ────────────────────────────────
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildMemberList(adults, isChildTab: false),
+                      _buildChildList(children),
+                    ],
+                  ),
+                ),
               ],
             ),
     );
@@ -239,7 +257,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          color: const Color(0xFF7C4DFF).withOpacity(0.1),
+          color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
           child: const Row(children: [
             Icon(Icons.shield, color: Color(0xFF7C4DFF), size: 18),
             SizedBox(width: 8),
@@ -321,9 +339,9 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -331,6 +349,67 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
           Icon(icon, size: 10, color: color),
           const SizedBox(width: 3),
           Text(label, style: TextStyle(color: color, fontSize: 9)),
+        ],
+      ),
+    );
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Family-screen specific threat alert
+//
+// FamilyScreen is a plain StatefulWidget (not Consumer), so we wrap the
+// banking-threat strip in a small Consumer here. Also adds a guardian-
+// context preface — guardians monitoring an elderly parent need to know
+// that the parent's device may be compromised RIGHT NOW.
+// ────────────────────────────────────────────────────────────────────────────
+class _FamilyThreatAlert extends ConsumerWidget {
+  const _FamilyThreatAlert();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final report = ref.watch(bankingThreatReportProvider);
+    if (report == null || !report.hasThreats) return const SizedBox.shrink();
+
+    final cs = Theme.of(context).colorScheme;
+    final isCritical = report.level == BankingThreatLevel.critical;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Guardian-context preface
+          Row(
+            children: [
+              Icon(
+                Icons.shield_moon_outlined,
+                size: 14,
+                color: cs.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  isCritical
+                      ? 'Active threats on this device — your family members are at risk:'
+                      : 'Caution recommended for family banking activity:',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          BankingThreatStrip(
+            report: report,
+            margin: EdgeInsets.zero,
+          ),
         ],
       ),
     );

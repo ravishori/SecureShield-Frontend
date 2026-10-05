@@ -1,62 +1,123 @@
-/// Theme type enum for the SecureShield app
+/// SecureShield theme catalog — 7 professionally curated themes.
 ///
-/// Supports 5 distinct themes optimized for different use cases:
-/// - Light: Professional, clean, accessibility-focused
-/// - Dark: Default dark mode, balanced blue/cyan accents
-/// - Cybersecurity: Dark theme with neon security colors for threat visualization
-/// - Senior Citizen: High contrast, large fonts, simplified for elderly users
-/// - Nature Green: Calming green palette with earthy, outdoor-inspired colors
+/// Design philosophy: enterprise cybersecurity products (Microsoft Defender,
+/// CrowdStrike Falcon, SentinelOne, Palo Alto Cortex, Darktrace, IBM QRadar,
+/// Bitdefender GravityZone). Every palette is WCAG-AA at minimum for body
+/// text, and none rely on glow, neon, or bloom to look "premium" — they use
+/// restrained contrast, hairline borders, subtle shadows, and clear typography.
+///
+/// Accessibility is INTENTIONALLY orthogonal to theme choice:
+///   • Theme  = the visual palette (color scheme)
+///   • A11y   = a separate toggle (larger fonts, bigger touch targets, higher
+///              contrast, reduced motion) that layers on top of any theme.
+///
+/// This mirrors how Microsoft, Apple, and Google structure their systems —
+/// a senior user can pick Enterprise Dark AND turn on Accessibility Mode,
+/// rather than being forced into a green- or pastel-only theme.
 library;
 
 enum AppThemeType {
-  /// Light theme - Professional white background with dark text
-  /// Best for: Office environments, accessibility-focused users
-  /// Contrast Ratio: WCAG AA (4.5:1)
-  light('Light', '💡'),
+  /// **Defender Blue** — Default. Inspired by Microsoft Defender.
+  /// Deep navy canvas, electric blue primary, minimal glow, high contrast.
+  defenderBlue(
+    'Defender Blue',
+    '🛡️',
+    'Microsoft Defender — deep navy, electric blue',
+  ),
 
-  /// Dark theme - Original dark mode with cyan accents
-  /// Best for: Reduced eye strain, modern appearance
-  /// Accent Color: Cyan (#00E5FF)
-  dark('Dark', '🌙'),
+  /// **Enterprise Dark** — Inspired by CrowdStrike Falcon.
+  /// Deep graphite, slate gray, subtle cyan. Muted, professional, elegant.
+  enterpriseDark(
+    'Enterprise Dark',
+    '🏢',
+    'CrowdStrike — graphite, slate, subtle cyan',
+  ),
 
-  /// Cybersecurity theme - Dark with neon security colors
-  /// Best for: Security professionals, threat visualization
-  /// Accent: Neon green (#00FF00), Threat: Pure red (#FF0000)
-  /// Contrast Ratio: WCAG AAA (7:1)
-  cybersecurity('Cyber Security', '🔐'),
+  /// **Midnight Security** — AMOLED-optimized. Almost-black canvas, blue
+  /// highlights, highest contrast. Best for OLED battery + outdoor readability.
+  midnightSecurity(
+    'Midnight Security',
+    '🌑',
+    'AMOLED-black, high-contrast blue',
+  ),
 
-  /// Senior Citizen theme - Large fonts, high contrast, simplified UI
-  /// Best for: Elderly users, accessibility-first design
-  /// Base Font Size: 18px (28% larger than standard)
-  /// Contrast Ratio: WCAG AAA (7:1)
-  seniorCitizen('Senior Citizen', '👴'),
+  /// **Banking Secure** — Premium navy, emerald accents, gold warnings.
+  /// Designed for banking / UPI protection UX.
+  bankingSecure(
+    'Banking Secure',
+    '🏦',
+    'Premium navy, emerald, gold warnings',
+  ),
 
-  /// Nature Green theme - Green palette with calming, outdoor colors
-  /// Best for: Relaxing interface, nature-inspired design
-  /// Primary: Forest green (#2D5016), Accent: Natural green (#4CAF50)
-  natureGreen('Nature Green', '🌿');
+  /// **Cyber Intelligence** — SOC-dashboard aesthetic. Dark indigo, blue,
+  /// purple highlights. Very subtle gradients.
+  cyberIntelligence(
+    'Cyber Intelligence',
+    '🧠',
+    'SOC dashboard — indigo, blue, purple',
+  ),
 
-  /// Display name for UI
+  /// **Corporate Light** — Professional light theme. Office environments,
+  /// daytime readability, high-contrast dark text.
+  corporateLight(
+    'Corporate Light',
+    '☀️',
+    'Office-friendly light — white, dark text, blue',
+  ),
+
+  /// **High Contrast** — Accessibility-first. Pure-black background, pure
+  /// white text, saturated status colors. No blur, no transparency, thick
+  /// borders. WCAG AAA. Best combined with Accessibility Mode ON.
+  highContrast(
+    'High Contrast',
+    '⚡',
+    'Accessibility-first — pure black, pure white',
+  );
+
+  /// Human-readable display name for the theme picker.
   final String displayName;
 
-  /// Emoji icon for visual identification in theme picker
+  /// Emoji glyph for compact preview.
   final String emoji;
 
-  const AppThemeType(this.displayName, this.emoji);
+  /// One-line tagline shown under the display name in the theme gallery.
+  final String tagline;
 
-  /// Returns true if this theme has a dark background
-  bool get isDark {
-    return this == AppThemeType.dark ||
-        this == AppThemeType.cybersecurity ||
-        this == AppThemeType.seniorCitizen;
-  }
+  const AppThemeType(this.displayName, this.emoji, this.tagline);
 
-  /// Returns true if this theme is designed for accessibility
-  bool get isAccessibilityMode {
-    return this == AppThemeType.seniorCitizen ||
-        this == AppThemeType.cybersecurity;
-  }
+  /// True for themes with a dark surface. Used by MaterialApp.themeMode
+  /// and by widgets that need to pick brightness-dependent assets.
+  bool get isDark => switch (this) {
+        AppThemeType.defenderBlue      => true,
+        AppThemeType.enterpriseDark    => true,
+        AppThemeType.midnightSecurity  => true,
+        AppThemeType.bankingSecure     => true,
+        AppThemeType.cyberIntelligence => true,
+        AppThemeType.corporateLight    => false,
+        AppThemeType.highContrast      => true,
+      };
 
-  /// Returns the theme name as a string key for storage
+  /// Storage key used in SharedPreferences. `.name` is the enum identifier
+  /// (e.g. `defenderBlue`).
   String get storageKey => name;
+
+  /// Migration: map legacy stored theme names (from before this rebuild)
+  /// to their nearest new equivalent. Returns null if the string is unknown.
+  static AppThemeType? fromLegacyKey(String key) => switch (key) {
+        // Old enum values — mapped to closest new theme
+        'dark'          => AppThemeType.defenderBlue,
+        'light'         => AppThemeType.corporateLight,
+        'cybersecurity' => AppThemeType.cyberIntelligence,
+        'seniorCitizen' => AppThemeType.highContrast,
+        'natureGreen'   => AppThemeType.enterpriseDark,
+        // New enum values — accept as-is
+        'defenderBlue'      => AppThemeType.defenderBlue,
+        'enterpriseDark'    => AppThemeType.enterpriseDark,
+        'midnightSecurity'  => AppThemeType.midnightSecurity,
+        'bankingSecure'     => AppThemeType.bankingSecure,
+        'cyberIntelligence' => AppThemeType.cyberIntelligence,
+        'corporateLight'    => AppThemeType.corporateLight,
+        'highContrast'      => AppThemeType.highContrast,
+        _                   => null,
+      };
 }

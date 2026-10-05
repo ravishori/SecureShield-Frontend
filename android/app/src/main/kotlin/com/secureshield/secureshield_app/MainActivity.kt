@@ -38,6 +38,8 @@ class MainActivity : FlutterActivity() {
         private const val APP_MONITOR_CHANNEL       = "secureshield/app_monitor"
         private const val INSTALL_ANALYSIS_CHANNEL  = "secureshield/install_analysis"
         private const val ELDERLY_CHANNEL           = "secureshield/elderly"
+        private const val SIM_INTEGRITY_CHANNEL     = "secureshield/sim_integrity"
+        private const val DEVICE_INTEGRITY_CHANNEL  = "secureshield/device_integrity"
         private const val MEDIA_PROJECTION_REQUEST  = 1001
         private const val VPN_PERMISSION_REQUEST    = 1002
 
@@ -230,40 +232,72 @@ class MainActivity : FlutterActivity() {
             })
 
         // ── VPN Monitor ──────────────────────────────────────────────────────
+        // CRITICAL: every native call here is wrapped in try/catch — a thrown
+        // ForegroundServiceStartNotAllowedException / SecurityException out of
+        // startForegroundService kills the host activity if it escapes.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, VPN_CHANNEL)
             .setMethodCallHandler { call, result ->
-                when (call.method) {
-                    "startVpn" -> {
-                        val prepare = VpnService.prepare(this)
-                        if (prepare == null) {
-                            startVpnService()
-                            result.success(true)
-                        } else {
-                            vpnPermissionResult = result
-                            startActivityForResult(prepare, VPN_PERMISSION_REQUEST)
+                try {
+                    when (call.method) {
+                        "startVpn" -> {
+                            val prepare = try { VpnService.prepare(this) } catch (e: Exception) {
+                                android.util.Log.e("SecureShieldVpn", "VpnService.prepare failed", e)
+                                result.success(false); return@setMethodCallHandler
+                            }
+                            if (prepare == null) {
+                                val started = startVpnServiceSafely()
+                                result.success(started)
+                            } else {
+                                vpnPermissionResult = result
+                                try {
+                                    startActivityForResult(prepare, VPN_PERMISSION_REQUEST)
+                                } catch (e: Exception) {
+                                    android.util.Log.e("SecureShieldVpn", "Failed to launch VPN consent", e)
+                                    vpnPermissionResult = null
+                                    result.success(false)
+                                }
+                            }
                         }
+                        "stopVpn" -> {
+                            try {
+                                startService(Intent(this, SecureShieldVpnService::class.java).apply {
+                                    action = SecureShieldVpnService.ACTION_STOP
+                                })
+                            } catch (e: Exception) {
+                                android.util.Log.w("SecureShieldVpn", "stopVpn dispatch failed", e)
+                            }
+                            result.success(true)
+                        }
+                        "isVpnRunning" -> result.success(SecureShieldVpnService.isRunning)
+                        else -> result.notImplemented()
                     }
-                    "stopVpn" -> {
-                        startService(Intent(this, SecureShieldVpnService::class.java).apply {
-                            action = SecureShieldVpnService.ACTION_STOP
-                        })
-                        result.success(true)
-                    }
-                    "isVpnRunning" -> result.success(SecureShieldVpnService.isRunning)
-                    else -> result.notImplemented()
+                } catch (e: Throwable) {
+                    android.util.Log.e("SecureShieldVpn", "VPN channel handler crashed", e)
+                    try { result.error("VPN_ERROR", e.message, null) } catch (_: Exception) {}
                 }
             }
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, VPN_EVENTS_CHANNEL)
             .setStreamHandler(object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+                    // Guard against double-register on hot-reload / re-subscribe.
+                    if (vpnReceiver != null) {
+                        try { unregisterReceiver(vpnReceiver) } catch (_: Exception) {}
+                        vpnReceiver = null
+                    }
                     vpnEventSink = events
-                    val filter = IntentFilter(SecureShieldVpnService.ACTION_VPN_TRAFFIC)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        registerReceiver(getVpnReceiver(), filter, RECEIVER_NOT_EXPORTED)
-                    } else {
-                        @Suppress("UnspecifiedRegisterReceiverFlag")
-                        registerReceiver(getVpnReceiver(), filter)
+                    try {
+                        val filter = IntentFilter(SecureShieldVpnService.ACTION_VPN_TRAFFIC)
+                        val rcvr = buildVpnReceiver()
+                        vpnReceiver = rcvr
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            registerReceiver(rcvr, filter, RECEIVER_NOT_EXPORTED)
+                        } else {
+                            @Suppress("UnspecifiedRegisterReceiverFlag")
+                            registerReceiver(rcvr, filter)
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("SecureShieldVpn", "VPN event registerReceiver failed", e)
                     }
                 }
                 override fun onCancel(arguments: Any?) {
@@ -394,6 +428,54 @@ class MainActivity : FlutterActivity() {
                 }
             }
 
+        // ── SIM Integrity ────────────────────────────────────────────────────
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SIM_INTEGRITY_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "readSimFingerprints" -> {
+                        try {
+                            val records = SimFingerprintProvider.read(this)
+                            val list = records.map { r ->
+                                mapOf(
+                                    "slotIndex"     to r.slotIndex,
+                                    "carrierName"   to r.carrierName,
+                                    "countryIso"    to r.countryIso,
+                                    "mccMnc"        to r.mccMnc,
+                                    "fingerprint"   to r.fingerprintSha256,
+                                    "hasFullId"     to r.hasFullId,
+                                )
+                            }
+                            result.success(list)
+                        } catch (e: Throwable) {
+                            android.util.Log.e("SimIntegrity", "readSimFingerprints failed", e)
+                            result.success(emptyList<Any>())
+                        }
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        // ── Enhanced Device Integrity ────────────────────────────────────────
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, DEVICE_INTEGRITY_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                try {
+                    when (call.method) {
+                        "isMagiskPresent"       -> result.success(DeviceIntegrityProbe.isMagiskPresent(this))
+                        "isXposedPresent"       -> result.success(DeviceIntegrityProbe.isXposedPresent())
+                        "isFridaPresent"        -> result.success(DeviceIntegrityProbe.isFridaPresent())
+                        "isDebuggable"          -> result.success(DeviceIntegrityProbe.isDebuggable(this))
+                        "isDeveloperMode"       -> result.success(DeviceIntegrityProbe.isDeveloperMode(this))
+                        "isUsbDebuggingEnabled" -> result.success(DeviceIntegrityProbe.isUsbDebuggingEnabled(this))
+                        "isMockLocationEnabled" -> result.success(DeviceIntegrityProbe.isMockLocationEnabled(this))
+                        "fullScan"              -> result.success(DeviceIntegrityProbe.fullScan(this))
+                        else -> result.notImplemented()
+                    }
+                } catch (e: Throwable) {
+                    android.util.Log.e("DeviceIntegrity", "${call.method} failed", e)
+                    result.success(false)
+                }
+            }
+
         // Elderly guardian-alert event stream
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, "secureshield/elderly_events")
             .setStreamHandler(object : EventChannel.StreamHandler {
@@ -459,25 +541,38 @@ class MainActivity : FlutterActivity() {
         }
 
         if (requestCode == VPN_PERMISSION_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                startVpnService()
-                vpnPermissionResult?.success(true)
-            } else {
-                vpnPermissionResult?.success(false)
-            }
+            val started = if (resultCode == Activity.RESULT_OK) startVpnServiceSafely() else false
+            try { vpnPermissionResult?.success(started) } catch (_: Exception) {}
             vpnPermissionResult = null
         }
     }
 
-    // ── Helper: start VPN service ────────────────────────────────────────────
-    private fun startVpnService() {
-        val intent = Intent(this, SecureShieldVpnService::class.java).apply {
-            action = SecureShieldVpnService.ACTION_START
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
+    // ── Helper: start VPN service safely ─────────────────────────────────────
+    /**
+     * Starts SecureShieldVpnService. Returns true if dispatch succeeded;
+     * NEVER throws — all exceptions are logged and converted to a false return
+     * so the UI gets a clean "couldn't start" instead of a process crash.
+     *
+     * Possible exceptions caught:
+     *   - ForegroundServiceStartNotAllowedException (Android 12+) — app not in fg
+     *   - SecurityException — missing FOREGROUND_SERVICE_* sub-permission (Android 14+)
+     *   - MissingForegroundServiceTypeException — manifest doesn't declare type
+     *   - IllegalStateException — service already starting / device shutting down
+     */
+    private fun startVpnServiceSafely(): Boolean {
+        return try {
+            val intent = Intent(this, SecureShieldVpnService::class.java).apply {
+                action = SecureShieldVpnService.ACTION_START
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+            true
+        } catch (e: Throwable) {
+            android.util.Log.e("SecureShieldVpn", "startVpnService failed", e)
+            false
         }
     }
 
@@ -498,19 +593,26 @@ class MainActivity : FlutterActivity() {
         return bankOtpReceiver!!
     }
 
-    private fun getVpnReceiver(): BroadcastReceiver {
-        if (vpnReceiver == null) {
-            vpnReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-                    vpnEventSink?.success(mapOf(
+    /**
+     * Builds a fresh receiver each time onListen is invoked. This avoids the
+     * double-register problem where the same instance gets registered twice
+     * (which leaks and crashes on later unregister).
+     */
+    private fun buildVpnReceiver(): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                try {
+                    val sink = vpnEventSink ?: return
+                    sink.success(mapOf(
                         "destIp"      to (intent.getStringExtra(SecureShieldVpnService.EXTRA_DEST_IP)      ?: ""),
                         "destDomain"  to (intent.getStringExtra(SecureShieldVpnService.EXTRA_DEST_DOMAIN)  ?: ""),
                         "threatLevel" to (intent.getStringExtra(SecureShieldVpnService.EXTRA_THREAT_LEVEL) ?: "safe"),
                     ))
+                } catch (e: Exception) {
+                    android.util.Log.w("SecureShieldVpn", "VPN receiver dispatch failed", e)
                 }
             }
         }
-        return vpnReceiver!!
     }
 
     private fun getPkgReceiver(): BroadcastReceiver {

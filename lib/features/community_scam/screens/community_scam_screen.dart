@@ -75,7 +75,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
-                  value: selectedType,
+                  initialValue: selectedType,
                   dropdownColor: AppTheme.surface,
                   style: const TextStyle(color: AppTheme.textPrimary),
                   decoration: const InputDecoration(labelText: 'Scam Type', labelStyle: TextStyle(color: AppTheme.textSecondary)),
@@ -144,7 +144,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
         title: const Text('Community Scam Alerts'),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_alt_outlined, color: AppTheme.accent),
+            icon: const Icon(Icons.filter_alt_outlined, color: AppTheme.accent),
             onPressed: _showFilterDialog,
             tooltip: 'Filter by city',
           ),
@@ -225,15 +225,15 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppTheme.errorColor.withOpacity(0.1),
+                    color: AppTheme.errorColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: AppTheme.errorColor.withOpacity(0.4)),
+                    border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.4)),
                   ),
-                  child: Text(typeLabel, style: TextStyle(color: AppTheme.errorColor, fontSize: 10, fontWeight: FontWeight.bold)),
+                  child: Text(typeLabel, style: const TextStyle(color: AppTheme.errorColor, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
                 if (isVerified) ...[
                   const SizedBox(width: 6),
-                  Icon(Icons.verified, color: AppTheme.accent, size: 14),
+                  const Icon(Icons.verified, color: AppTheme.accent, size: 14),
                   const Text(' Verified', style: TextStyle(color: AppTheme.accent, fontSize: 10)),
                 ],
                 const Spacer(),
@@ -267,7 +267,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                     await _load();
                   },
                   child: Row(children: [
-                    Icon(Icons.thumb_up_outlined, color: AppTheme.accent, size: 14),
+                    const Icon(Icons.thumb_up_outlined, color: AppTheme.accent, size: 14),
                     const SizedBox(width: 4),
                     Text('$upvotes helpful', style: const TextStyle(color: AppTheme.accent, fontSize: 12)),
                   ]),

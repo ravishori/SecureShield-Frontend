@@ -161,7 +161,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Container(
               width: 64, height: 64,
               decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.12),
+                color: AppTheme.success.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.verified_rounded, color: AppTheme.success, size: 36),
@@ -178,7 +178,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Text(msg,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -229,9 +229,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   Container(
                     width: 80, height: 80,
                     decoration: BoxDecoration(
-                      color: accent.withOpacity(0.15),
+                      color: accent.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
-                      border: Border.all(color: accent.withOpacity(0.4), width: 2),
+                      border: Border.all(color: accent.withValues(alpha: 0.4), width: 2),
                     ),
                     child: Icon(Icons.person_rounded, color: accent, size: 42),
                   ),
@@ -249,7 +249,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   const SizedBox(height: 2),
                   Text(
                     _emailCtrl.text.isEmpty ? 'No email set' : _emailCtrl.text,
-                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                   ),
                 ],
               ),
@@ -260,9 +260,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: accent.withOpacity(0.06),
+                color: accent.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: accent.withOpacity(0.2)),
+                border: Border.all(color: accent.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
@@ -271,7 +271,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   Expanded(
                     child: Text(
                       'Any profile changes trigger an automated security email to you.',
-                      style: TextStyle(color: onSurf.withOpacity(0.7), fontSize: 11, height: 1.4),
+                      style: TextStyle(color: onSurf.withValues(alpha: 0.7), fontSize: 11, height: 1.4),
                     ),
                   ),
                 ],
@@ -337,7 +337,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Mobile Number', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                        const Text('Mobile Number', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
                         const SizedBox(height: 2),
                         Text(
                           _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
@@ -349,7 +349,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppTheme.textSecondary.withOpacity(0.1),
+                      color: AppTheme.textSecondary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text('Verified', style: TextStyle(color: AppTheme.textSecondary, fontSize: 9, fontWeight: FontWeight.w600)),
@@ -365,7 +365,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
 
             // State dropdown
             DropdownButtonFormField<String>(
-              value: _selectedState,
+              initialValue: _selectedState,
               decoration: InputDecoration(
                 labelText: 'State',
                 prefixIcon: Icon(Icons.map_outlined, color: accent, size: 18),
@@ -381,7 +381,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
 
             // City dropdown
             DropdownButtonFormField<String>(
-              value: _selectedCity,
+              initialValue: _selectedCity,
               decoration: InputDecoration(
                 labelText: 'City',
                 prefixIcon: Icon(Icons.location_city_outlined, color: accent, size: 18),
@@ -459,7 +459,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.12),
+            color: accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: accent, size: 16),
@@ -506,16 +506,39 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
   }
 
   Future<void> _delete(String id) async {
-    await _api.deleteEmergencyContact(id);
-    _load();
+    try {
+      await _api.deleteEmergencyContact(id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Contact removed'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not delete contact: $e'),
+            backgroundColor: AppTheme.errorColor,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 
-  void _showAddSheet() {
-    final nameCtrl = TextEditingController();
-    final relCtrl  = TextEditingController();
-    final phoneCtrl = TextEditingController();
-    final emailCtrl = TextEditingController();
-    final formKey  = GlobalKey<FormState>();
+  /// Open the bottom-sheet for either creating a new contact (existing=null)
+  /// or editing an existing one (existing=<contact map>).
+  void _showContactSheet({Map<String, dynamic>? existing}) {
+    final isEdit    = existing != null;
+    final nameCtrl  = TextEditingController(text: (existing?['name']         as String?) ?? '');
+    final relCtrl   = TextEditingController(text: (existing?['relationship'] as String?) ?? '');
+    final phoneCtrl = TextEditingController(text: (existing?['phone']        as String?) ?? '');
+    final emailCtrl = TextEditingController(text: (existing?['email']        as String?) ?? '');
+    final formKey   = GlobalKey<FormState>();
     bool saving = false;
 
     showModalBottomSheet<void>(
@@ -542,14 +565,20 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppTheme.errorColor.withOpacity(0.12),
+                            color: AppTheme.errorColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.emergency_rounded, color: AppTheme.errorColor, size: 20),
+                          child: Icon(
+                            isEdit
+                                ? Icons.edit_outlined
+                                : Icons.emergency_rounded,
+                            color: AppTheme.errorColor,
+                            size: 20,
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        const Text('Add Emergency Contact',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(isEdit ? 'Edit Emergency Contact' : 'Add Emergency Contact',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -586,7 +615,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       validator: (v) {
-                        if ((v == null || v.isEmpty) && emailCtrl.text.isEmpty) {
+                        if ((v == null || v.trim().isEmpty) && emailCtrl.text.trim().isEmpty) {
                           return 'At least one of phone or email is required';
                         }
                         return null;
@@ -604,7 +633,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(
+                    const Text(
                       'These contacts will be notified in emergencies and can receive incident reports via Email or WhatsApp.',
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, height: 1.4),
                     ),
@@ -617,17 +646,36 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                           if (!formKey.currentState!.validate()) return;
                           setSheetState(() => saving = true);
                           try {
-                            await _api.addEmergencyContact(
-                              name: nameCtrl.text.trim(),
-                              relationship: relCtrl.text.trim(),
-                              phone: phoneCtrl.text.trim(),
-                              email: emailCtrl.text.trim(),
-                            );
+                            if (isEdit) {
+                              await _api.updateEmergencyContact(
+                                id:           existing['id'] as String,
+                                name:         nameCtrl.text.trim(),
+                                relationship: relCtrl.text.trim(),
+                                phone:        phoneCtrl.text.trim(),
+                                email:        emailCtrl.text.trim(),
+                              );
+                            } else {
+                              await _api.addEmergencyContact(
+                                name:         nameCtrl.text.trim(),
+                                relationship: relCtrl.text.trim(),
+                                phone:        phoneCtrl.text.trim(),
+                                email:        emailCtrl.text.trim(),
+                              );
+                            }
                             if (ctx.mounted) Navigator.pop(ctx);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(isEdit ? 'Contact updated' : 'Contact added'),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
                             _load();
                           } catch (e) {
                             setSheetState(() => saving = false);
                             if (context.mounted) {
+                              // ignore: use_build_context_synchronously (guarded by context.mounted above)
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
                               );
@@ -636,8 +684,12 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                         },
                         icon: saving
                             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Icon(Icons.add_rounded, size: 18),
-                        label: Text(saving ? 'Saving...' : 'Add Contact'),
+                            : Icon(isEdit ? Icons.save_rounded : Icons.add_rounded, size: 18),
+                        label: Text(
+                          saving
+                              ? (isEdit ? 'Saving…' : 'Adding…')
+                              : (isEdit ? 'Save Changes' : 'Add Contact'),
+                        ),
                       ),
                     ),
                   ],
@@ -649,6 +701,9 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
       },
     );
   }
+
+  /// Back-compat shim — older call sites still invoke _showAddSheet().
+  void _showAddSheet() => _showContactSheet();
 
   @override
   Widget build(BuildContext context) {
@@ -683,7 +738,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.errorColor.withOpacity(0.08),
+                color: AppTheme.errorColor.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.emergency_rounded, size: 48, color: AppTheme.errorColor),
@@ -697,7 +752,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Add trusted family members or friends who will be notified in case of an emergency or cyber incident.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
@@ -721,14 +776,14 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.errorColor.withOpacity(0.15)),
+        border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.errorColor.withOpacity(0.1),
+              color: AppTheme.errorColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -761,7 +816,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppTheme.errorColor.withOpacity(0.1),
+                          color: AppTheme.errorColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -797,9 +852,36 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
               ],
             ),
           ),
-          IconButton(
-            onPressed: () => _confirmDelete(id, name),
-            icon: const Icon(Icons.delete_outline_rounded, color: AppTheme.errorColor, size: 20),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Edit pencil — opens the same bottom-sheet pre-filled.
+              IconButton(
+                onPressed: () => _showContactSheet(existing: c),
+                tooltip: 'Edit',
+                icon: Icon(
+                  Icons.edit_outlined,
+                  color: AppTheme.accentOf(context),
+                  size: 20,
+                ),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              ),
+              const SizedBox(height: 2),
+              IconButton(
+                onPressed: () => _confirmDelete(id, name),
+                tooltip: 'Delete',
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppTheme.errorColor,
+                  size: 20,
+                ),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              ),
+            ],
           ),
         ],
       ),
@@ -814,7 +896,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Remove Contact', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
         content: Text('Remove $name from emergency contacts?',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontSize: 13)),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),

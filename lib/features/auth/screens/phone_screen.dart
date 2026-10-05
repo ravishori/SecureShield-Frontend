@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
-import '../../../core/app_spacing.dart';
 import '../../../core/security/biometric_service.dart';
 import '../../../core/security/google_auth_service.dart';
 import '../auth_provider.dart';
@@ -40,7 +39,11 @@ enum _InputMode { phone, email }
 // ── PhoneScreen ───────────────────────────────────────────────────────────────
 
 class PhoneScreen extends ConsumerStatefulWidget {
-  const PhoneScreen({super.key});
+  /// Optional pre-filled identifier (email or phone). Used when the user is
+  /// redirected here from the register screen after hitting a 409 conflict.
+  final String? initialIdentifier;
+
+  const PhoneScreen({super.key, this.initialIdentifier});
 
   @override
   ConsumerState<PhoneScreen> createState() => _PhoneScreenState();
@@ -70,6 +73,34 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
     _fadeAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
     _animCtrl.forward();
     _checkBiometrics();
+    _prefillIdentifier(widget.initialIdentifier);
+  }
+
+  /// If the caller passed an email/phone (e.g. from "Sign in instead" on
+  /// the register screen), drop it into the right field and switch input mode.
+  void _prefillIdentifier(String? value) {
+    if (value == null || value.isEmpty) return;
+    final trimmed = value.trim();
+    if (trimmed.contains('@')) {
+      _mode = _InputMode.email;
+      _emailCtrl.text = trimmed.toLowerCase();
+      return;
+    }
+    _mode = _InputMode.phone;
+    // Strip leading country code if present so the phone box shows only the digits.
+    final match = RegExp(r'^(\+\d{1,4})(.+)$').firstMatch(trimmed);
+    if (match != null) {
+      final code = match.group(1)!;
+      final digits = match.group(2)!;
+      final country = _countries.firstWhere(
+        (c) => c.code == code,
+        orElse: () => _selectedCountry,
+      );
+      _selectedCountry = country;
+      _phoneCtrl.text = digits;
+    } else {
+      _phoneCtrl.text = trimmed;
+    }
   }
 
   Future<void> _checkBiometrics() async {
@@ -203,9 +234,9 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                     child: Container(
                       width: 38, height: 38,
                       decoration: BoxDecoration(
-                        color: accent.withOpacity(0.1),
+                        color: accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: accent.withOpacity(0.25)),
+                        border: Border.all(color: accent.withValues(alpha: 0.25)),
                       ),
                       child: Icon(Icons.arrow_back_ios_new_rounded, color: accent, size: 16),
                     ),
@@ -218,7 +249,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                       Container(
                         width: 52, height: 52,
                         decoration: BoxDecoration(
-                          color: accent.withOpacity(0.15),
+                          color: accent.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(Icons.lock_open_rounded, color: accent, size: 28),
@@ -236,7 +267,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                           ),
                           Text('Login to your account',
                             style: TextStyle(
-                              color: onSurf.withOpacity(0.55),
+                              color: onSurf.withValues(alpha: 0.55),
                               fontSize: 12,
                             ),
                           ),
@@ -252,7 +283,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: accent.withOpacity(0.2)),
+                      border: Border.all(color: accent.withValues(alpha: 0.2)),
                     ),
                     child: Row(
                       children: [
@@ -285,7 +316,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                                 Text(_selectedCountry.code,
                                   style: TextStyle(color: onSurf, fontSize: 13, fontWeight: FontWeight.w600)),
                                 const SizedBox(width: 2),
-                                Icon(Icons.arrow_drop_down, size: 18, color: onSurf.withOpacity(0.5)),
+                                Icon(Icons.arrow_drop_down, size: 18, color: onSurf.withValues(alpha: 0.5)),
                               ],
                             ),
                           ),
@@ -336,9 +367,9 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorColor.withOpacity(0.08),
+                        color: AppTheme.errorColor.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppTheme.errorColor.withOpacity(0.3)),
+                        border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
@@ -370,12 +401,12 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                                 strokeWidth: 2.5, color: Colors.white,
                               ),
                             )
-                          : Row(
+                          : const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text('Send OTP'),
-                                const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward_rounded, size: 18),
+                                Text('Send OTP'),
+                                SizedBox(width: 8),
+                                Icon(Icons.arrow_forward_rounded, size: 18),
                               ],
                             ),
                     ),
@@ -385,12 +416,12 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
 
                   // ── Divider ─────────────────────────────────────────
                   Row(children: [
-                    Expanded(child: Divider(color: onSurf.withOpacity(0.15))),
+                    Expanded(child: Divider(color: onSurf.withValues(alpha: 0.15))),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text('or', style: TextStyle(color: onSurf.withOpacity(0.4), fontSize: 12)),
+                      child: Text('or', style: TextStyle(color: onSurf.withValues(alpha: 0.4), fontSize: 12)),
                     ),
-                    Expanded(child: Divider(color: onSurf.withOpacity(0.15))),
+                    Expanded(child: Divider(color: onSurf.withValues(alpha: 0.15))),
                   ]),
                   const SizedBox(height: 20),
 
@@ -419,7 +450,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
                       child: RichText(
                         text: TextSpan(
                           text: "Don't have an account? ",
-                          style: TextStyle(color: onSurf.withOpacity(0.6), fontSize: 13),
+                          style: TextStyle(color: onSurf.withValues(alpha: 0.6), fontSize: 13),
                           children: [
                             TextSpan(
                               text: 'Register',
@@ -463,11 +494,11 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 16,
-                color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
               const SizedBox(width: 6),
               Text(label,
                 style: TextStyle(
-                  color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                   fontSize: 13,
                 ),
@@ -519,7 +550,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
       child: OutlinedButton.icon(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: color.withOpacity(0.5)),
+          side: BorderSide(color: color.withValues(alpha: 0.5)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         icon: Icon(icon, color: color, size: 20),

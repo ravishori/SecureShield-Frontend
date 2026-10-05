@@ -2,18 +2,22 @@
 ///
 /// Dedicated view for Indian banking/UPI apps.
 /// Shows authenticity status, signature verification, and recommended actions.
+///
+/// Uses [RiskUiTokens] + [A11ySizing] so it stays readable in every theme
+/// (Senior Citizen and Nature Green included).
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme.dart';
-import '../../../core/theme/app_theme_enum.dart';
-import '../../../core/theme/app_theme_extensions.dart';
+import '../../../core/theme/risk_ui_tokens.dart';
+import '../../../core/theme/theme_provider.dart' show themeProvider;
+import '../../../core/security/app_risk_engine.dart';
+import '../../../core/security/banking_threat_correlator.dart';
 import '../../../core/security/device_scanner_service.dart';
 import '../../../core/security/trusted_app_catalog.dart';
 import '../../../core/security/fake_app_detector.dart';
 import '../../../core/services/notification_service.dart';
-import 'package:flutter/services.dart';
 
 class BankingProtectionScreen extends ConsumerStatefulWidget {
   const BankingProtectionScreen({super.key});
@@ -28,8 +32,9 @@ class _BankingProtectionScreenState
   static const _signatureChannel = MethodChannel('secureshield/apk_signature');
 
   List<DeviceAppInfo>? _installedApps;
-  Map<String, FakeAppAnalysis> _fakeAppAnalyses = {};
-  Map<String, String?> _appSignatures = {};
+  final Map<String, FakeAppAnalysis> _fakeAppAnalyses = {};
+  final Map<String, String?> _appSignatures = {};
+  BankingThreatReport? _threatReport;
   bool _loading = true;
 
   @override
@@ -38,31 +43,66 @@ class _BankingProtectionScreenState
     _loadBankingApps();
   }
 
+  Future<void> _refresh() async {
+    setState(() => _loading = true);
+    await _loadBankingApps();
+  }
+
   Future<void> _loadBankingApps() async {
     try {
-      final apps = await DeviceScannerService.getInstalledApps();
-      final bankingApps = apps
-          .where((a) {
-            final trusted = TrustedAppCatalog.lookup(a.packageName);
-            // Include only if it's a banking/UPI/payments app, not just any popular app
-            final isBankingFromCatalog = trusted != null &&
-                (trusted.category == 'banking' ||
-                 trusted.category == 'upi' ||
-                 trusted.category == 'payments');
-            // Also include if app name contains banking keywords
-            final isBankingRelated = _isBankingRelated(a.appName.toLowerCase());
-            return isBankingFromCatalog || isBankingRelated;
-          })
-          .toList();
+      // Run the threat correlator in parallel with the app inventory —
+      // they hit different system APIs so we can save ~200-300ms.
+      final threatFuture = BankingThreatCorrelator.scan();
 
-      // Analyze each for fake-app indicators
+      final apps = await DeviceScannerService.getInstalledApps();
+      final bankingApps = apps.where((a) {
+        final trusted = TrustedAppCatalog.lookup(a.packageName);
+        final isBankingFromCatalog = trusted != null &&
+            (trusted.category == 'banking' ||
+             trusted.category == 'upi' ||
+             trusted.category == 'payments');
+        final isBankingRelated = _isBankingRelated(a.appName.toLowerCase());
+        return isBankingFromCatalog || isBankingRelated;
+      }).toList();
+
+      // Await the threat scan and store it (errors handled inside the
+      // correlator — it returns a "safe" report on failure rather than
+      // throwing).
+      final threatReport = await threatFuture;
+      _threatReport = threatReport;
+
+      // Fire one critical notification on first scan if a critical-tier
+      // threat is present, so the user is alerted even before they read
+      // the screen.
+      if (threatReport.level == BankingThreatLevel.critical && mounted) {
+        try {
+          await NotificationService.showBankingAlert(
+            bankName: 'Banking Protection',
+            alertType: 'Active Threat Detected',
+            details:
+                'Active threats are running on your device that could '
+                'compromise banking sessions. Open SecureShield to review.',
+          );
+        } catch (_) {/* notification failures must not break the scan */}
+      }
+
       for (final app in bankingApps) {
-        final analysis = FakeAppDetector.analyze(app.packageName, app.appName);
+        // Pass isSystem so the detector short-circuits system apps.
+        final analysis = FakeAppDetector.analyze(
+          app.packageName,
+          app.appName,
+          isSystem: app.isSystem,
+        );
         _fakeAppAnalyses[app.packageName] = analysis;
 
-        // Trigger alert if fake banking app detected
-        if (analysis.risk != FakeAppRisk.notFake && analysis.impersonatesApp != null) {
-          final bankName = TrustedAppCatalog.lookup(app.packageName)?.label ?? app.appName;
+        // Fire banking-alert ONLY when the detector returns a genuine
+        // impersonation signal (suspected or higher). Trusted catalog apps,
+        // system apps, and same-publisher variants all return notFake by
+        // design, so they won't trigger.
+        if (analysis.risk.shouldWarn &&
+            analysis.impersonatesApp != null) {
+          final bankName =
+              TrustedAppCatalog.lookup(app.packageName)?.label ?? app.appName;
           await NotificationService.showBankingAlert(
             bankName: bankName,
             alertType: analysis.risk == FakeAppRisk.probablyFake
@@ -70,51 +110,35 @@ class _BankingProtectionScreenState
                 : analysis.risk == FakeAppRisk.likelyFake
                     ? 'Likely Fake App'
                     : 'Suspicious App',
-            details:
-                'This app may be impersonating $bankName. Reasons: ${analysis.reasons.join(", ")}',
+            details: 'This app may be impersonating $bankName. '
+                'Reasons: ${analysis.reasons.join(", ")}',
           );
         }
 
-        // Try to get signature SHA-256 (optional)
         try {
-          final sig = await _signatureChannel
-              .invokeMethod<String>('getSignatureSha256', {
-            'packageName': app.packageName,
-          });
+          final sig = await _signatureChannel.invokeMethod<String>(
+              'getSignatureSha256', {'packageName': app.packageName});
           _appSignatures[app.packageName] = sig;
         } catch (_) {}
       }
 
-      setState(() {
-        _installedApps = bankingApps;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() {
+          _installedApps = bankingApps;
+          _loading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
   bool _isBankingRelated(String label) {
-    final banking = [
-      'paytm',
-      'phonepe',
-      'google pay',
-      'bhim',
-      'upi',
-      'sbi',
-      'hdfc',
-      'icici',
-      'axis',
-      'kotak',
-      'yes bank',
-      'bank of baroda',
-      'idbi',
-      'indusind',
-      'federal bank',
-      'airtel payments',
-      'amazon pay',
-      'gpay',
-      'whatsapp business',
+    const banking = [
+      'paytm', 'phonepe', 'google pay', 'bhim', 'upi',
+      'sbi', 'hdfc', 'icici', 'axis', 'kotak', 'yes bank',
+      'bank of baroda', 'idbi', 'indusind', 'federal bank',
+      'airtel payments', 'amazon pay', 'gpay', 'whatsapp business',
     ];
     final lowerLabel = label.toLowerCase();
     return banking.any((b) => lowerLabel.contains(b));
@@ -122,277 +146,544 @@ class _BankingProtectionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('🏦 Banking App Protection'),
-        elevation: 0,
-      ),
-      body: _loading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            )
-          : _installedApps == null || _installedApps!.isEmpty
-              ? _buildEmptyState()
-              : _buildBankingAppsList(),
-    );
-  }
+    final cs = Theme.of(context).colorScheme;
+    final themeType = ref.watch(themeProvider).themeType;
+    final sizing = A11ySizing.forTheme(themeType);
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.security_outlined,
-            size: 64,
-            color: Theme.of(context).colorScheme.secondary,
+    return Scaffold(
+      backgroundColor: cs.surface,
+      appBar: AppBar(
+        title: Text(
+          '🏦 Banking App Protection',
+          style: TextStyle(
+            fontSize: 18 * sizing.textScale,
+            fontWeight: FontWeight.w700,
           ),
-          const SizedBox(height: 16),
-          Text(
-            'No banking apps found',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppTheme.textPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Install SBI, HDFC, ICICI, Paytm, PhonePe, Google Pay, BHIM, or other banking/UPI apps',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppTheme.textSecondary,
-                ),
-            textAlign: TextAlign.center,
+        ),
+        elevation: 0,
+        backgroundColor: cs.surface,
+        foregroundColor: cs.onSurface,
+        actions: [
+          IconButton(
+            tooltip: 'Re-scan threats',
+            onPressed: _loading ? null : _refresh,
+            icon: const Icon(Icons.refresh_rounded),
           ),
         ],
       ),
+      body: RefreshIndicator(
+        color: cs.primary,
+        onRefresh: _refresh,
+        child: _loading
+            ? Center(child: CircularProgressIndicator(color: cs.primary))
+            : (_installedApps == null || _installedApps!.isEmpty)
+                ? _buildEmptyState(cs, sizing)
+                : _buildBankingAppsList(cs, sizing),
+      ),
     );
   }
 
-  Widget _buildBankingAppsList() {
+  Widget _buildEmptyState(ColorScheme cs, A11ySizing s) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24 * s.padScale),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.security_outlined,
+                size: 64 * s.textScale, color: cs.primary),
+            SizedBox(height: 16 * s.padScale),
+            Text(
+              'No banking apps found',
+              style: TextStyle(
+                color: cs.onSurface,
+                fontWeight: FontWeight.w700,
+                fontSize: 20 * s.textScale,
+              ),
+            ),
+            SizedBox(height: 8 * s.padScale),
+            Text(
+              'Install SBI, HDFC, ICICI, Paytm, PhonePe, '
+              'Google Pay, BHIM, or other banking/UPI apps',
+              style: TextStyle(
+                color: cs.onSurfaceVariant,
+                fontSize: 13 * s.textScale,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBankingAppsList(ColorScheme cs, A11ySizing s) {
+    // Build the safety banner using SAFE-tier tokens so it always reads well
+    final safe = RiskUiTokens.of(context, AppRiskLevel.safe);
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(16 * s.padScale),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Safety tips card ───────────────────────────────────────────────
+          // ── Active-threat correlator banner (only when not safe) ────
+          if (_threatReport != null && _threatReport!.hasThreats) ...[
+            _buildThreatCorrelatorBanner(_threatReport!, s),
+            SizedBox(height: 16 * s.padScale),
+          ],
+
+          // ── Safety tips banner ──────────────────────────────────────
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(14 * s.padScale),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(8),
+              color: safe.cardBg,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                width: 1.5,
+                color: safe.cardBorder,
+                width: 1.5 + s.extraBorder,
               ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.info,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
+                Icon(Icons.info_outline_rounded,
+                    color: safe.iconFg, size: 22 * s.textScale),
+                SizedBox(width: 12 * s.padScale),
                 Expanded(
                   child: Text(
-                    'Download banking apps ONLY from Google Play Store.\nVerify the publisher is the official bank.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.w500,
-                          height: 1.4,
-                        ),
+                    'Download banking apps ONLY from the Google Play Store.\n'
+                    'Always verify the publisher is the official bank.',
+                    style: TextStyle(
+                      color: safe.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13 * s.textScale,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20 * s.padScale),
 
-          // ── Banking apps list ──────────────────────────────────────────────
+          // ── Section title ───────────────────────────────────────────
           Text(
             'Installed Banking Apps',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
-                  letterSpacing: 0.5,
-                ),
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              color: cs.onSurface,
+              letterSpacing: 0.5,
+              fontSize: 15 * s.textScale,
+            ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12 * s.padScale),
+
+          // ── List ────────────────────────────────────────────────────
           if (_installedApps!.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24 * s.padScale),
               child: Center(
                 child: Text(
                   'No banking apps installed',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 13 * s.textScale,
+                  ),
                 ),
               ),
             )
           else
-            ..._installedApps!
-                .map((app) => _buildBankingAppCard(app))
-                .toList(),
+            ..._installedApps!.map((app) => _buildBankingAppCard(app, cs, s)),
         ],
       ),
     );
   }
 
-  Widget _buildBankingAppCard(DeviceAppInfo app) {
-    final analysis = _fakeAppAnalyses[app.packageName];
-    final isTrusted = TrustedAppCatalog.lookup(app.packageName) != null;
-    final isFake = analysis?.risk != FakeAppRisk.notFake;
-
-    // Get colors from theme
-    final accentColor = Theme.of(context).colorScheme.secondary;
-    final threatColor = AppThemeType.dark.threatColor();
-    final safeColor = AppThemeType.dark.safeColor();
-
-    // Color scheme based on security status
-    final cardBgColor = isFake
-        ? threatColor.withOpacity(0.08)  // Light red background
-        : safeColor.withOpacity(0.08);   // Light green background
-    final borderColor = isFake
-        ? threatColor.withOpacity(0.4)   // Red border
-        : safeColor.withOpacity(0.4);    // Green border
-    final statusColor = isFake ? threatColor : safeColor;
+  /// Renders the live "Active Threats" banner from [BankingThreatCorrelator].
+  ///
+  /// Style:
+  ///   • CRITICAL  → red salmon background, big AlertOctagon icon
+  ///   • SUSPICIOUS → orange background, smaller WarningAmber icon
+  ///   • SAFE      → not shown (filtered out by the caller)
+  Widget _buildThreatCorrelatorBanner(
+    BankingThreatReport report,
+    A11ySizing s,
+  ) {
+    final isCritical = report.level == BankingThreatLevel.critical;
+    final level = isCritical ? AppRiskLevel.critical : AppRiskLevel.medium;
+    final t = RiskUiTokens.of(context, level);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14 * s.padScale),
       decoration: BoxDecoration(
-        color: cardBgColor,
-        borderRadius: BorderRadius.circular(10),
+        color: t.cardBg,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: borderColor.withOpacity(0.3),
-          width: 1.5,
+          color: t.cardBorder,
+          width: 1.8 + s.extraBorder,
+        ),
+        boxShadow: isCritical
+            ? [
+                BoxShadow(
+                  color: t.cardBorder.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header row ──────────────────────────────────────────────
+          Row(
+            children: [
+              Icon(
+                isCritical
+                    ? Icons.gpp_bad_rounded
+                    : Icons.warning_amber_rounded,
+                color: t.iconFg,
+                size: 28 * s.textScale,
+              ),
+              SizedBox(width: 10 * s.padScale),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isCritical
+                          ? 'Do NOT Open Banking Apps'
+                          : 'Possible Risk Detected',
+                      style: TextStyle(
+                        color: t.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15.5 * s.textScale,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    SizedBox(height: 2 * s.padScale),
+                    Text(
+                      '${report.threats.length} active '
+                      '${report.threats.length == 1 ? "threat" : "threats"} '
+                      'on this device',
+                      style: TextStyle(
+                        color: t.textSecondary,
+                        fontSize: 12 * s.textScale,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 12 * s.padScale),
+          Divider(color: t.cardBorder, height: 1),
+          SizedBox(height: 10 * s.padScale),
+
+          // ── Threat list (collapsible if many) ────────────────────────
+          ...report.threats.take(5).map(
+                (threat) => Padding(
+                  padding: EdgeInsets.only(bottom: 10 * s.padScale),
+                  child: _buildThreatRow(threat, t, s),
+                ),
+              ),
+          if (report.threats.length > 5)
+            Padding(
+              padding: EdgeInsets.only(top: 2 * s.padScale),
+              child: Text(
+                '+ ${report.threats.length - 5} more',
+                style: TextStyle(
+                  color: t.textSecondary,
+                  fontSize: 11.5 * s.textScale,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+
+          // ── Bottom call-to-action ───────────────────────────────────
+          SizedBox(height: 6 * s.padScale),
+          Container(
+            padding: EdgeInsets.all(10 * s.padScale),
+            decoration: BoxDecoration(
+              color: t.badgeBg,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.shield_moon_rounded,
+                  color: t.badgeText,
+                  size: 18 * s.textScale,
+                ),
+                SizedBox(width: 8 * s.padScale),
+                Expanded(
+                  child: Text(
+                    isCritical
+                        ? 'Resolve every threat above before opening any '
+                            'banking or UPI app. Your screen, taps, and SMS '
+                            'may be visible to an attacker right now.'
+                        : 'Review and resolve the items above before doing '
+                            'any sensitive banking action.',
+                    style: TextStyle(
+                      color: t.badgeText,
+                      fontSize: 12.5 * s.textScale,
+                      fontWeight: FontWeight.w600,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThreatRow(
+    BankingThreatItem threat,
+    RiskUiTokens t,
+    A11ySizing s,
+  ) {
+    final isCritical = threat.severity == BankingThreatLevel.critical;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 6 * s.textScale,
+          height: 6 * s.textScale,
+          margin: EdgeInsets.only(top: 8 * s.padScale, right: 10 * s.padScale),
+          decoration: BoxDecoration(
+            color: isCritical ? t.iconFg : t.textSecondary,
+            shape: BoxShape.circle,
+          ),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                threat.message,
+                style: TextStyle(
+                  color: t.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13 * s.textScale,
+                  height: 1.45,
+                ),
+              ),
+              SizedBox(height: 3 * s.padScale),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.lightbulb_outline_rounded,
+                    size: 13 * s.textScale,
+                    color: t.textSecondary,
+                  ),
+                  SizedBox(width: 4 * s.padScale),
+                  Expanded(
+                    child: Text(
+                      threat.recommendedAction,
+                      style: TextStyle(
+                        color: t.textSecondary,
+                        fontSize: 11.5 * s.textScale,
+                        fontStyle: FontStyle.italic,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBankingAppCard(DeviceAppInfo app, ColorScheme cs, A11ySizing s) {
+    final analysis = _fakeAppAnalyses[app.packageName];
+    final isTrusted = TrustedAppCatalog.lookup(app.packageName) != null;
+    final isFake = analysis != null && analysis.risk != FakeAppRisk.notFake;
+
+    // Pick the risk level for this card so the whole tile uses one palette
+    final level = isFake
+        ? (analysis.risk == FakeAppRisk.probablyFake
+            ? AppRiskLevel.critical
+            : analysis.risk == FakeAppRisk.likelyFake
+                ? AppRiskLevel.high
+                : AppRiskLevel.medium)
+        : (isTrusted ? AppRiskLevel.safe : AppRiskLevel.medium);
+
+    final t = RiskUiTokens.of(context, level);
+    final statusLabel = isFake
+        ? (level == AppRiskLevel.critical
+            ? '⚠ Fake'
+            : level == AppRiskLevel.high
+                ? '⚠ Likely Fake'
+                : '⚠ Suspicious')
+        : (isTrusted ? '✓ Verified' : 'Check Publisher');
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12 * s.padScale),
+      padding: EdgeInsets.all(14 * s.padScale),
+      decoration: BoxDecoration(
+        color: t.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: t.cardBorder,
+          width: 1.5 + s.extraBorder,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: icon, name, status ────────────────────────────────────
+          // ── Header row ──────────────────────────────────────────────
           Row(
             children: [
-              Icon(
-                isTrusted ? Icons.verified_user : Icons.warning_amber_rounded,
-                color: statusColor,
-                size: 24,
+              Container(
+                width: 40 * s.textScale,
+                height: 40 * s.textScale,
+                decoration: BoxDecoration(
+                  color: t.iconBg,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: t.cardBorder, width: 1),
+                ),
+                child: Icon(
+                  isTrusted ? Icons.verified_user_rounded : Icons.warning_amber_rounded,
+                  color: t.iconFg,
+                  size: 22 * s.textScale,
+                ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12 * s.padScale),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       app.appName,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
-                          ),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: t.textPrimary,
+                        fontSize: 16 * s.textScale,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    SizedBox(height: 2 * s.padScale),
                     Text(
                       app.packageName,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppTheme.textSecondary,
-                            fontFamily: 'monospace',
-                          ),
+                      style: TextStyle(
+                        color: t.textSecondary,
+                        fontSize: 11.5 * s.textScale,
+                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.w500,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              SizedBox(width: 8 * s.padScale),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10 * s.padScale,
+                  vertical: 5 * s.padScale,
+                ),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: statusColor.withOpacity(0.4)),
+                  color: t.badgeBg,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: t.badgeBorder,
+                    width: 1.5 + s.extraBorder,
+                  ),
                 ),
                 child: Text(
-                  isTrusted ? '✓ Safe' : '⚠️ Alert',
+                  statusLabel,
                   style: TextStyle(
-                    color: statusColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    color: t.badgeText,
+                    fontSize: 11 * s.textScale,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ),
             ],
           ),
 
-          // ── Risk reasons ───────────────────────────────────────────────────
+          // ── Risk reasons ────────────────────────────────────────────
           if (analysis != null && isFake) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: 10 * s.padScale),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(10 * s.padScale),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A0000),
-                borderRadius: BorderRadius.circular(6),
+                color: t.badgeBg,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: t.badgeBorder, width: 1),
               ),
               child: Text(
-                analysis.reasons.join('\n'),
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFFFF8888),
-                  height: 1.4,
+                analysis.reasons.join('\n• '),
+                style: TextStyle(
+                  fontSize: 12.5 * s.textScale,
+                  color: t.badgeText,
+                  height: 1.5,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ],
 
-          // ── Signature hash ─────────────────────────────────────────────────
+          // ── Signature hash chip ─────────────────────────────────────
           if (_appSignatures[app.packageName] != null) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: 10 * s.padScale),
             GestureDetector(
               onLongPress: () {
+                final fullHash = _appSignatures[app.packageName] ?? '';
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
-                    'SHA-256: ${_appSignatures[app.packageName]}',
-                    style: const TextStyle(fontSize: 9, fontFamily: 'monospace'),
+                    'SHA-256: $fullHash',
+                    style: TextStyle(
+                      fontSize: 10 * s.textScale,
+                      fontFamily: 'monospace',
+                    ),
                   ),
                   duration: const Duration(seconds: 5),
-                  backgroundColor: AppTheme.cardColor,
+                  backgroundColor: cs.inverseSurface,
                 ));
               },
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(10 * s.padScale),
                 decoration: BoxDecoration(
-                  color: AppTheme.background.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: AppTheme.accent.withOpacity(0.2),
-                  ),
+                  color: t.iconBg,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: t.cardBorder, width: 1),
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.fingerprint,
-                      size: 14,
-                      color: AppTheme.accent,
-                    ),
-                    const SizedBox(width: 6),
+                    Icon(Icons.fingerprint_rounded,
+                        size: 16 * s.textScale, color: t.iconFg),
+                    SizedBox(width: 8 * s.padScale),
                     Expanded(
                       child: Text(
-                        'SHA256: ${(_appSignatures[app.packageName] ?? '').substring(0, 12)}...',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppTheme.textSecondary,
+                        'SHA256: '
+                        '${(_appSignatures[app.packageName] ?? '').substring(0, 12)}…',
+                        style: TextStyle(
+                          fontSize: 11 * s.textScale,
+                          color: t.textSecondary,
                           fontFamily: 'monospace',
+                          fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(
-                      Icons.tap_and_play,
-                      size: 12,
-                      color: AppTheme.accent,
-                    ),
+                    Icon(Icons.touch_app_rounded,
+                        size: 14 * s.textScale, color: t.iconFg),
                   ],
                 ),
               ),

@@ -7,10 +7,10 @@
 /// - AppThemeType enum for theme selection
 /// - AppTheme.getTheme() for ThemeData
 /// - context.accentColor for color access
+library;
 
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
-import 'app_theme_enum.dart';
 
 /// Backward compatibility class - static accessors for dark theme
 ///

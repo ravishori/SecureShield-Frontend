@@ -46,7 +46,7 @@ class NotificationService {
       requestSoundPermission: true,
     );
 
-    final initSettings = InitializationSettings(
+    const initSettings = InitializationSettings(
       android: androidInitSettings,
       iOS: iosInitSettings,
     );
@@ -71,7 +71,7 @@ class NotificationService {
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(
-        AndroidNotificationChannel(
+        const AndroidNotificationChannel(
           _fakeAppChannelId,
           'Fake App Alerts',
           description: 'Alerts when suspicious/fake apps are detected',
@@ -81,7 +81,7 @@ class NotificationService {
         ),
       );
       await androidPlugin.createNotificationChannel(
-        AndroidNotificationChannel(
+        const AndroidNotificationChannel(
           _fraudChannelId,
           'Fraud Alerts',
           description: 'Alerts for scam keywords (KYC, Digital Arrest, etc.)',
@@ -91,7 +91,7 @@ class NotificationService {
         ),
       );
       await androidPlugin.createNotificationChannel(
-        AndroidNotificationChannel(
+        const AndroidNotificationChannel(
           _bankingChannelId,
           'Banking Security',
           description: 'Banking app security warnings',
@@ -101,7 +101,7 @@ class NotificationService {
         ),
       );
       await androidPlugin.createNotificationChannel(
-        AndroidNotificationChannel(
+        const AndroidNotificationChannel(
           _securityChannelId,
           'Security Warnings',
           description: 'General security & privacy warnings',
@@ -122,7 +122,7 @@ class NotificationService {
   }) async {
     _checkInitialized();
 
-    final title = '🚨 Fake App Detected';
+    const title = '🚨 Fake App Detected';
     final body = '$appName is impersonating $impersonatesApp';
     final payload = 'fake_app:$packageName';
 
@@ -158,8 +158,8 @@ class NotificationService {
         appName.hashCode,
         title,
         body,
-        NotificationDetails(
-          iOS: const DarwinNotificationDetails(
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
             sound: 'default',
             presentAlert: true,
             presentBadge: true,
@@ -218,8 +218,8 @@ class NotificationService {
         fraudType.hashCode,
         title,
         body,
-        NotificationDetails(
-          iOS: const DarwinNotificationDetails(
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
             sound: 'default',
             presentAlert: true,
             presentBadge: true,
@@ -274,8 +274,8 @@ class NotificationService {
         '$bankName:$alertType'.hashCode,
         title,
         body,
-        NotificationDetails(
-          iOS: const DarwinNotificationDetails(
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
             sound: 'default',
             presentAlert: true,
             presentBadge: true,
@@ -321,8 +321,8 @@ class NotificationService {
         title.hashCode,
         title,
         message,
-        NotificationDetails(
-          iOS: const DarwinNotificationDetails(
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
           ),
@@ -348,6 +348,7 @@ class NotificationService {
   static void _onNotificationTapped(
     NotificationResponse response,
   ) {
+    // ignore: unused_local_variable
     final payload = response.payload ?? '';
     // Handle navigation based on payload
     // e.g., if (payload.startsWith('fake_app:')) { navigate to app detail }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -124,11 +125,109 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         });
       }
     } catch (e) {
-      if (mounted) {
-        final msg = ref.read(authProvider).error ?? e.toString();
-        AppSnackBar.error(context, msg);
+      if (!mounted) return;
+
+      // ── Special handling: HTTP 409 = account already exists ──────────────
+      // Detect either via DioException status OR by message content (covers
+      // the case where the error has already been wrapped by the provider).
+      final providerError = ref.read(authProvider).error;
+      final isConflict =
+          (e is DioException && e.response?.statusCode == 409) ||
+          (providerError?.toLowerCase().contains('already') ?? false) ||
+          (providerError?.toLowerCase().contains('conflict') ?? false);
+
+      if (isConflict) {
+        await _showAccountExistsDialog(providerError);
+        return;
       }
+
+      final msg = providerError ?? e.toString();
+      AppSnackBar.error(context, msg);
     }
+  }
+
+  /// Show a friendly "account exists" dialog with two actions: go to login
+  /// (pre-fills the identifier) or amend the form.
+  Future<void> _showAccountExistsDialog(String? backendMessage) async {
+    final email = _emailCtrl.text.trim().toLowerCase();
+    final phone = '${_selectedCountry.code}${_phoneCtrl.text.trim()}';
+
+    // The backend says either "email already" or "phone already" — pick the
+    // most-relevant identifier to pre-fill on the login screen.
+    final mentionsPhone = backendMessage?.toLowerCase().contains('phone') ?? false;
+    final loginIdentifier = mentionsPhone ? phone : email;
+
+    final accent = AppTheme.accentOf(context);
+    final cs = Theme.of(context).colorScheme;
+
+    final action = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: cs.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        icon: Icon(Icons.account_circle_outlined, color: accent, size: 48),
+        title: Text(
+          'Account already exists',
+          style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.w700),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              backendMessage ??
+                  'An account is already registered with this email or phone number.',
+              style: TextStyle(color: cs.onSurfaceVariant, height: 1.45),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: accent.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                loginIdentifier,
+                style: TextStyle(
+                  color: accent,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'monospace',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'edit'),
+            child: Text(
+              'Edit details',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(ctx, 'login'),
+            icon: const Icon(Icons.login_rounded, size: 18),
+            label: const Text('Sign in instead'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+    if (action == 'login') {
+      // Navigate to login with identifier pre-filled.
+      context.go('/login', extra: {'identifier': loginIdentifier});
+    }
+    // 'edit' (or dismiss) → stay on register screen so user can change details
   }
 
   // ── Build ───────────────────────────────────────────────────────────────
@@ -195,9 +294,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: accent.withOpacity(0.07),
+                            color: accent.withValues(alpha: 0.07),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: accent.withOpacity(0.2)),
+                            border: Border.all(color: accent.withValues(alpha: 0.2)),
                           ),
                           child: Row(
                             children: [
@@ -208,7 +307,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                   'Both email and phone number are required. '
                                   'OTP will be sent to both for verification.',
                                   style: TextStyle(
-                                    color: onSurf.withOpacity(0.7),
+                                    color: onSurf.withValues(alpha: 0.7),
                                     fontSize: 11,
                                     height: 1.4,
                                   ),
@@ -236,7 +335,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             Text(
                               'Phone Number *',
                               style: TextStyle(
-                                color: onSurf.withOpacity(0.75),
+                                color: onSurf.withValues(alpha: 0.75),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -274,7 +373,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                         const SizedBox(width: 2),
                                         Icon(Icons.arrow_drop_down,
                                           size: 18,
-                                          color: onSurf.withOpacity(0.6)),
+                                          color: onSurf.withValues(alpha: 0.6)),
                                       ],
                                     ),
                                   ),
@@ -341,7 +440,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                               text: TextSpan(
                                 text: 'Already have an account? ',
                                 style: TextStyle(
-                                  color: onSurf.withOpacity(0.6),
+                                  color: onSurf.withValues(alpha: 0.6),
                                   fontSize: 13,
                                 ),
                                 children: [
@@ -377,7 +476,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         Container(
           width: 32, height: 32,
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.12),
+            color: accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 18, color: accent),
@@ -406,8 +505,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            accent.withOpacity(0.12),
-            accent.withOpacity(0.03),
+            accent.withValues(alpha: 0.12),
+            accent.withValues(alpha: 0.03),
           ],
         ),
       ),
@@ -419,9 +518,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             child: Container(
               width: 38, height: 38,
               decoration: BoxDecoration(
-                color: accent.withOpacity(0.1),
+                color: accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: accent.withOpacity(0.25)),
+                border: Border.all(color: accent.withValues(alpha: 0.25)),
               ),
               child: Icon(Icons.arrow_back_ios_new_rounded, color: accent, size: 16),
             ),
@@ -432,9 +531,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
               Container(
                 width: 52, height: 52,
                 decoration: BoxDecoration(
-                  color: accent.withOpacity(0.15),
+                  color: accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: accent.withOpacity(0.3)),
+                  border: Border.all(color: accent.withValues(alpha: 0.3)),
                 ),
                 child: Icon(Icons.person_add_rounded, color: accent, size: 28),
               ),
@@ -455,7 +554,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     Text(
                       'Email & phone required — OTP sent to both',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                         fontSize: 11,
                       ),
                     ),
@@ -515,9 +614,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: accent.withOpacity(0.06),
+          color: accent.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: accent.withOpacity(0.2)),
+          border: Border.all(color: accent.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -579,7 +678,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         ),
         Sp.gapMd,
         DropdownButtonFormField<String>(
-          value: _selectedState,
+          initialValue: _selectedState,
           decoration: InputDecoration(
             labelText: 'State',
             prefixIcon: Icon(Icons.map_outlined, color: accent),
@@ -599,7 +698,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
         ),
         Sp.gapMd,
         DropdownButtonFormField<String>(
-          value: _selectedCity,
+          initialValue: _selectedCity,
           decoration: InputDecoration(
             labelText: 'City',
             prefixIcon: Icon(Icons.location_city_outlined, color: accent),
@@ -668,21 +767,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.success.withOpacity(0.06),
+        color: AppTheme.success.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.success.withOpacity(0.25)),
+        border: Border.all(color: AppTheme.success.withValues(alpha: 0.25)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.verified_user_outlined, size: 16, color: AppTheme.success),
+          const Icon(Icons.verified_user_outlined, size: 16, color: AppTheme.success),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               'A 6-digit OTP will be sent to BOTH your email and mobile number '
               'to verify your identity. OTP expires in 10 minutes.',
               style: TextStyle(
-                color: onSurf.withOpacity(0.7),
+                color: onSurf.withValues(alpha: 0.7),
                 fontSize: 12,
                 height: 1.4,
               ),

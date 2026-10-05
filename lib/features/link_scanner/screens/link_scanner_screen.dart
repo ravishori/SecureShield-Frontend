@@ -86,7 +86,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
             // ── URL input ──────────────────────────────────────────────
             TextField(
               controller: _urlController,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               keyboardType: TextInputType.url,
               autocorrect: false,
               decoration: InputDecoration(
@@ -122,9 +122,12 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
                     : const Icon(Icons.security),
                 label: Text(_scanning ? 'Scanning...' : 'Scan URL'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.accent,
-                  foregroundColor: AppTheme.background,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -139,14 +142,16 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Row(
                   children: [
-                    const Icon(Icons.history, size: 16, color: AppTheme.accent),
-                    const SizedBox(width: 6),
+                    Icon(Icons.history,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 8),
                     Text(
                       'Recent Scans',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                   ],
                 ),
@@ -164,26 +169,28 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
 class _InfoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.accent.withValues(alpha: 0.08),
+        color: cs.primary.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppTheme.accent.withValues(alpha: 0.25)),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.35), width: 1.2),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.shield_outlined, color: AppTheme.accent, size: 20),
-          SizedBox(width: 10),
+          Icon(Icons.shield_outlined, color: cs.primary, size: 22),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               'Powered by Google Safe Browsing — checks URLs against known malware, phishing, and scam databases.',
-              style: const TextStyle(
-                color: const Color.fromARGB(222, 255, 255, 255),
-                fontSize: 12,
-                height: 1.4,
+              style: TextStyle(
+                color: cs.onSurface,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w500,
+                height: 1.45,
               ),
-            ), // Text
+            ),
           ),
         ],
       ),
@@ -206,8 +213,12 @@ class _ScanResultCard extends StatelessWidget {
     final gsb = result['gsb_threats'] as List<dynamic>?;
     final url = result['url'] as String? ?? '';
 
-    final isGsbVerified = scanProvider == 'google_safe_browsing';
+    // The backend reports "google_safe_browsing+urlhaus" when both providers answered.
+    final isGsbVerified = scanProvider.contains('google_safe_browsing');
+    // Show the "unable to fully verify" banner ONLY when no live external
+    // provider could be consulted (true internal-only path).
     final isFallback = scanProvider == 'internal_fallback';
+    final isHybrid = scanProvider == 'hybrid_fallback';
     final isSuspicious = !isMalicious && (isPhishing || (riskScore >= 30 && riskScore < 60));
 
     // Determine tier
@@ -273,24 +284,28 @@ class _ScanResultCard extends StatelessWidget {
             ),
           ),
 
-          const Divider(height: 1, color: Colors.white10),
+          Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
 
           // ── URL row ──────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
-                const Icon(Icons.link, size: 14, color: Colors.white70),
+                Icon(Icons.link, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     url.length > 60 ? '${url.substring(0, 60)}…' : url,
-                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.copy, size: 14, color: Colors.white70),
+                  icon: Icon(Icons.copy, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -306,7 +321,7 @@ class _ScanResultCard extends StatelessWidget {
 
           // ── GSB threat details (when confirmed threats) ──────────────
           if (isGsbVerified && gsb != null && gsb.isNotEmpty) ...[
-            const Divider(height: 1, color: Colors.white10),
+            Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -352,16 +367,16 @@ class _ScanResultCard extends StatelessWidget {
                               children: [
                                 Text(
                                   label,
-                                  style: const TextStyle(
-                                    color: AppTheme.textPrimary,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
                                   ),
                                 ),
                                 Text(
                                   _threatDescription(threatType),
-                                  style: const TextStyle(
-                                    color: AppTheme.textSecondary,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontSize: 11,
                                     height: 1.3,
                                   ),
@@ -380,7 +395,7 @@ class _ScanResultCard extends StatelessWidget {
 
           // ── Threat category chip (non-GSB threats) ───────────────────
           if (threatCategory.isNotEmpty && !(isGsbVerified && gsb != null && gsb.isNotEmpty)) ...[
-            const Divider(height: 1, color: Colors.white10),
+            Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Wrap(
@@ -401,8 +416,11 @@ class _ScanResultCard extends StatelessWidget {
           ],
 
           // ── Fallback caution message ──────────────────────────────────
-          if (isFallback) ...[
-            const Divider(height: 1, color: Colors.white10),
+          // Only shown when NO live external provider could be reached.
+          // URLhaus-verified or hybrid scans skip this and show their own
+          // provider badge instead.
+          if (isFallback || isHybrid) ...[
+            Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
             Container(
               margin: const EdgeInsets.all(12),
               padding: const EdgeInsets.all(12),
@@ -411,15 +429,18 @@ class _ScanResultCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppTheme.warning.withValues(alpha: 0.35)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: AppTheme.warning, size: 18),
-                  SizedBox(width: 10),
+                  const Icon(Icons.info_outline, color: AppTheme.warning, size: 18),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Unable to fully verify — Google Safe Browsing is currently unavailable. '
-                      'Result is based on internal rules only. Proceed with caution.',
-                      style: TextStyle(
+                      isFallback
+                          ? 'Live threat feeds were unreachable — this result is based on '
+                            'internal phishing heuristics only. Proceed with caution.'
+                          : 'Google Safe Browsing is temporarily unreachable. Verified '
+                            'against URLhaus + internal heuristics instead.',
+                      style: const TextStyle(
                         color: AppTheme.warning,
                         fontSize: 12,
                         height: 1.4,
@@ -433,7 +454,7 @@ class _ScanResultCard extends StatelessWidget {
 
           // ── Action advice ─────────────────────────────────────────────
           if (tier != _Tier.safe) ...[
-            const Divider(height: 1, color: Colors.white10),
+            Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
             Padding(
               padding: const EdgeInsets.all(16),
               child: _ActionAdvice(tier: tier, isMalicious: isMalicious, isPhishing: isPhishing),
@@ -480,9 +501,13 @@ class _RiskScoreBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Risk Score',
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Text(
               '${score.toStringAsFixed(0)} / 100',
@@ -495,9 +520,9 @@ class _RiskScoreBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: score / 100,
-            backgroundColor: Colors.white10,
+            backgroundColor: Theme.of(context).colorScheme.outlineVariant,
             valueColor: AlwaysStoppedAnimation(color),
-            minHeight: 6,
+            minHeight: 7,
           ),
         ),
       ],
@@ -513,18 +538,39 @@ class _ProviderBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     final (label, icon, color) = switch (scanProvider) {
       'google_safe_browsing' => (
           'Verified by Google Safe Browsing',
           Icons.verified,
-          AppTheme.accent,
+          theme.primary,
+        ),
+      'google_safe_browsing+urlhaus' => (
+          'Verified by Google Safe Browsing + URLhaus',
+          Icons.verified,
+          theme.primary,
+        ),
+      'urlhaus' => (
+          'Verified by URLhaus (abuse.ch)',
+          Icons.verified_user,
+          theme.primary,
+        ),
+      'urlhaus_clean_internal_score' => (
+          'Checked via URLhaus + internal rules',
+          Icons.fact_check_outlined,
+          theme.primary,
+        ),
+      'hybrid_fallback' => (
+          'URLhaus + internal rules (GSB temporarily unreachable)',
+          Icons.shield_outlined,
+          const Color(0xFFFF8800),
         ),
       'internal_fallback' => (
-          'Internal scan only (GSB unavailable)',
-          Icons.warning_amber,
-          AppTheme.warning,
+          'Internal heuristics only (no live threat feed)',
+          Icons.warning_amber_rounded,
+          const Color(0xFFFF8800),
         ),
-      _ => ('Internal scan', Icons.security, AppTheme.textSecondary),
+      _ => ('Internal scan', Icons.security, theme.onSurfaceVariant),
     };
 
     return Row(
@@ -532,7 +578,13 @@ class _ProviderBadge extends StatelessWidget {
       children: [
         Icon(icon, size: 12, color: color),
         const SizedBox(width: 4),
-        Text(label, style: TextStyle(color: color, fontSize: 11)),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(color: color, fontSize: 11),
+            textAlign: TextAlign.center,
+          ),
+        ),
       ],
     );
   }
@@ -583,7 +635,11 @@ class _ActionAdvice extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           body,
-          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.5),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 12,
+            height: 1.5,
+          ),
         ),
         if (tier == _Tier.malicious) ...[
           const SizedBox(height: 12),
@@ -621,20 +677,23 @@ class _HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     final isMalicious = item['is_malicious'] as bool? ?? false;
-    final isPhishing = item['is_phishing'] as bool? ?? false;
-    final riskScore = (item['risk_score'] as num?)?.toDouble() ?? 0.0;
-    final url = item['url'] as String? ?? '';
-    final provider = item['scan_provider'] as String? ?? 'internal';
-    final gsb = item['gsb_threats'] as List<dynamic>?;
+    final isPhishing  = item['is_phishing']  as bool? ?? false;
+    final riskScore   = (item['risk_score'] as num?)?.toDouble() ?? 0.0;
+    final url         = item['url']           as String? ?? '';
+    final provider    = item['scan_provider'] as String? ?? 'internal';
+    final gsb         = item['gsb_threats']   as List<dynamic>?;
 
     final isSuspicious = !isMalicious && (isPhishing || riskScore >= 30);
 
-    final color = isMalicious
-        ? AppTheme.errorColor
+    // Risk-tier palette — pulls from the live theme so light/dark both work.
+    final tierColor = isMalicious
+        ? const Color(0xFFB00020)
         : isSuspicious
-            ? AppTheme.warning
-            : AppTheme.success;
+            ? const Color(0xFFFF6D00)
+            : const Color(0xFF2E7D32);
 
     final statusLabel = isMalicious
         ? 'MALICIOUS'
@@ -646,60 +705,82 @@ class _HistoryTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.cardColor,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        color: cs.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: tierColor.withValues(alpha: 0.35), width: 1.2),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
+              color: tierColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
+              border: Border.all(color: tierColor.withValues(alpha: 0.5)),
             ),
             child: Icon(
               isMalicious
-                  ? Icons.gpp_bad
+                  ? Icons.gpp_bad_rounded
                   : isSuspicious
-                      ? Icons.warning_amber
-                      : Icons.verified_user,
-              color: color,
-              size: 16,
+                      ? Icons.warning_amber_rounded
+                      : Icons.verified_user_rounded,
+              color: tierColor,
+              size: 18,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   url.length > 45 ? '${url.substring(0, 45)}…' : url,
-                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  style: TextStyle(
+                    color: cs.onSurface,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Row(
                   children: [
                     if (provider == 'google_safe_browsing') ...[
-                      const Icon(Icons.verified, size: 10, color: AppTheme.accent),
+                      Icon(Icons.verified, size: 12, color: cs.primary),
                       const SizedBox(width: 3),
-                      const Text('GSB', style: TextStyle(color: AppTheme.accent, fontSize: 10)),
-                      const SizedBox(width: 6),
+                      Text('GSB',
+                          style: TextStyle(
+                              color: cs.primary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
                     ] else if (provider == 'internal_fallback') ...[
-                      const Icon(Icons.warning_amber, size: 10, color: AppTheme.warning),
+                      const Icon(Icons.warning_amber_rounded,
+                          size: 12, color: Color(0xFFFF8800)),
                       const SizedBox(width: 3),
-                      const Text('Fallback', style: TextStyle(color: AppTheme.warning, fontSize: 10)),
-                      const SizedBox(width: 6),
+                      const Text('Fallback',
+                          style: TextStyle(
+                              color: Color(0xFFFF8800),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
                     ],
                     if (hasGsbThreats) ...[
-                      const Text('•', style: TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
-                      const SizedBox(width: 4),
+                      Text('•',
+                          style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: 11)),
+                      const SizedBox(width: 6),
                       Text(
                         '${gsb.length} threat${gsb.length > 1 ? 's' : ''}',
-                        style: const TextStyle(color: AppTheme.errorColor, fontSize: 10),
+                        style: const TextStyle(
+                          color: Color(0xFFB00020),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ],
@@ -707,21 +788,36 @@ class _HistoryTile extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                statusLabel,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
-                  letterSpacing: 0.5,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: tierColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: tierColor.withValues(alpha: 0.5)),
+                ),
+                child: Text(
+                  statusLabel,
+                  style: TextStyle(
+                    color: tierColor,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                    letterSpacing: 0.4,
+                  ),
                 ),
               ),
+              const SizedBox(height: 4),
               Text(
                 '${riskScore.toStringAsFixed(0)}/100',
-                style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 11),
+                style: TextStyle(
+                  color: tierColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),
