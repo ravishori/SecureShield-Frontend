@@ -1,9 +1,7 @@
 {
   "@@locale": "bn",
-
   "appName": "SecureShield AI",
   "appTagline": "আপনার সম্পূর্ণ সাইবার সুরক্ষা",
-
   "ok": "ঠিক আছে",
   "cancel": "বাতিল করুন",
   "save": "সংরক্ষণ করুন",
@@ -14,7 +12,6 @@
   "retry": "আবার চেষ্টা করুন",
   "loading": "লোড হচ্ছে…",
   "orDivider": "অথবা",
-
   "welcomeTitle": "SecureShield AI",
   "welcomeSubtitle": "আপনার সম্পূর্ণ সাইবার সুরক্ষা",
   "welcomeScanTitle": "মোবাইল স্ক্যান করুন",
@@ -27,7 +24,6 @@
   "welcomeSosSubtitle": "সাইবার অপরাধ তাৎক্ষণিক রিপোর্ট করুন",
   "welcomeShareTitle": "WhatsApp-এ শেয়ার করুন",
   "welcomeShareSubtitle": "বন্ধুদের সাইবার কেলেঙ্কারি সম্পর্কে সতর্ক করুন",
-
   "signIn": "সাইন ইন",
   "signInSubtitle": "চালিয়ে যেতে ফোন নম্বর বা ইমেইল দিন",
   "mobileTab": "মোবাইল",
@@ -44,7 +40,6 @@
   "creatingNewAccount": "নতুন অ্যাকাউন্ট তৈরি হচ্ছে",
   "loginWithBiometric": "বায়োমেট্রিক দিয়ে লগইন",
   "continueWithGoogle": "Google দিয়ে চালিয়ে যান",
-
   "verifyTitle": "কোড যাচাই করুন",
   "enterVerificationCode": "যাচাইকরণ কোড দিন",
   "codeSentViaSms": "আমরা {phone}-এ ৬ সংখ্যার SMS পাঠিয়েছি",
@@ -52,7 +47,6 @@
   "verifyBtn": "কোড যাচাই করুন",
   "verifying": "যাচাই হচ্ছে…",
   "resendCode": "কোড পুনরায় পাঠান",
-
   "registerTitle": "অ্যাকাউন্ট তৈরি করুন",
   "registerSubtitle": "শুরু করতে মোবাইল নম্বর দিন।\nআমরা আপনাকে একটি যাচাইকরণ কোড পাঠাব।",
   "mobileNumber": "মোবাইল নম্বর",
@@ -62,7 +56,6 @@
   "alreadyHaveAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
   "signInLink": "সাইন ইন করুন",
   "registerInfoNote": "নম্বর যাচাইয়ের পরে, নিবন্ধন সম্পূর্ণ করতে প্রোফাইল বিবরণ পূরণ করুন।",
-
   "completeYourProfile": "আপনার প্রোফাইল সম্পূর্ণ করুন",
   "profileSetupSubtitle": "আপনার SecureShield অ্যাকাউন্ট সক্রিয় করতে বিবরণ পূরণ করুন",
   "personalInformation": "ব্যক্তিগত তথ্য",
@@ -82,7 +75,6 @@
   "saveAndContinue": "সংরক্ষণ করুন এবং চালিয়ে যান",
   "saving": "সংরক্ষণ হচ্ছে…",
   "fillThisLater": "পরে পূরণ করুন",
-
   "settings": "সেটিংস",
   "appearance": "চেহারা",
   "appTheme": "অ্যাপ থিম",
@@ -104,12 +96,10 @@
   "cybercrimeHelpline": "সাইবার ক্রাইম হেল্পলাইন",
   "cybercrimeHelplineNumber": "1930 (ভারত জাতীয় সাইবার ক্রাইম হেল্পলাইন)",
   "logout": "লগ আউট",
-
   "profileCompleteness": "প্রোফাইল সম্পূর্ণতা",
   "profileCompletenessPercent": "{percent}% সম্পূর্ণ",
   "completeProfileBanner": "সমস্ত নিরাপত্তা বৈশিষ্ট্য আনলক করতে প্রোফাইল সম্পূর্ণ করুন",
   "completeProfileBtn": "প্রোফাইল সম্পূর্ণ করুন",
-
   "fieldRequired": "এই ক্ষেত্রটি প্রয়োজনীয়",
   "invalidEmail": "একটি বৈধ ইমেইল ঠিকানা দিন",
   "invalidPhone": "একটি বৈধ ফোন নম্বর দিন",
@@ -122,5 +112,105 @@
   "scanTitle": "ডিভাইস নিরাপত্তা স্ক্যান",
   "scanSubtitle": "চালিয়ে যাওয়ার আগে আপনার ডিভাইস পরীক্ষা করা হচ্ছে",
   "cyberSafetyTips": "সাইবার নিরাপত্তা টিপস",
-  "cyberCrimeContacts": "সাইবার ক্রাইম যোগাযোগ"
+  "cyberCrimeContacts": "সাইবার ক্রাইম যোগাযোগ",
+  "navHome": "হোম",
+  "navScanner": "স্ক্যানার",
+  "navAlerts": "সতর্কতা",
+  "navReports": "প্রতিবেদন",
+  "navAiCoach": "এআই কোচ",
+  "secThreat": "হুমকি শনাক্তকরণ",
+  "secEmergency": "জরুরি ও SOS",
+  "secIdentity": "পরিচয় ও গোপনীয়তা",
+  "secFamily": "পরিবারের নিরাপত্তা",
+  "secDevice": "ডিভাইস নিরাপত্তা",
+  "secReports": "প্রতিবেদন ও অন্তর্দৃষ্টি",
+  "secAccount": "অ্যাকাউন্ট",
+  "menuLinkScanner": "লিংক স্ক্যানার",
+  "menuMessageAnalyzer": "বার্তা বিশ্লেষক",
+  "menuWifi": "ওয়াই-ফাই নিরাপত্তা",
+  "menuAppRisk": "অ্যাপ ঝুঁকি স্ক্যানার",
+  "menuPackageMonitor": "প্যাকেজ মনিটর",
+  "menuCommunityScams": "কমিউনিটি প্রতারণা",
+  "menuPoliceCall": "পুলিশ ভিডিও কল",
+  "menuFir": "এফআইআর খসড়া",
+  "menuCallRecorder": "কল রেকর্ডার",
+  "menuEmergencyShare": "জরুরি শেয়ার",
+  "menuComplaintEmail": "অভিযোগ ইমেল",
+  "menuAppInstall": "অ্যাপ ইনস্টল মনিটর",
+  "menuClone": "ক্লোন ডিটেক্টর",
+  "menuElderly": "বয়স্ক সুরক্ষা",
+  "menuBanking": "ব্যাংকিং সুরক্ষা",
+  "menuBankOtp": "ব্যাংক OTP মনিটর",
+  "menuVpn": "ভিপিএন মনিটর",
+  "menuRemote": "রিমোট ডিটেক্টর",
+  "menuScreenRec": "স্ক্রিন রেকর্ডিং শনাক্তকরণ",
+  "menuJobMsg": "চাকরি / বার্তা বিশ্লেষক",
+  "menuDeviceScan": "ডিভাইস স্ক্যান",
+  "menuConsent": "সম্মতি ব্যবস্থাপক",
+  "menuSecurityReports": "নিরাপত্তা প্রতিবেদন",
+  "menuCyberTips": "সাইবার টিপস",
+  "menuProfile": "আমার প্রোফাইল",
+  "menuEmergencyContacts": "জরুরি যোগাযোগ",
+  "familyTitle": "পরিবার নিরাপত্তা ড্যাশবোর্ড",
+  "familyTabFamily": "পরিবার ({count})",
+  "@familyTabFamily": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabKids": "শিশু ({count})",
+  "@familyTabKids": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabInvites": "আমন্ত্রণ ({count})",
+  "@familyTabInvites": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteTitle": "{name} আপনাকে পরিবার হিসেবে যুক্ত করতে চান",
+  "@inviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharesAlerts": "গ্রহণ করলে {name} আপনার নিরাপত্তা সতর্কতা দেখতে পারবেন।",
+  "@inviteSharesAlerts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteNoShare": "গ্রহণ করলে আপনার সতর্কতা শেয়ার হয় না।",
+  "accept": "গ্রহণ করুন",
+  "decline": "প্রত্যাখ্যান",
+  "noInvites": "কোনো অপেক্ষমাণ আমন্ত্রণ নেই। কেউ আপনাকে পরিবারে যুক্ত করলে তারা আপনার সতর্কতা দেখতে পারবে কি না তা আপনি এখানে ঠিক করবেন।",
+  "consentLinked": "যুক্ত",
+  "consentLinkedUnread": "যুক্ত - {count} অপঠিত",
+  "@consentLinkedUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "consentDeclined": "প্রত্যাখ্যাত",
+  "consentPending": "অনুমোদনের অপেক্ষায়",
+  "noAlerts": "কোনো সতর্কতা নেই",
+  "youAreSafe": "আপনি নিরাপদ!",
+  "panicTitle": "প্যানিক অ্যালার্ট",
+  "panicBody": "এটি আপনার জরুরি যোগাযোগদের বার্তা পাঠাবে এবং একটি গুরুতর সতর্কতা নথিভুক্ত করবে (আপনার অনুমোদিত পরিবারের সদস্যরা এটি দেখতে পারবেন)। আপনি কি নিশ্চিত?",
+  "sendAlert": "অ্যালার্ট পাঠান",
+  "panicSent": "প্যানিক অ্যালার্ট পাঠানো হয়েছে! জরুরি যোগাযোগদের জানানো হয়েছে।"
 }

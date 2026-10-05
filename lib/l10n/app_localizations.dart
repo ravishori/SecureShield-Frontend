@@ -783,6 +783,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cyber Crime Contacts'**
   String get cyberCrimeContacts;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner'**
+  String get navScanner;
+
+  /// No description provided for @navAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get navAlerts;
+
+  /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// No description provided for @navAiCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Coach'**
+  String get navAiCoach;
+
+  /// No description provided for @secThreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Threat Detection'**
+  String get secThreat;
+
+  /// No description provided for @secEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency & SOS'**
+  String get secEmergency;
+
+  /// No description provided for @secIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity & Privacy'**
+  String get secIdentity;
+
+  /// No description provided for @secFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Safety'**
+  String get secFamily;
+
+  /// No description provided for @secDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Security'**
+  String get secDevice;
+
+  /// No description provided for @secReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & Insights'**
+  String get secReports;
+
+  /// No description provided for @secAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get secAccount;
+
+  /// No description provided for @menuLinkScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Scanner'**
+  String get menuLinkScanner;
+
+  /// No description provided for @menuMessageAnalyzer.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Analyzer'**
+  String get menuMessageAnalyzer;
+
+  /// No description provided for @menuWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Safety'**
+  String get menuWifi;
+
+  /// No description provided for @menuAppRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'App Risk Scanner'**
+  String get menuAppRisk;
+
+  /// No description provided for @menuPackageMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Monitor'**
+  String get menuPackageMonitor;
+
+  /// No description provided for @menuCommunityScams.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Scams'**
+  String get menuCommunityScams;
+
+  /// No description provided for @menuPoliceCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Police Video Call'**
+  String get menuPoliceCall;
+
+  /// No description provided for @menuFir.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR Draft'**
+  String get menuFir;
+
+  /// No description provided for @menuCallRecorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Recorder'**
+  String get menuCallRecorder;
+
+  /// No description provided for @menuEmergencyShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Share'**
+  String get menuEmergencyShare;
+
+  /// No description provided for @menuComplaintEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Email'**
+  String get menuComplaintEmail;
+
+  /// No description provided for @menuAppInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'App Install Monitor'**
+  String get menuAppInstall;
+
+  /// No description provided for @menuClone.
+  ///
+  /// In en, this message translates to:
+  /// **'Clone Detector'**
+  String get menuClone;
+
+  /// No description provided for @menuElderly.
+  ///
+  /// In en, this message translates to:
+  /// **'Elderly Protection'**
+  String get menuElderly;
+
+  /// No description provided for @menuBanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Banking Protection'**
+  String get menuBanking;
+
+  /// No description provided for @menuBankOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank OTP Monitor'**
+  String get menuBankOtp;
+
+  /// No description provided for @menuVpn.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Monitor'**
+  String get menuVpn;
+
+  /// No description provided for @menuRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Detector'**
+  String get menuRemote;
+
+  /// No description provided for @menuScreenRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Rec Detect'**
+  String get menuScreenRec;
+
+  /// No description provided for @menuJobMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Job / Msg Analyzer'**
+  String get menuJobMsg;
+
+  /// No description provided for @menuDeviceScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Scan'**
+  String get menuDeviceScan;
+
+  /// No description provided for @menuConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent Manager'**
+  String get menuConsent;
+
+  /// No description provided for @menuSecurityReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Reports'**
+  String get menuSecurityReports;
+
+  /// No description provided for @menuCyberTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Tips'**
+  String get menuCyberTips;
+
+  /// No description provided for @menuProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get menuProfile;
+
+  /// No description provided for @menuEmergencyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contacts'**
+  String get menuEmergencyContacts;
+
+  /// No description provided for @familyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Safety Dashboard'**
+  String get familyTitle;
+
+  /// No description provided for @familyTabFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family ({count})'**
+  String familyTabFamily(int count);
+
+  /// No description provided for @familyTabKids.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids ({count})'**
+  String familyTabKids(int count);
+
+  /// No description provided for @familyTabInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'Invites ({count})'**
+  String familyTabInvites(int count);
+
+  /// No description provided for @inviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to add you as family'**
+  String inviteTitle(String name);
+
+  /// No description provided for @inviteSharesAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'If you accept, {name} will be able to see your security alerts.'**
+  String inviteSharesAlerts(String name);
+
+  /// No description provided for @inviteNoShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting does not share your alerts.'**
+  String get inviteNoShare;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @noInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.'**
+  String get noInvites;
+
+  /// No description provided for @consentLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked'**
+  String get consentLinked;
+
+  /// No description provided for @consentLinkedUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked - {count} unread'**
+  String consentLinkedUnread(int count);
+
+  /// No description provided for @consentDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get consentDeclined;
+
+  /// No description provided for @consentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for approval'**
+  String get consentPending;
+
+  /// No description provided for @noAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts'**
+  String get noAlerts;
+
+  /// No description provided for @youAreSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'You are safe!'**
+  String get youAreSafe;
+
+  /// No description provided for @panicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Panic Alert'**
+  String get panicTitle;
+
+  /// No description provided for @panicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?'**
+  String get panicBody;
+
+  /// No description provided for @sendAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND ALERT'**
+  String get sendAlert;
+
+  /// No description provided for @panicSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Panic alert sent! Emergency contacts notified.'**
+  String get panicSent;
 }
 
 class _AppLocalizationsDelegate

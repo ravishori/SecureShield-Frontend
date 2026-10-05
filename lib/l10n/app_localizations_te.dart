@@ -361,4 +361,193 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'సైబర్ క్రైమ్ సంప్రదింపులు';
+
+  @override
+  String get navHome => 'హోమ్';
+
+  @override
+  String get navScanner => 'స్కానర్';
+
+  @override
+  String get navAlerts => 'హెచ్చరికలు';
+
+  @override
+  String get navReports => 'నివేదికలు';
+
+  @override
+  String get navAiCoach => 'AI కోచ్';
+
+  @override
+  String get secThreat => 'ముప్పు గుర్తింపు';
+
+  @override
+  String get secEmergency => 'అత్యవసరం & SOS';
+
+  @override
+  String get secIdentity => 'గుర్తింపు & గోప్యత';
+
+  @override
+  String get secFamily => 'కుటుంబ భద్రత';
+
+  @override
+  String get secDevice => 'పరికర భద్రత';
+
+  @override
+  String get secReports => 'నివేదికలు & అంతర్దృష్టులు';
+
+  @override
+  String get secAccount => 'ఖాతా';
+
+  @override
+  String get menuLinkScanner => 'లింక్ స్కానర్';
+
+  @override
+  String get menuMessageAnalyzer => 'సందేశ విశ్లేషకం';
+
+  @override
+  String get menuWifi => 'వై-ఫై భద్రత';
+
+  @override
+  String get menuAppRisk => 'యాప్ రిస్క్ స్కానర్';
+
+  @override
+  String get menuPackageMonitor => 'ప్యాకేజీ మానిటర్';
+
+  @override
+  String get menuCommunityScams => 'కమ్యూనిటీ మోసాలు';
+
+  @override
+  String get menuPoliceCall => 'పోలీస్ వీడియో కాల్';
+
+  @override
+  String get menuFir => 'FIR ముసాయిదా';
+
+  @override
+  String get menuCallRecorder => 'కాల్ రికార్డర్';
+
+  @override
+  String get menuEmergencyShare => 'అత్యవసర షేర్';
+
+  @override
+  String get menuComplaintEmail => 'ఫిర్యాదు ఇమెయిల్';
+
+  @override
+  String get menuAppInstall => 'యాప్ ఇన్‌స్టాల్ మానిటర్';
+
+  @override
+  String get menuClone => 'క్లోన్ డిటెక్టర్';
+
+  @override
+  String get menuElderly => 'వృద్ధుల రక్షణ';
+
+  @override
+  String get menuBanking => 'బ్యాంకింగ్ రక్షణ';
+
+  @override
+  String get menuBankOtp => 'బ్యాంక్ OTP మానిటర్';
+
+  @override
+  String get menuVpn => 'VPN మానిటర్';
+
+  @override
+  String get menuRemote => 'రిమోట్ డిటెక్టర్';
+
+  @override
+  String get menuScreenRec => 'స్క్రీన్ రికార్డింగ్ గుర్తింపు';
+
+  @override
+  String get menuJobMsg => 'ఉద్యోగ / సందేశ విశ్లేషకం';
+
+  @override
+  String get menuDeviceScan => 'పరికర స్కాన్';
+
+  @override
+  String get menuConsent => 'సమ్మతి నిర్వాహకుడు';
+
+  @override
+  String get menuSecurityReports => 'భద్రతా నివేదికలు';
+
+  @override
+  String get menuCyberTips => 'సైబర్ చిట్కాలు';
+
+  @override
+  String get menuProfile => 'నా ప్రొఫైల్';
+
+  @override
+  String get menuEmergencyContacts => 'అత్యవసర సంప్రదింపులు';
+
+  @override
+  String get familyTitle => 'కుటుంబ భద్రత డాష్‌బోర్డ్';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'కుటుంబం ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'పిల్లలు ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'ఆహ్వానాలు ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name మిమ్మల్ని కుటుంబ సభ్యునిగా చేర్చాలనుకుంటున్నారు';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'అంగీకరిస్తే $name మీ భద్రతా హెచ్చరికలను చూడగలరు.';
+  }
+
+  @override
+  String get inviteNoShare => 'అంగీకరించడం వల్ల మీ హెచ్చరికలు షేర్ కావు.';
+
+  @override
+  String get accept => 'అంగీకరించు';
+
+  @override
+  String get decline => 'తిరస్కరించు';
+
+  @override
+  String get noInvites =>
+      'పెండింగ్ ఆహ్వానాలు లేవు. ఎవరైనా మిమ్మల్ని కుటుంబంగా చేర్చినప్పుడు, వారు మీ హెచ్చరికలను చూడవచ్చా అని మీరు ఇక్కడ నిర్ణయిస్తారు.';
+
+  @override
+  String get consentLinked => 'లింక్ అయింది';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'లింక్ అయింది - $count చదవనివి';
+  }
+
+  @override
+  String get consentDeclined => 'తిరస్కరించబడింది';
+
+  @override
+  String get consentPending => 'ఆమోదం కోసం వేచి ఉంది';
+
+  @override
+  String get noAlerts => 'హెచ్చరికలు లేవు';
+
+  @override
+  String get youAreSafe => 'మీరు సురక్షితంగా ఉన్నారు!';
+
+  @override
+  String get panicTitle => 'పానిక్ అలర్ట్';
+
+  @override
+  String get panicBody =>
+      'ఇది మీ అత్యవసర సంప్రదింపులకు సందేశం పంపి, ఒక తీవ్రమైన హెచ్చరికను నమోదు చేస్తుంది (మీరు ఆమోదించిన కుటుంబ సభ్యులు దీన్ని చూడవచ్చు). మీరు ఖచ్చితంగా ఉన్నారా?';
+
+  @override
+  String get sendAlert => 'అలర్ట్ పంపండి';
+
+  @override
+  String get panicSent =>
+      'పానిక్ అలర్ట్ పంపబడింది! అత్యవసర సంప్రదింపులకు తెలియజేయబడింది.';
 }

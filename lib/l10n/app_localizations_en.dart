@@ -358,4 +358,192 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'Cyber Crime Contacts';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navScanner => 'Scanner';
+
+  @override
+  String get navAlerts => 'Alerts';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navAiCoach => 'AI Coach';
+
+  @override
+  String get secThreat => 'Threat Detection';
+
+  @override
+  String get secEmergency => 'Emergency & SOS';
+
+  @override
+  String get secIdentity => 'Identity & Privacy';
+
+  @override
+  String get secFamily => 'Family Safety';
+
+  @override
+  String get secDevice => 'Device Security';
+
+  @override
+  String get secReports => 'Reports & Insights';
+
+  @override
+  String get secAccount => 'Account';
+
+  @override
+  String get menuLinkScanner => 'Link Scanner';
+
+  @override
+  String get menuMessageAnalyzer => 'Message Analyzer';
+
+  @override
+  String get menuWifi => 'Wi-Fi Safety';
+
+  @override
+  String get menuAppRisk => 'App Risk Scanner';
+
+  @override
+  String get menuPackageMonitor => 'Package Monitor';
+
+  @override
+  String get menuCommunityScams => 'Community Scams';
+
+  @override
+  String get menuPoliceCall => 'Police Video Call';
+
+  @override
+  String get menuFir => 'FIR Draft';
+
+  @override
+  String get menuCallRecorder => 'Call Recorder';
+
+  @override
+  String get menuEmergencyShare => 'Emergency Share';
+
+  @override
+  String get menuComplaintEmail => 'Complaint Email';
+
+  @override
+  String get menuAppInstall => 'App Install Monitor';
+
+  @override
+  String get menuClone => 'Clone Detector';
+
+  @override
+  String get menuElderly => 'Elderly Protection';
+
+  @override
+  String get menuBanking => 'Banking Protection';
+
+  @override
+  String get menuBankOtp => 'Bank OTP Monitor';
+
+  @override
+  String get menuVpn => 'VPN Monitor';
+
+  @override
+  String get menuRemote => 'Remote Detector';
+
+  @override
+  String get menuScreenRec => 'Screen Rec Detect';
+
+  @override
+  String get menuJobMsg => 'Job / Msg Analyzer';
+
+  @override
+  String get menuDeviceScan => 'Device Scan';
+
+  @override
+  String get menuConsent => 'Consent Manager';
+
+  @override
+  String get menuSecurityReports => 'Security Reports';
+
+  @override
+  String get menuCyberTips => 'Cyber Tips';
+
+  @override
+  String get menuProfile => 'My Profile';
+
+  @override
+  String get menuEmergencyContacts => 'Emergency Contacts';
+
+  @override
+  String get familyTitle => 'Family Safety Dashboard';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'Family ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'Kids ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'Invites ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name wants to add you as family';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'If you accept, $name will be able to see your security alerts.';
+  }
+
+  @override
+  String get inviteNoShare => 'Accepting does not share your alerts.';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get noInvites =>
+      'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.';
+
+  @override
+  String get consentLinked => 'Linked';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'Linked - $count unread';
+  }
+
+  @override
+  String get consentDeclined => 'Declined';
+
+  @override
+  String get consentPending => 'Waiting for approval';
+
+  @override
+  String get noAlerts => 'No alerts';
+
+  @override
+  String get youAreSafe => 'You are safe!';
+
+  @override
+  String get panicTitle => 'Panic Alert';
+
+  @override
+  String get panicBody =>
+      'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?';
+
+  @override
+  String get sendAlert => 'SEND ALERT';
+
+  @override
+  String get panicSent => 'Panic alert sent! Emergency contacts notified.';
 }

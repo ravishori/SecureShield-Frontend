@@ -901,12 +901,12 @@ class HomeScreen extends ConsumerWidget {
             case 4: context.go('/home/ai-coach'); break;
           }
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard),     label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.apps),          label: 'Scanner'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Alerts'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart),     label: 'Reports'),
-          BottomNavigationBarItem(icon: Icon(Icons.smart_toy),     label: 'AI Coach'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.dashboard),     label: AppLocalizations.of(context).navHome),
+          BottomNavigationBarItem(icon: const Icon(Icons.apps),          label: AppLocalizations.of(context).navScanner),
+          BottomNavigationBarItem(icon: const Icon(Icons.notifications), label: AppLocalizations.of(context).navAlerts),
+          BottomNavigationBarItem(icon: const Icon(Icons.bar_chart),     label: AppLocalizations.of(context).navReports),
+          BottomNavigationBarItem(icon: const Icon(Icons.smart_toy),     label: AppLocalizations.of(context).navAiCoach),
         ],
       ),
     );
@@ -953,49 +953,49 @@ class _AppDrawer extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               children: [
-                _drawerSection(context, '🛡️  Threat Detection', [
-                  const _DrawerItem(Icons.link,           'Link Scanner',        '/link-scanner',       Color(0xFF00E5FF), badge: 'AI'),
-                  const _DrawerItem(Icons.sms,            'Message Analyzer',    '/message-analyzer',   Color(0xFF00E5FF), badge: 'AI'),
-                  const _DrawerItem(Icons.wifi,           'Wi-Fi Safety',        '/wifi-scanner',       Color(0xFF00BCD4)),
-                  const _DrawerItem(Icons.apps,           'App Risk Scanner',    '/home/scanner',       Color(0xFF00E5FF)),
-                  const _DrawerItem(Icons.install_mobile, 'Package Monitor',     '/package-monitor',    Color(0xFFFF9800)),
-                  const _DrawerItem(Icons.groups,         'Community Scams',     '/community-scams',    Color(0xFFFF5252), badge: 'NEW'),
+                _drawerSection(context, '🛡️  ${AppLocalizations.of(context).secThreat}', [
+                  _DrawerItem(Icons.link,           AppLocalizations.of(context).menuLinkScanner,        '/link-scanner',       const Color(0xFF00E5FF), badge: 'AI'),
+                  _DrawerItem(Icons.sms,            AppLocalizations.of(context).menuMessageAnalyzer,    '/message-analyzer',   const Color(0xFF00E5FF), badge: 'AI'),
+                  _DrawerItem(Icons.wifi,           AppLocalizations.of(context).menuWifi,        '/wifi-scanner',       const Color(0xFF00BCD4)),
+                  _DrawerItem(Icons.apps,           AppLocalizations.of(context).menuAppRisk,    '/home/scanner',       const Color(0xFF00E5FF)),
+                  _DrawerItem(Icons.install_mobile, AppLocalizations.of(context).menuPackageMonitor,     '/package-monitor',    const Color(0xFFFF9800)),
+                  _DrawerItem(Icons.groups,         AppLocalizations.of(context).menuCommunityScams,     '/community-scams',    const Color(0xFFFF5252), badge: 'NEW'),
                 ]),
-                _drawerSection(context, '🚨  Emergency & SOS', [
-                  const _DrawerItem(Icons.video_call,     'Police Video Call',   '/video-call',         Color(0xFF4CAF50), badge: 'NEW'),
-                  const _DrawerItem(Icons.description,    'FIR Draft',           '/fir-draft',          Color(0xFFFF9800), badge: 'AI'),
-                  const _DrawerItem(Icons.mic,            'Call Recorder',       '/call-recorder',      Color(0xFFFF5252)),
-                  const _DrawerItem(Icons.share,          'Emergency Share',     '/emergency-share',    Color(0xFFFF5252)),
+                _drawerSection(context, '🚨  ${AppLocalizations.of(context).secEmergency}', [
+                  _DrawerItem(Icons.video_call,     AppLocalizations.of(context).menuPoliceCall,   '/video-call',         const Color(0xFF4CAF50), badge: 'NEW'),
+                  _DrawerItem(Icons.description,    AppLocalizations.of(context).menuFir,           '/fir-draft',          const Color(0xFFFF9800), badge: 'AI'),
+                  _DrawerItem(Icons.mic,            AppLocalizations.of(context).menuCallRecorder,       '/call-recorder',      const Color(0xFFFF5252)),
+                  _DrawerItem(Icons.share,          AppLocalizations.of(context).menuEmergencyShare,     '/emergency-share',    const Color(0xFFFF5252)),
                   _DrawerItem(Icons.folder_special, AppLocalizations.of(context).evidenceLocker,     '/evidence',           const Color(0xFF7C4DFF)),
-                  const _DrawerItem(Icons.email,          'Complaint Email',     '/complaint-email',    Color(0xFF4CAF50), badge: 'AI'),
+                  _DrawerItem(Icons.email,          AppLocalizations.of(context).menuComplaintEmail,     '/complaint-email',    const Color(0xFF4CAF50), badge: 'AI'),
                 ]),
-                _drawerSection(context, '🔐  Identity & Privacy', [
-                  const _DrawerItem(Icons.install_mobile, 'App Install Monitor', '/app-monitor',         Color(0xFF00E5FF), badge: 'NEW'),
-                  const _DrawerItem(Icons.content_copy,   'Clone Detector',      '/clone-detector',      Color(0xFFFF5252), badge: 'NEW'),
-                  const _DrawerItem(Icons.elderly,        'Elderly Protection',  '/elderly-mode',        Color(0xFF9C27B0), badge: 'NEW'),
-                  const _DrawerItem(Icons.security,       'Banking Protection',  '/banking-protection',  Color(0xFF4CAF50)),
-                  const _DrawerItem(Icons.lock_clock,     'Bank OTP Monitor',    '/bank-otp-monitor',   Color(0xFFFF9800)),
-                  const _DrawerItem(Icons.vpn_lock,       'VPN Monitor',         '/vpn-monitor',        Color(0xFF7C4DFF)),
-                  const _DrawerItem(Icons.desktop_access_disabled, 'Remote Detector', '/remote-detector', Color(0xFFFF5252)),
-                  const _DrawerItem(Icons.videocam_off,   'Screen Rec Detect',   '/screen-recorder',    Color(0xFF00E5FF)),
+                _drawerSection(context, '🔐  ${AppLocalizations.of(context).secIdentity}', [
+                  _DrawerItem(Icons.install_mobile, AppLocalizations.of(context).menuAppInstall, '/app-monitor',         const Color(0xFF00E5FF), badge: 'NEW'),
+                  _DrawerItem(Icons.content_copy,   AppLocalizations.of(context).menuClone,      '/clone-detector',      const Color(0xFFFF5252), badge: 'NEW'),
+                  _DrawerItem(Icons.elderly,        AppLocalizations.of(context).menuElderly,  '/elderly-mode',        const Color(0xFF9C27B0), badge: 'NEW'),
+                  _DrawerItem(Icons.security,       AppLocalizations.of(context).menuBanking,  '/banking-protection',  const Color(0xFF4CAF50)),
+                  _DrawerItem(Icons.lock_clock,     AppLocalizations.of(context).menuBankOtp,    '/bank-otp-monitor',   const Color(0xFFFF9800)),
+                  _DrawerItem(Icons.vpn_lock,       AppLocalizations.of(context).menuVpn,         '/vpn-monitor',        const Color(0xFF7C4DFF)),
+                  _DrawerItem(Icons.desktop_access_disabled, AppLocalizations.of(context).menuRemote, '/remote-detector', const Color(0xFFFF5252)),
+                  _DrawerItem(Icons.videocam_off,   AppLocalizations.of(context).menuScreenRec,   '/screen-recorder',    const Color(0xFF00E5FF)),
                 ]),
-                _drawerSection(context, '👨‍👩‍👧  Family Safety', [
+                _drawerSection(context, '👨‍👩‍👧  ${AppLocalizations.of(context).secFamily}', [
                   _DrawerItem(Icons.family_restroom,AppLocalizations.of(context).familyDashboard,    '/family',             const Color(0xFF9C27B0)),
-                  const _DrawerItem(Icons.sms,            'Job / Msg Analyzer',  '/message-analyzer',   Color(0xFFFF9800), badge: 'AI'),
+                  _DrawerItem(Icons.sms,            AppLocalizations.of(context).menuJobMsg,  '/message-analyzer',   const Color(0xFFFF9800), badge: 'AI'),
                 ]),
-                _drawerSection(context, '📱  Device Security', [
-                  const _DrawerItem(Icons.phone_android,  'Device Scan',         '/device-scan',        Color(0xFF4CAF50)),
-                  const _DrawerItem(Icons.settings_suggest,'Consent Manager',    '/consent-manager',    Color(0xFF00BCD4)),
+                _drawerSection(context, '📱  ${AppLocalizations.of(context).secDevice}', [
+                  _DrawerItem(Icons.phone_android,  AppLocalizations.of(context).menuDeviceScan,         '/device-scan',        const Color(0xFF4CAF50)),
+                  _DrawerItem(Icons.settings_suggest,AppLocalizations.of(context).menuConsent,    '/consent-manager',    const Color(0xFF00BCD4)),
                 ]),
-                _drawerSection(context, '📊  Reports & Insights', [
-                  const _DrawerItem(Icons.bar_chart,      'Security Reports',    '/home/reports',       Color(0xFFFF9800)),
-                  const _DrawerItem(Icons.smart_toy,      'AI Coach',            '/home/ai-coach',      Color(0xFF7C4DFF), badge: 'AI'),
-                  const _DrawerItem(Icons.tips_and_updates,'Cyber Tips',         '/tips',               Color(0xFF00E5FF)),
+                _drawerSection(context, '📊  ${AppLocalizations.of(context).secReports}', [
+                  _DrawerItem(Icons.bar_chart,      AppLocalizations.of(context).menuSecurityReports,    '/home/reports',       const Color(0xFFFF9800)),
+                  _DrawerItem(Icons.smart_toy,      AppLocalizations.of(context).navAiCoach,            '/home/ai-coach',      const Color(0xFF7C4DFF), badge: 'AI'),
+                  _DrawerItem(Icons.tips_and_updates,AppLocalizations.of(context).menuCyberTips,         '/tips',               const Color(0xFF00E5FF)),
                   const _DrawerItem(Icons.settings,       'Settings',            '/settings',           AppTheme.textSecondary),
                 ]),
-                _drawerSection(context, '👤  Account', [
-                  const _DrawerItem(Icons.person_rounded,     'My Profile',          '/profile',            Color(0xFF69F0AE)),
-                  const _DrawerItem(Icons.emergency_rounded,  'Emergency Contacts',  '/profile',            AppTheme.errorColor),
+                _drawerSection(context, '👤  ${AppLocalizations.of(context).secAccount}', [
+                  _DrawerItem(Icons.person_rounded,     AppLocalizations.of(context).menuProfile,          '/profile',            const Color(0xFF69F0AE)),
+                  _DrawerItem(Icons.emergency_rounded,  AppLocalizations.of(context).menuEmergencyContacts,  '/profile',            AppTheme.errorColor),
                 ]),
               ],
             ),

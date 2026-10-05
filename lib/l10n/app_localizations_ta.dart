@@ -362,4 +362,193 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'சைபர் கிரைம் தொடர்புகள்';
+
+  @override
+  String get navHome => 'முகப்பு';
+
+  @override
+  String get navScanner => 'ஸ்கேனர்';
+
+  @override
+  String get navAlerts => 'எச்சரிக்கைகள்';
+
+  @override
+  String get navReports => 'அறிக்கைகள்';
+
+  @override
+  String get navAiCoach => 'AI பயிற்சியாளர்';
+
+  @override
+  String get secThreat => 'அச்சுறுத்தல் கண்டறிதல்';
+
+  @override
+  String get secEmergency => 'அவசரம் & SOS';
+
+  @override
+  String get secIdentity => 'அடையாளம் & தனியுரிமை';
+
+  @override
+  String get secFamily => 'குடும்ப பாதுகாப்பு';
+
+  @override
+  String get secDevice => 'சாதன பாதுகாப்பு';
+
+  @override
+  String get secReports => 'அறிக்கைகள் & நுண்ணறிவு';
+
+  @override
+  String get secAccount => 'கணக்கு';
+
+  @override
+  String get menuLinkScanner => 'இணைப்பு ஸ்கேனர்';
+
+  @override
+  String get menuMessageAnalyzer => 'செய்தி பகுப்பாய்வி';
+
+  @override
+  String get menuWifi => 'வைஃபை பாதுகாப்பு';
+
+  @override
+  String get menuAppRisk => 'செயலி ஆபத்து ஸ்கேனர்';
+
+  @override
+  String get menuPackageMonitor => 'தொகுப்பு கண்காணிப்பு';
+
+  @override
+  String get menuCommunityScams => 'சமூக மோசடிகள்';
+
+  @override
+  String get menuPoliceCall => 'காவல்துறை வீடியோ அழைப்பு';
+
+  @override
+  String get menuFir => 'FIR வரைவு';
+
+  @override
+  String get menuCallRecorder => 'அழைப்பு பதிவு';
+
+  @override
+  String get menuEmergencyShare => 'அவசர பகிர்வு';
+
+  @override
+  String get menuComplaintEmail => 'புகார் மின்னஞ்சல்';
+
+  @override
+  String get menuAppInstall => 'செயலி நிறுவல் கண்காணிப்பு';
+
+  @override
+  String get menuClone => 'குளோன் கண்டறிவி';
+
+  @override
+  String get menuElderly => 'முதியோர் பாதுகாப்பு';
+
+  @override
+  String get menuBanking => 'வங்கி பாதுகாப்பு';
+
+  @override
+  String get menuBankOtp => 'வங்கி OTP கண்காணிப்பு';
+
+  @override
+  String get menuVpn => 'VPN கண்காணிப்பு';
+
+  @override
+  String get menuRemote => 'ரிமோட் கண்டறிவி';
+
+  @override
+  String get menuScreenRec => 'திரை பதிவு கண்டறிதல்';
+
+  @override
+  String get menuJobMsg => 'வேலை / செய்தி பகுப்பாய்வி';
+
+  @override
+  String get menuDeviceScan => 'சாதன ஸ்கேன்';
+
+  @override
+  String get menuConsent => 'ஒப்புதல் மேலாளர்';
+
+  @override
+  String get menuSecurityReports => 'பாதுகாப்பு அறிக்கைகள்';
+
+  @override
+  String get menuCyberTips => 'சைபர் குறிப்புகள்';
+
+  @override
+  String get menuProfile => 'என் சுயவிவரம்';
+
+  @override
+  String get menuEmergencyContacts => 'அவசர தொடர்புகள்';
+
+  @override
+  String get familyTitle => 'குடும்ப பாதுகாப்பு டாஷ்போர்டு';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'குடும்பம் ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'குழந்தைகள் ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'அழைப்புகள் ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name உங்களை குடும்பமாக சேர்க்க விரும்புகிறார்';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'ஏற்றுக்கொண்டால் $name உங்கள் பாதுகாப்பு எச்சரிக்கைகளைப் பார்க்கலாம்.';
+  }
+
+  @override
+  String get inviteNoShare => 'ஏற்பதால் உங்கள் எச்சரிக்கைகள் பகிரப்படாது.';
+
+  @override
+  String get accept => 'ஏற்கவும்';
+
+  @override
+  String get decline => 'நிராகரி';
+
+  @override
+  String get noInvites =>
+      'நிலுவையில் அழைப்புகள் இல்லை. யாராவது உங்களை குடும்பமாகச் சேர்த்தால், உங்கள் எச்சரிக்கைகளை அவர்கள் பார்க்கலாமா என்பதை இங்கே நீங்கள் தீர்மானிக்கலாம்.';
+
+  @override
+  String get consentLinked => 'இணைக்கப்பட்டது';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'இணைக்கப்பட்டது - $count படிக்காதவை';
+  }
+
+  @override
+  String get consentDeclined => 'நிராகரிக்கப்பட்டது';
+
+  @override
+  String get consentPending => 'ஒப்புதலுக்காக காத்திருக்கிறது';
+
+  @override
+  String get noAlerts => 'எச்சரிக்கைகள் இல்லை';
+
+  @override
+  String get youAreSafe => 'நீங்கள் பாதுகாப்பாக உள்ளீர்கள்!';
+
+  @override
+  String get panicTitle => 'பீதி எச்சரிக்கை';
+
+  @override
+  String get panicBody =>
+      'இது உங்கள் அவசர தொடர்புகளுக்கு செய்தி அனுப்பி ஒரு முக்கிய எச்சரிக்கையைப் பதிவு செய்யும் (நீங்கள் அங்கீகரித்த குடும்ப உறுப்பினர்கள் அதைப் பார்க்கலாம்). உறுதியாக உள்ளீர்களா?';
+
+  @override
+  String get sendAlert => 'எச்சரிக்கை அனுப்பு';
+
+  @override
+  String get panicSent =>
+      'பீதி எச்சரிக்கை அனுப்பப்பட்டது! அவசர தொடர்புகளுக்குத் தெரிவிக்கப்பட்டது.';
 }

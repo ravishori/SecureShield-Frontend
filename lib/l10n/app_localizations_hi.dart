@@ -358,4 +358,193 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'साइबर क्राइम संपर्क';
+
+  @override
+  String get navHome => 'होम';
+
+  @override
+  String get navScanner => 'स्कैनर';
+
+  @override
+  String get navAlerts => 'अलर्ट';
+
+  @override
+  String get navReports => 'रिपोर्ट';
+
+  @override
+  String get navAiCoach => 'एआई कोच';
+
+  @override
+  String get secThreat => 'खतरे की पहचान';
+
+  @override
+  String get secEmergency => 'आपातकाल और SOS';
+
+  @override
+  String get secIdentity => 'पहचान और गोपनीयता';
+
+  @override
+  String get secFamily => 'परिवार की सुरक्षा';
+
+  @override
+  String get secDevice => 'डिवाइस सुरक्षा';
+
+  @override
+  String get secReports => 'रिपोर्ट और जानकारी';
+
+  @override
+  String get secAccount => 'खाता';
+
+  @override
+  String get menuLinkScanner => 'लिंक स्कैनर';
+
+  @override
+  String get menuMessageAnalyzer => 'संदेश विश्लेषक';
+
+  @override
+  String get menuWifi => 'वाई-फाई सुरक्षा';
+
+  @override
+  String get menuAppRisk => 'ऐप जोखिम स्कैनर';
+
+  @override
+  String get menuPackageMonitor => 'पैकेज मॉनिटर';
+
+  @override
+  String get menuCommunityScams => 'सामुदायिक घोटाले';
+
+  @override
+  String get menuPoliceCall => 'पुलिस वीडियो कॉल';
+
+  @override
+  String get menuFir => 'एफआईआर ड्राफ्ट';
+
+  @override
+  String get menuCallRecorder => 'कॉल रिकॉर्डर';
+
+  @override
+  String get menuEmergencyShare => 'आपातकालीन साझा';
+
+  @override
+  String get menuComplaintEmail => 'शिकायत ईमेल';
+
+  @override
+  String get menuAppInstall => 'ऐप इंस्टॉल मॉनिटर';
+
+  @override
+  String get menuClone => 'क्लोन डिटेक्टर';
+
+  @override
+  String get menuElderly => 'बुजुर्ग सुरक्षा';
+
+  @override
+  String get menuBanking => 'बैंकिंग सुरक्षा';
+
+  @override
+  String get menuBankOtp => 'बैंक OTP मॉनिटर';
+
+  @override
+  String get menuVpn => 'वीपीएन मॉनिटर';
+
+  @override
+  String get menuRemote => 'रिमोट डिटेक्टर';
+
+  @override
+  String get menuScreenRec => 'स्क्रीन रिकॉर्डिंग पहचान';
+
+  @override
+  String get menuJobMsg => 'नौकरी / संदेश विश्लेषक';
+
+  @override
+  String get menuDeviceScan => 'डिवाइस स्कैन';
+
+  @override
+  String get menuConsent => 'सहमति प्रबंधक';
+
+  @override
+  String get menuSecurityReports => 'सुरक्षा रिपोर्ट';
+
+  @override
+  String get menuCyberTips => 'साइबर सुझाव';
+
+  @override
+  String get menuProfile => 'मेरी प्रोफ़ाइल';
+
+  @override
+  String get menuEmergencyContacts => 'आपातकालीन संपर्क';
+
+  @override
+  String get familyTitle => 'परिवार सुरक्षा डैशबोर्ड';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'परिवार ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'बच्चे ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'निमंत्रण ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name आपको परिवार के रूप में जोड़ना चाहते हैं';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'स्वीकार करने पर $name आपके सुरक्षा अलर्ट देख सकेंगे।';
+  }
+
+  @override
+  String get inviteNoShare => 'स्वीकार करने से आपके अलर्ट साझा नहीं होते।';
+
+  @override
+  String get accept => 'स्वीकार करें';
+
+  @override
+  String get decline => 'अस्वीकार करें';
+
+  @override
+  String get noInvites =>
+      'कोई लंबित निमंत्रण नहीं। जब कोई आपको परिवार में जोड़ेगा, तो आप यहीं तय करेंगे कि वे आपके अलर्ट देख सकते हैं या नहीं।';
+
+  @override
+  String get consentLinked => 'जुड़ा हुआ';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'जुड़ा हुआ - $count अपठित';
+  }
+
+  @override
+  String get consentDeclined => 'अस्वीकृत';
+
+  @override
+  String get consentPending => 'स्वीकृति की प्रतीक्षा';
+
+  @override
+  String get noAlerts => 'कोई अलर्ट नहीं';
+
+  @override
+  String get youAreSafe => 'आप सुरक्षित हैं!';
+
+  @override
+  String get panicTitle => 'पैनिक अलर्ट';
+
+  @override
+  String get panicBody =>
+      'यह आपके आपातकालीन संपर्कों को संदेश भेजेगा और एक गंभीर अलर्ट दर्ज करेगा (आपके स्वीकृत परिवार के सदस्य इसे देख सकते हैं)। क्या आप निश्चित हैं?';
+
+  @override
+  String get sendAlert => 'अलर्ट भेजें';
+
+  @override
+  String get panicSent =>
+      'पैनिक अलर्ट भेजा गया! आपातकालीन संपर्कों को सूचित किया गया।';
 }

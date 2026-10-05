@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../alerts_api.dart';
@@ -44,10 +45,10 @@ class _AlertsScreenState extends State<AlertsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Panic Alert', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
-        content: const Text(
-          'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?',
-          style: TextStyle(color: Color.fromARGB(222, 255, 255, 255)),
+        title: Text(AppLocalizations.of(context).panicTitle, style: const TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
+        content: Text(
+          AppLocalizations.of(context).panicBody,
+          style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255)),
         ),
         actions: [
           TextButton(
@@ -63,8 +64,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 await _load();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Panic alert sent! Emergency contacts notified.'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context).panicSent),
                       backgroundColor: AppTheme.errorColor,
                     ),
                   );
@@ -77,7 +78,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 }
               }
             },
-            child: const Text('SEND ALERT'),
+            child: Text(AppLocalizations.of(context).sendAlert),
           ),
         ],
       ),
@@ -96,14 +97,14 @@ class _AlertsScreenState extends State<AlertsScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.accent))
           : _alerts.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle, size: 64, color: AppTheme.success),
-                      SizedBox(height: 16),
-                      Text('No alerts', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
-                      Text('You are safe!', style: TextStyle(color: Colors.white70)),
+                      const Icon(Icons.check_circle, size: 64, color: AppTheme.success),
+                      const SizedBox(height: 16),
+                      Text(AppLocalizations.of(context).noAlerts, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
+                      Text(AppLocalizations.of(context).youAreSafe, style: const TextStyle(color: Colors.white70)),
                     ],
                   ),
                 )

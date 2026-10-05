@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/security/banking_threat_correlator.dart';
@@ -188,16 +189,16 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Family Safety Dashboard'),
+        title: Text(AppLocalizations.of(context).familyTitle),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppTheme.accent,
           labelColor: AppTheme.accent,
           unselectedLabelColor: AppTheme.textSecondary,
           tabs: [
-            Tab(icon: const Icon(Icons.family_restroom), text: 'Family (${adults.length})'),
-            Tab(icon: const Icon(Icons.child_care), text: 'Kids (${children.length})'),
-            Tab(icon: const Icon(Icons.mail_outline), text: 'Invites (${_invitations.length})'),
+            Tab(icon: const Icon(Icons.family_restroom), text: AppLocalizations.of(context).familyTabFamily(adults.length)),
+            Tab(icon: const Icon(Icons.child_care), text: AppLocalizations.of(context).familyTabKids(children.length)),
+            Tab(icon: const Icon(Icons.mail_outline), text: AppLocalizations.of(context).familyTabInvites(_invitations.length)),
           ],
         ),
         actions: [
@@ -264,13 +265,11 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$who wants to add you as family',
+                Text(AppLocalizations.of(context).inviteTitle(who),
                     style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text(
-                  inv['can_view_alerts'] == true
-                      ? 'If you accept, $who will be able to see your security alerts.'
-                      : 'Accepting does not share your alerts.',
+                  inv['can_view_alerts'] == true ? AppLocalizations.of(context).inviteSharesAlerts(who) : AppLocalizations.of(context).inviteNoShare,
                   style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                 ),
                 Row(
@@ -281,14 +280,14 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                         await _api.answerInvitation(inv['id'] as String, accept: false);
                         await _load();
                       },
-                      child: const Text('Decline'),
+                      child: Text(AppLocalizations.of(context).decline),
                     ),
                     ElevatedButton(
                       onPressed: () async {
                         await _api.answerInvitation(inv['id'] as String, accept: true);
                         await _load();
                       },
-                      child: const Text('Accept'),
+                      child: Text(AppLocalizations.of(context).accept),
                     ),
                   ],
                 ),
@@ -426,11 +425,11 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
     final unread = dash.isEmpty ? 0 : (dash.first['unread_alerts'] as int? ?? 0);
     switch (status) {
       case 'accepted':
-        return _badge(Icons.verified_user, unread > 0 ? 'Linked - $unread unread' : 'Linked', AppTheme.success);
+        return _badge(Icons.verified_user, unread > 0 ? AppLocalizations.of(context).consentLinkedUnread(unread) : AppLocalizations.of(context).consentLinked, AppTheme.success);
       case 'declined':
-        return _badge(Icons.block, 'Declined', AppTheme.errorColor);
+        return _badge(Icons.block, AppLocalizations.of(context).consentDeclined, AppTheme.errorColor);
       default:
-        return _badge(Icons.hourglass_top, 'Waiting for approval', AppTheme.warning);
+        return _badge(Icons.hourglass_top, AppLocalizations.of(context).consentPending, AppTheme.warning);
     }
   }
 

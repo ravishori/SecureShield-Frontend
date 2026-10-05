@@ -1,9 +1,7 @@
 {
   "@@locale": "ta",
-
   "appName": "SecureShield AI",
   "appTagline": "உங்கள் முழுமையான சைபர் பாதுகாப்பு",
-
   "ok": "சரி",
   "cancel": "ரத்து செய்",
   "save": "சேமி",
@@ -14,7 +12,6 @@
   "retry": "மீண்டும் முயற்சி",
   "loading": "ஏற்றுகிறது…",
   "orDivider": "அல்லது",
-
   "welcomeTitle": "SecureShield AI",
   "welcomeSubtitle": "உங்கள் முழுமையான சைபர் பாதுகாப்பு",
   "welcomeScanTitle": "மொபைல் ஸ்கேன் செய்",
@@ -27,7 +24,6 @@
   "welcomeSosSubtitle": "சைபர் கிரைமை உடனடியாக புகாரளிக்கவும்",
   "welcomeShareTitle": "WhatsApp-ல் பகிர்",
   "welcomeShareSubtitle": "நண்பர்களை சைபர் மோசடிகளைப் பற்றி எச்சரிக்கவும்",
-
   "signIn": "உள்நுழைக",
   "signInSubtitle": "தொடர தொலைபேசி எண் அல்லது மின்னஞ்சல் உள்ளிடவும்",
   "mobileTab": "மொபைல்",
@@ -44,7 +40,6 @@
   "creatingNewAccount": "புதிய கணக்கு உருவாக்கப்படுகிறது",
   "loginWithBiometric": "பயோமெட்ரிக்கில் உள்நுழைக",
   "continueWithGoogle": "Google-ல் தொடர",
-
   "verifyTitle": "குறியீட்டை சரிபார்க்கவும்",
   "enterVerificationCode": "சரிபார்ப்பு குறியீட்டை உள்ளிடவும்",
   "codeSentViaSms": "நாங்கள் {phone}-க்கு 6 இலக்க SMS அனுப்பினோம்",
@@ -52,7 +47,6 @@
   "verifyBtn": "குறியீட்டை சரிபார்க்கவும்",
   "verifying": "சரிபார்க்கிறது…",
   "resendCode": "குறியீட்டை மீண்டும் அனுப்பு",
-
   "registerTitle": "கணக்கு உருவாக்கு",
   "registerSubtitle": "தொடங்க மொபைல் எண் உள்ளிடவும்.\nநாங்கள் உங்களுக்கு ஒரு சரிபார்ப்பு குறியீடு அனுப்புவோம்.",
   "mobileNumber": "மொபைல் எண்",
@@ -62,7 +56,6 @@
   "alreadyHaveAccount": "ஏற்கனவே கணக்கு உள்ளதா?",
   "signInLink": "உள்நுழைக",
   "registerInfoNote": "எண்ணை சரிபார்த்த பிறகு, பதிவை முடிக்க உங்கள் சுயவிவர விவரங்களை நிரப்பவும்.",
-
   "completeYourProfile": "உங்கள் சுயவிவரத்தை முடிக்கவும்",
   "profileSetupSubtitle": "உங்கள் SecureShield கணக்கை செயல்படுத்த விவரங்களை நிரப்பவும்",
   "personalInformation": "தனிப்பட்ட தகவல்",
@@ -82,7 +75,6 @@
   "saveAndContinue": "சேமி மற்றும் தொடர",
   "saving": "சேமிக்கிறது…",
   "fillThisLater": "பின்னர் நிரப்பவும்",
-
   "settings": "அமைப்புகள்",
   "appearance": "தோற்றம்",
   "appTheme": "செயலி தீம்",
@@ -104,12 +96,10 @@
   "cybercrimeHelpline": "சைபர் கிரைம் உதவி எண்",
   "cybercrimeHelplineNumber": "1930 (இந்தியா தேசிய சைபர் கிரைம் உதவி எண்)",
   "logout": "வெளியேறு",
-
   "profileCompleteness": "சுயவிவர முழுமை",
   "profileCompletenessPercent": "{percent}% முடிந்தது",
   "completeProfileBanner": "அனைத்து பாதுகாப்பு அம்சங்களையும் திறக்க சுயவிவரத்தை முடிக்கவும்",
   "completeProfileBtn": "சுயவிவரத்தை முடிக்கவும்",
-
   "fieldRequired": "இந்த புலம் தேவை",
   "invalidEmail": "சரியான மின்னஞ்சல் முகவரி உள்ளிடவும்",
   "invalidPhone": "சரியான தொலைபேசி எண் உள்ளிடவும்",
@@ -122,5 +112,105 @@
   "scanTitle": "சாதன பாதுகாப்பு ஸ்கேன்",
   "scanSubtitle": "தொடர்வதற்கு முன் உங்கள் சாதனம் சரிபார்க்கப்படுகிறது",
   "cyberSafetyTips": "சைபர் பாதுகாப்பு குறிப்புகள்",
-  "cyberCrimeContacts": "சைபர் கிரைம் தொடர்புகள்"
+  "cyberCrimeContacts": "சைபர் கிரைம் தொடர்புகள்",
+  "navHome": "முகப்பு",
+  "navScanner": "ஸ்கேனர்",
+  "navAlerts": "எச்சரிக்கைகள்",
+  "navReports": "அறிக்கைகள்",
+  "navAiCoach": "AI பயிற்சியாளர்",
+  "secThreat": "அச்சுறுத்தல் கண்டறிதல்",
+  "secEmergency": "அவசரம் & SOS",
+  "secIdentity": "அடையாளம் & தனியுரிமை",
+  "secFamily": "குடும்ப பாதுகாப்பு",
+  "secDevice": "சாதன பாதுகாப்பு",
+  "secReports": "அறிக்கைகள் & நுண்ணறிவு",
+  "secAccount": "கணக்கு",
+  "menuLinkScanner": "இணைப்பு ஸ்கேனர்",
+  "menuMessageAnalyzer": "செய்தி பகுப்பாய்வி",
+  "menuWifi": "வைஃபை பாதுகாப்பு",
+  "menuAppRisk": "செயலி ஆபத்து ஸ்கேனர்",
+  "menuPackageMonitor": "தொகுப்பு கண்காணிப்பு",
+  "menuCommunityScams": "சமூக மோசடிகள்",
+  "menuPoliceCall": "காவல்துறை வீடியோ அழைப்பு",
+  "menuFir": "FIR வரைவு",
+  "menuCallRecorder": "அழைப்பு பதிவு",
+  "menuEmergencyShare": "அவசர பகிர்வு",
+  "menuComplaintEmail": "புகார் மின்னஞ்சல்",
+  "menuAppInstall": "செயலி நிறுவல் கண்காணிப்பு",
+  "menuClone": "குளோன் கண்டறிவி",
+  "menuElderly": "முதியோர் பாதுகாப்பு",
+  "menuBanking": "வங்கி பாதுகாப்பு",
+  "menuBankOtp": "வங்கி OTP கண்காணிப்பு",
+  "menuVpn": "VPN கண்காணிப்பு",
+  "menuRemote": "ரிமோட் கண்டறிவி",
+  "menuScreenRec": "திரை பதிவு கண்டறிதல்",
+  "menuJobMsg": "வேலை / செய்தி பகுப்பாய்வி",
+  "menuDeviceScan": "சாதன ஸ்கேன்",
+  "menuConsent": "ஒப்புதல் மேலாளர்",
+  "menuSecurityReports": "பாதுகாப்பு அறிக்கைகள்",
+  "menuCyberTips": "சைபர் குறிப்புகள்",
+  "menuProfile": "என் சுயவிவரம்",
+  "menuEmergencyContacts": "அவசர தொடர்புகள்",
+  "familyTitle": "குடும்ப பாதுகாப்பு டாஷ்போர்டு",
+  "familyTabFamily": "குடும்பம் ({count})",
+  "@familyTabFamily": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabKids": "குழந்தைகள் ({count})",
+  "@familyTabKids": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabInvites": "அழைப்புகள் ({count})",
+  "@familyTabInvites": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteTitle": "{name} உங்களை குடும்பமாக சேர்க்க விரும்புகிறார்",
+  "@inviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharesAlerts": "ஏற்றுக்கொண்டால் {name} உங்கள் பாதுகாப்பு எச்சரிக்கைகளைப் பார்க்கலாம்.",
+  "@inviteSharesAlerts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteNoShare": "ஏற்பதால் உங்கள் எச்சரிக்கைகள் பகிரப்படாது.",
+  "accept": "ஏற்கவும்",
+  "decline": "நிராகரி",
+  "noInvites": "நிலுவையில் அழைப்புகள் இல்லை. யாராவது உங்களை குடும்பமாகச் சேர்த்தால், உங்கள் எச்சரிக்கைகளை அவர்கள் பார்க்கலாமா என்பதை இங்கே நீங்கள் தீர்மானிக்கலாம்.",
+  "consentLinked": "இணைக்கப்பட்டது",
+  "consentLinkedUnread": "இணைக்கப்பட்டது - {count} படிக்காதவை",
+  "@consentLinkedUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "consentDeclined": "நிராகரிக்கப்பட்டது",
+  "consentPending": "ஒப்புதலுக்காக காத்திருக்கிறது",
+  "noAlerts": "எச்சரிக்கைகள் இல்லை",
+  "youAreSafe": "நீங்கள் பாதுகாப்பாக உள்ளீர்கள்!",
+  "panicTitle": "பீதி எச்சரிக்கை",
+  "panicBody": "இது உங்கள் அவசர தொடர்புகளுக்கு செய்தி அனுப்பி ஒரு முக்கிய எச்சரிக்கையைப் பதிவு செய்யும் (நீங்கள் அங்கீகரித்த குடும்ப உறுப்பினர்கள் அதைப் பார்க்கலாம்). உறுதியாக உள்ளீர்களா?",
+  "sendAlert": "எச்சரிக்கை அனுப்பு",
+  "panicSent": "பீதி எச்சரிக்கை அனுப்பப்பட்டது! அவசர தொடர்புகளுக்குத் தெரிவிக்கப்பட்டது."
 }

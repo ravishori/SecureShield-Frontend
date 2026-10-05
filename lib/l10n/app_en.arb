@@ -1,12 +1,13 @@
 {
   "@@locale": "en",
-
   "appName": "SecureShield AI",
-  "@appName": { "description": "App name" },
-
+  "@appName": {
+    "description": "App name"
+  },
   "appTagline": "Your complete cyber safety guardian",
-  "@appTagline": { "description": "App tagline on welcome screen" },
-
+  "@appTagline": {
+    "description": "App tagline on welcome screen"
+  },
   "ok": "OK",
   "cancel": "Cancel",
   "save": "Save",
@@ -17,7 +18,6 @@
   "retry": "Retry",
   "loading": "Loading…",
   "orDivider": "or",
-
   "welcomeTitle": "SecureShield AI",
   "welcomeSubtitle": "Your complete cyber safety guardian",
   "welcomeScanTitle": "Scan My Mobile",
@@ -30,7 +30,6 @@
   "welcomeSosSubtitle": "Report a cybercrime immediately",
   "welcomeShareTitle": "Share on WhatsApp",
   "welcomeShareSubtitle": "Warn friends about cyber scams",
-
   "signIn": "Sign In",
   "signInSubtitle": "Enter your phone number or email to continue",
   "mobileTab": "Mobile",
@@ -47,21 +46,27 @@
   "creatingNewAccount": "Creating new account",
   "loginWithBiometric": "Login with Biometrics",
   "continueWithGoogle": "Continue with Google",
-
   "verifyTitle": "Verify Code",
   "enterVerificationCode": "Enter verification code",
   "codeSentViaSms": "We sent a 6-digit SMS to\n{phone}",
   "@codeSentViaSms": {
-    "placeholders": { "phone": { "type": "String" } }
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
   },
   "codeSentViaEmail": "We sent a 6-digit code to\n{email}",
   "@codeSentViaEmail": {
-    "placeholders": { "email": { "type": "String" } }
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
   },
   "verifyBtn": "Verify Code",
   "verifying": "Verifying…",
   "resendCode": "Resend Code",
-
   "registerTitle": "Create Account",
   "registerSubtitle": "Enter your mobile number to get started.\nWe'll send you a verification code.",
   "mobileNumber": "Mobile Number",
@@ -71,7 +76,6 @@
   "alreadyHaveAccount": "Already have an account?",
   "signInLink": "Sign In",
   "registerInfoNote": "After verifying your number, you'll set up your profile details to complete registration.",
-
   "completeYourProfile": "Complete Your Profile",
   "profileSetupSubtitle": "Fill in your details to activate your SecureShield account",
   "personalInformation": "Personal Information",
@@ -91,7 +95,6 @@
   "saveAndContinue": "Save & Continue",
   "saving": "Saving…",
   "fillThisLater": "Fill this in later",
-
   "settings": "Settings",
   "appearance": "Appearance",
   "appTheme": "App Theme",
@@ -113,15 +116,17 @@
   "cybercrimeHelpline": "Cybercrime Helpline",
   "cybercrimeHelplineNumber": "1930 (India National Cybercrime Helpline)",
   "logout": "Logout",
-
   "profileCompleteness": "Profile Completeness",
   "profileCompletenessPercent": "{percent}% Complete",
   "@profileCompletenessPercent": {
-    "placeholders": { "percent": { "type": "int" } }
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
   },
   "completeProfileBanner": "Complete your profile to unlock all security features",
   "completeProfileBtn": "Complete Profile",
-
   "fieldRequired": "This field is required",
   "invalidEmail": "Enter a valid email address",
   "invalidPhone": "Enter a valid phone number (digits only)",
@@ -134,5 +139,105 @@
   "scanTitle": "Device Security Scan",
   "scanSubtitle": "Checking your device for security threats\nbefore you continue",
   "cyberSafetyTips": "Cyber Safety Tips",
-  "cyberCrimeContacts": "Cyber Crime Contacts"
+  "cyberCrimeContacts": "Cyber Crime Contacts",
+  "navHome": "Home",
+  "navScanner": "Scanner",
+  "navAlerts": "Alerts",
+  "navReports": "Reports",
+  "navAiCoach": "AI Coach",
+  "secThreat": "Threat Detection",
+  "secEmergency": "Emergency & SOS",
+  "secIdentity": "Identity & Privacy",
+  "secFamily": "Family Safety",
+  "secDevice": "Device Security",
+  "secReports": "Reports & Insights",
+  "secAccount": "Account",
+  "menuLinkScanner": "Link Scanner",
+  "menuMessageAnalyzer": "Message Analyzer",
+  "menuWifi": "Wi-Fi Safety",
+  "menuAppRisk": "App Risk Scanner",
+  "menuPackageMonitor": "Package Monitor",
+  "menuCommunityScams": "Community Scams",
+  "menuPoliceCall": "Police Video Call",
+  "menuFir": "FIR Draft",
+  "menuCallRecorder": "Call Recorder",
+  "menuEmergencyShare": "Emergency Share",
+  "menuComplaintEmail": "Complaint Email",
+  "menuAppInstall": "App Install Monitor",
+  "menuClone": "Clone Detector",
+  "menuElderly": "Elderly Protection",
+  "menuBanking": "Banking Protection",
+  "menuBankOtp": "Bank OTP Monitor",
+  "menuVpn": "VPN Monitor",
+  "menuRemote": "Remote Detector",
+  "menuScreenRec": "Screen Rec Detect",
+  "menuJobMsg": "Job / Msg Analyzer",
+  "menuDeviceScan": "Device Scan",
+  "menuConsent": "Consent Manager",
+  "menuSecurityReports": "Security Reports",
+  "menuCyberTips": "Cyber Tips",
+  "menuProfile": "My Profile",
+  "menuEmergencyContacts": "Emergency Contacts",
+  "familyTitle": "Family Safety Dashboard",
+  "familyTabFamily": "Family ({count})",
+  "@familyTabFamily": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabKids": "Kids ({count})",
+  "@familyTabKids": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabInvites": "Invites ({count})",
+  "@familyTabInvites": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteTitle": "{name} wants to add you as family",
+  "@inviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharesAlerts": "If you accept, {name} will be able to see your security alerts.",
+  "@inviteSharesAlerts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteNoShare": "Accepting does not share your alerts.",
+  "accept": "Accept",
+  "decline": "Decline",
+  "noInvites": "No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.",
+  "consentLinked": "Linked",
+  "consentLinkedUnread": "Linked - {count} unread",
+  "@consentLinkedUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "consentDeclined": "Declined",
+  "consentPending": "Waiting for approval",
+  "noAlerts": "No alerts",
+  "youAreSafe": "You are safe!",
+  "panicTitle": "Panic Alert",
+  "panicBody": "This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?",
+  "sendAlert": "SEND ALERT",
+  "panicSent": "Panic alert sent! Emergency contacts notified."
 }
