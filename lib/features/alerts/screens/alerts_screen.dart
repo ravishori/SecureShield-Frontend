@@ -46,7 +46,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
         backgroundColor: AppTheme.surface,
         title: const Text('Panic Alert', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
         content: const Text(
-          'This will send an emergency alert to your family members and log a critical alert. Are you sure?',
+          'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?',
           style: TextStyle(color: Color.fromARGB(222, 255, 255, 255)),
         ),
         actions: [
