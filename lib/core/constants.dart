@@ -15,7 +15,7 @@ class AppConstants {
   static const String verifyOtp    = '/auth/verify-otp';
   static const String register     = '/auth/register';
   static const String checkUser    = '/auth/check-user';
-  static const String googleAuth   = '/auth/google-signin';
+  static const String googleAuth   = '/auth/google';
   static const String refreshToken = '/auth/refresh';
   static const String getMe        = '/auth/me';
   static const String updateMe     = '/auth/me';

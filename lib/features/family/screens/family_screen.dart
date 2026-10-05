@@ -16,13 +16,15 @@ class FamilyScreen extends StatefulWidget {
 class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderStateMixin {
   final _api = FamilyApi();
   List<dynamic> _members = [];
+  List<dynamic> _invitations = [];
+  Map<String, dynamic> _dashboard = {};
   bool _loading = true;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _load();
   }
 
@@ -36,7 +38,22 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
     setState(() => _loading = true);
     try {
       final members = await _api.getMembers();
-      if (mounted) setState(() { _members = members; _loading = false; });
+      var invitations = <dynamic>[];
+      var dashboard = <String, dynamic>{};
+      try {
+        invitations = await _api.getInvitations();
+        dashboard = await _api.getDashboard();
+      } catch (_) {
+        // Older servers without the consent API: the member list still works.
+      }
+      if (mounted) {
+        setState(() {
+          _members = members;
+          _invitations = invitations;
+          _dashboard = dashboard;
+          _loading = false;
+        });
+      }
     } catch (e) {
       if (mounted) setState(() => _loading = false);
     }
@@ -180,6 +197,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
           tabs: [
             Tab(icon: const Icon(Icons.family_restroom), text: 'Family (${adults.length})'),
             Tab(icon: const Icon(Icons.child_care), text: 'Kids (${children.length})'),
+            Tab(icon: const Icon(Icons.mail_outline), text: 'Invites (${_invitations.length})'),
           ],
         ),
         actions: [
@@ -211,11 +229,74 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                     children: [
                       _buildMemberList(adults, isChildTab: false),
                       _buildChildList(children),
+                      _buildInvitations(),
                     ],
                   ),
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _buildInvitations() {
+    if (_invitations.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Text(
+            'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppTheme.textSecondary),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _invitations.length,
+      itemBuilder: (context, i) {
+        final inv = _invitations[i] as Map<String, dynamic>;
+        final who = (inv['inviter_name'] as String?) ?? 'Someone';
+        return Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('$who wants to add you as family',
+                    style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(
+                  inv['can_view_alerts'] == true
+                      ? 'If you accept, $who will be able to see your security alerts.'
+                      : 'Accepting does not share your alerts.',
+                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        await _api.answerInvitation(inv['id'] as String, accept: false);
+                        await _load();
+                      },
+                      child: const Text('Decline'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _api.answerInvitation(inv['id'] as String, accept: true);
+                        await _load();
+                      },
+                      child: const Text('Accept'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -322,6 +403,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
               spacing: 6,
               runSpacing: 4,
               children: [
+                _consentBadge(member),
                 if (member['can_view_alerts'] == true) _badge(Icons.notifications, 'Alerts', AppTheme.accent),
                 if (member['can_trigger_panic'] == true) _badge(Icons.sos, 'Panic', AppTheme.errorColor),
                 if (isChild) _badge(Icons.child_care, 'Child Profile', const Color(0xFF7C4DFF)),
@@ -333,6 +415,23 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
         ),
       ),
     );
+  }
+
+  Widget _consentBadge(Map<String, dynamic> member) {
+    final status = member['consent_status'] as String? ?? 'pending';
+    final dash = (_dashboard['members'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .where((m) => m['member_id'] == member['id'])
+        .toList();
+    final unread = dash.isEmpty ? 0 : (dash.first['unread_alerts'] as int? ?? 0);
+    switch (status) {
+      case 'accepted':
+        return _badge(Icons.verified_user, unread > 0 ? 'Linked - $unread unread' : 'Linked', AppTheme.success);
+      case 'declined':
+        return _badge(Icons.block, 'Declined', AppTheme.errorColor);
+      default:
+        return _badge(Icons.hourglass_top, 'Waiting for approval', AppTheme.warning);
+    }
   }
 
   Widget _badge(IconData icon, String label, Color color) {
