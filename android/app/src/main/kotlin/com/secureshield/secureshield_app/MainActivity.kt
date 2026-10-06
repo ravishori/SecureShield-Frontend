@@ -234,6 +234,11 @@ class MainActivity : FlutterFragmentActivity() {
                         result.success(true)
                     }
                     "isRecording" -> result.success(ScreenRecordService.isRecording)
+                    "recordingStatus" -> result.success(mapOf(
+                        "recording" to ScreenRecordService.isRecording,
+                        "microphone" to ScreenRecordService.microphoneIncluded,
+                        "error" to ScreenRecordService.lastError,
+                    ))
                     else -> result.notImplemented()
                 }
             }

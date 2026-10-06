@@ -1,7 +1,9 @@
 package com.secureshield.secureshield_app
 
 import android.app.*
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.MediaRecorder
@@ -29,6 +31,10 @@ class ScreenRecordService : Service() {
         const val EXTRA_DATA    = "result_data"
         const val CHANNEL_ID    = "screen_record"
         var isRecording = false
+        /** True when the running/last recording includes microphone audio. */
+        @Volatile var microphoneIncluded = false
+        /** Non-null when the last start attempt failed; shown to the user by the Flutter side. */
+        @Volatile var lastError: String? = null
     }
 
     private var mediaProjection: MediaProjection? = null
@@ -45,9 +51,20 @@ class ScreenRecordService : Service() {
     }
 
     private fun startRecording(intent: Intent) {
+        lastError = null
+        microphoneIncluded = false
         createNotificationChannel()
         startForeground(1001, buildNotification())
+        try {
+            doStartRecording(intent)
+        } catch (e: Exception) {
+            // Never crash the process: release everything and tell the UI why nothing is recording.
+            lastError = "Screen recording could not start (${e.javaClass.simpleName})"
+            stopRecording()
+        }
+    }
 
+    private fun doStartRecording(intent: Intent) {
         val resultCode = intent.getIntExtra(EXTRA_RESULT, Int.MIN_VALUE)
         val resultData: Intent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_DATA, Intent::class.java)
@@ -56,7 +73,11 @@ class ScreenRecordService : Service() {
             intent.getParcelableExtra(EXTRA_DATA)
         }
 
-        if (resultCode != android.app.Activity.RESULT_OK || resultData == null) { stopSelf(); return }
+        if (resultCode != android.app.Activity.RESULT_OK || resultData == null) {
+            lastError = "Screen capture permission was not granted"
+            stopRecording()
+            return
+        }
 
         val mpm = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mediaProjection = mpm.getMediaProjection(resultCode, resultData)
@@ -79,24 +100,15 @@ class ScreenRecordService : Service() {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         outputPath = "${dir.absolutePath}/recording_$timestamp.mp4"
 
-        // Setup MediaRecorder
-        mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            MediaRecorder(this)
-        } else {
-            @Suppress("DEPRECATION")
-            MediaRecorder()
-        }
-        mediaRecorder!!.apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setVideoSource(MediaRecorder.VideoSource.SURFACE)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(outputPath)
-            setVideoSize(width, height)
-            setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setVideoEncodingBitRate(5_000_000)
-            setVideoFrameRate(30)
-            prepare()
+        // RECORD_AUDIO is a runtime permission. Without it MediaRecorder.setAudioSource throws, so the screen is
+        // recorded without microphone audio instead of failing (the Flutter side tells the user).
+        val micGranted = checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        mediaRecorder = try {
+            buildRecorder(width, height, withAudio = micGranted).also { microphoneIncluded = micGranted }
+        } catch (e: Exception) {
+            if (!micGranted) throw e
+            // Microphone busy/unavailable: fall back to video only.
+            buildRecorder(width, height, withAudio = false).also { microphoneIncluded = false }
         }
 
         virtualDisplay = mediaProjection!!.createVirtualDisplay(
@@ -111,12 +123,42 @@ class ScreenRecordService : Service() {
         isRecording = true
     }
 
-    private fun stopRecording() {
+    private fun buildRecorder(width: Int, height: Int, withAudio: Boolean): MediaRecorder {
+        val recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(this)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaRecorder()
+        }
         try {
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-        } catch (_: Exception) {}
+            recorder.apply {
+                if (withAudio) setAudioSource(MediaRecorder.AudioSource.MIC)
+                setVideoSource(MediaRecorder.VideoSource.SURFACE)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setOutputFile(outputPath)
+                setVideoSize(width, height)
+                setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+                if (withAudio) setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setVideoEncodingBitRate(5_000_000)
+                setVideoFrameRate(30)
+                prepare()
+            }
+        } catch (e: Exception) {
+            recorder.release()
+            throw e
+        }
+        return recorder
+    }
+
+    private fun stopRecording() {
+        // stop() throws if the recorder never started; release() must still run.
+        try { if (isRecording) mediaRecorder?.stop() } catch (_: Exception) {}
+        try { mediaRecorder?.release() } catch (_: Exception) {}
         mediaRecorder = null
+        // A failed start must not leave an empty/corrupt file in the recordings list.
+        if (lastError != null && outputPath.isNotEmpty()) {
+            try { File(outputPath).delete() } catch (_: Exception) {}
+        }
 
         virtualDisplay?.release()
         virtualDisplay = null

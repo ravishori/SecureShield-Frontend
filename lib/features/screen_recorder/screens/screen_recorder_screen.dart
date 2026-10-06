@@ -63,11 +63,19 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
       }
     } else {
       final ok = await notifier.startRecording();
-      if (!ok && mounted) {
+      if (!mounted) return;
+      final r = notifier.lastStart;
+      if (!ok) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppTheme.errorColor,
-            content: Text(AppLocalizations.of(context).srDenied),
+            content: Text(r?.error ?? AppLocalizations.of(context).srDenied),
+          ),
+        );
+      } else if (r != null && !r.microphone) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Recording the screen without microphone audio (microphone permission not granted).'),
           ),
         );
       }
