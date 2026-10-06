@@ -15,6 +15,8 @@ import '../features/ai_coach/screens/ai_coach_screen.dart';
 import '../features/link_scanner/screens/link_scanner_screen.dart';
 import '../features/evidence/screens/evidence_screen.dart';
 import '../features/family/screens/family_screen.dart';
+import '../features/scam_calls/screens/scam_calls_screen.dart';
+import '../features/otp_vault/screens/otp_vault_screen.dart';
 import '../features/wifi_scanner/screens/wifi_scanner_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
 import '../features/call_recording/screens/recording_screen.dart';
@@ -191,6 +193,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/link-scanner',  builder: (_, __) => const LinkScannerScreen()),
       GoRoute(path: '/evidence',      builder: (_, __) => const EvidenceScreen()),
       GoRoute(path: '/family',        builder: (_, __) => const FamilyScreen()),
+      GoRoute(path: '/otp-vault',     builder: (_, __) => const OtpVaultScreen()),
+      GoRoute(path: '/scam-calls',    builder: (_, __) => const ScamCallsScreen()),
       GoRoute(path: '/wifi-scanner',  builder: (_, __) => const WifiScannerScreen()),
       GoRoute(path: '/settings',      builder: (_, __) => const SettingsScreen()),
       GoRoute(

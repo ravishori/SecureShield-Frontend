@@ -151,7 +151,7 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                       const SizedBox(height: 4),
                       Text(
                         isOn
-                            ? 'Watching all outbound connections'
+                            ? 'Blocking connections to known-malicious networks'
                             : 'Tap shield to start monitoring',
                         style: const TextStyle(color: Colors.white70, fontSize: 12),
                       ),
@@ -201,10 +201,9 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                   ]),
                   SizedBox(height: 8),
                   Text(
-                    '• Creates a local VPN tunnel — no traffic leaves your device\n'
-                    '• Only destination IP addresses are inspected (not your data)\n'
-                    '• Detects connections to known malicious domains\n'
-                    '• Alerts you about spyware, phishing, and C2 servers',
+                    '• Only traffic to known-malicious network ranges is routed into a local VPN tunnel; everything else uses your normal connection\n'
+                    '• A connection attempt to such a range is blocked and reported (only the destination address is read, never your data)\n'
+                    '• Domain-name based detection is not available in this mode',
                     style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.6),
                   ),
                 ],
@@ -265,7 +264,7 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                           Icon(Icons.wifi_tethering, size: 56,
                             color: AppTheme.accent.withValues(alpha: 0.3)),
                           const SizedBox(height: 12),
-                          const Text('Waiting for connections...',
+                          const Text('No blocked connection attempts yet',
                             style: TextStyle(color: AppTheme.textSecondary)),
                         ],
                       ),

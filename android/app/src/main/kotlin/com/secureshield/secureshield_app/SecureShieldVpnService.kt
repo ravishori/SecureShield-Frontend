@@ -22,12 +22,16 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * SecureShield local VPN service for outbound traffic monitoring.
  *
- * Architecture — monitoring-only mode:
- *  • Creates a tun0 virtual interface capturing all IP traffic
- *  • Reads outbound IP packet headers (not payload) to extract destination IP
- *  • Checks destination against known malicious IPs/domains
- *  • Forwards ALL packets without modification (transparent pass-through)
- *  • Sends threat events to Flutter via ACTION_VPN_TRAFFIC broadcast
+ * Architecture — blocklist mode (changed after device testing):
+ *  • The tun interface is given routes ONLY for the known-bad IP ranges in SUSPICIOUS_IP_PREFIXES.
+ *    All other traffic bypasses the VPN and flows normally.
+ *  • A packet that reaches the tun is a connection attempt to a flagged range; it is read (header only),
+ *    reported to Flutter via ACTION_VPN_TRAFFIC, and dropped, i.e. the connection is blocked.
+ *
+ * WHY: the first version routed 0.0.0.0/0 into the tun and never wrote packets back, so while the monitor was on
+ * the phone had NO internet at all (reproduced on the emulator: the app could not even reach its own API).
+ * A real "see every destination" monitor needs a user-space TCP/UDP forwarder, which this app does not have.
+ * Consequence: domain-based detection (SUSPICIOUS_DOMAINS) no longer sees traffic; only IP ranges are monitored.
  *
  * Privacy: packet payloads are never read or stored — only destination IPs.
  *
@@ -70,6 +74,13 @@ class SecureShieldVpnService : VpnService() {
             "185.220.",
             "45.142.",
             "91.108.56",
+        )
+
+        // The same ranges as CIDR routes (keep in sync with SUSPICIOUS_IP_PREFIXES).
+        private val BLOCKED_ROUTES = listOf(
+            "185.220.0.0" to 16,
+            "45.142.0.0" to 16,
+            "91.108.56.0" to 24,
         )
 
         private val KNOWN_SAFE_DOMAINS = setOf(
@@ -164,11 +175,15 @@ class SecureShieldVpnService : VpnService() {
             val builder = Builder()
                 .setSession("SecureShield Traffic Monitor")
                 .addAddress("10.250.1.1", 32)
-                .addRoute("0.0.0.0", 0)
-                .addDnsServer("8.8.8.8")
-                .addDnsServer("8.8.4.4")
                 .setMtu(1500)
                 .setBlocking(false)
+
+            // Only flagged ranges are routed into the tun (see class comment).
+            for ((address, prefix) in BLOCKED_ROUTES) {
+                try { builder.addRoute(address, prefix) } catch (e: Exception) {
+                    Log.w(TAG, "addRoute failed for $address/$prefix", e)
+                }
+            }
 
             // Bypass our own traffic to prevent looping. protect() before
             // establish() is the documented order.

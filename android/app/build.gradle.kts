@@ -82,4 +82,6 @@ dependencies {
     // Required for ServiceCompat.startForeground(service, id, notif, foregroundServiceType)
     // which is the Android 14+ safe-call. Version 1.12.0 added the 4-arg overload.
     implementation("androidx.core:core-ktx:1.13.1")
+    // local_auth (BiometricPrompt) needs a FragmentActivity with an AppCompat theme.
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }

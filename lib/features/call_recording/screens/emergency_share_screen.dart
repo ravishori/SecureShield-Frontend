@@ -1,3 +1,4 @@
+import '../../../core/app_config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -142,7 +143,9 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
 
       // 2. Generate expiring share link (24 h)
       final linkResp = await _dio.post('/recordings/$recordingId/share-link');
-      final url = linkResp.data['share_url'] as String;
+      // The API returns a path ("/api/v1/recordings/share/<token>"); a link someone can open needs the host.
+      final path = linkResp.data['share_url'] as String;
+      final url = path.startsWith('/') ? '${Uri.parse(AppConfig.baseUrl).origin}$path' : path;
 
       if (mounted) {
         setState(() {

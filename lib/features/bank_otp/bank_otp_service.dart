@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../otp_vault/otp_vault_store.dart';
+
 class BankOtpAlert {
   final String otp;
   final String bank;
@@ -67,8 +69,13 @@ final bankOtpHistoryProvider =
   (ref) {
     final notifier = BankOtpHistoryNotifier();
     // Listen to stream and append to history
+    final vault = OtpVaultStore();
     ref.listen(bankOtpStreamProvider, (_, next) {
-      next.whenData(notifier.addAlert);
+      next.whenData((alert) {
+        notifier.addAlert(alert);
+        // Keep a copy in the locked vault (device-local, Keystore-backed).
+        vault.add(sender: alert.bank, otp: alert.otp, sourceApp: alert.packageName);
+      });
     });
     return notifier;
   },
