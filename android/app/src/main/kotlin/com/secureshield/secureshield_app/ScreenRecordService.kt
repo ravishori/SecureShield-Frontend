@@ -48,7 +48,7 @@ class ScreenRecordService : Service() {
         createNotificationChannel()
         startForeground(1001, buildNotification())
 
-        val resultCode = intent.getIntExtra(EXTRA_RESULT, -1)
+        val resultCode = intent.getIntExtra(EXTRA_RESULT, Int.MIN_VALUE)
         val resultData: Intent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_DATA, Intent::class.java)
         } else {
@@ -56,10 +56,14 @@ class ScreenRecordService : Service() {
             intent.getParcelableExtra(EXTRA_DATA)
         }
 
-        if (resultCode == -1 || resultData == null) { stopSelf(); return }
+        if (resultCode != android.app.Activity.RESULT_OK || resultData == null) { stopSelf(); return }
 
         val mpm = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mediaProjection = mpm.getMediaProjection(resultCode, resultData)
+        // Android 14+ requires a callback to be registered before capture starts.
+        mediaProjection!!.registerCallback(object : MediaProjection.Callback() {
+            override fun onStop() { stopRecording() }
+        }, null)
 
         val wm      = getSystemService(WINDOW_SERVICE) as WindowManager
         val metrics = DisplayMetrics()
