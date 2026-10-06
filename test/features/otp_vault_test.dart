@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:secureshield_app/features/otp_vault/otp_vault_store.dart';
@@ -91,6 +93,13 @@ void main() {
     Future<void> pump(WidgetTester tester,
         {required bool unlocks, OtpVaultStore? store}) async {
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         home: OtpVaultScreen(store: store, authenticate: () async => unlocks),
       ));
       await tester.pumpAndSettle();
@@ -133,6 +142,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('No archived OTPs'), findsOneWidget);
       expect(await s.load(), isEmpty);
+    });
+
+    testWidgets('the locked screen is rendered from the Hindi translation', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        locale: const Locale('hi'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: OtpVaultScreen(store: OtpVaultStore(), authenticate: () async => false),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('ओटीपी वॉल्ट लॉक है'), findsOneWidget);
+      expect(find.text('OTP Vault is locked'), findsNothing);
     });
 
     testWidgets('shows an empty state when there is nothing saved',

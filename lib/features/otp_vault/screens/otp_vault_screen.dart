@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -55,7 +56,7 @@ class _OtpVaultScreenState extends State<OtpVaultScreen> with WidgetsBindingObse
   Future<void> _unlock() async {
     if (_authing) return;
     setState(() => _authing = true);
-    final ok = await (widget._authenticate ?? () => BiometricService.authenticate(reason: 'Unlock your OTP vault'))();
+    final ok = await (widget._authenticate ?? () => BiometricService.authenticate(reason: AppLocalizations.of(context).vaultReason))();
     if (!mounted) return;
     if (ok) {
       final entries = await _store.load();
@@ -78,10 +79,10 @@ class _OtpVaultScreenState extends State<OtpVaultScreen> with WidgetsBindingObse
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('OTP Vault'), actions: [
+      appBar: AppBar(title: Text(AppLocalizations.of(context).vaultTitle), actions: [
         if (_unlocked)
           IconButton(
-            tooltip: _showArchived ? 'Hide archived' : 'Show archived',
+            tooltip: _showArchived ? AppLocalizations.of(context).vaultHideArchived : AppLocalizations.of(context).vaultShowArchived,
             icon: Icon(_showArchived ? Icons.inventory_2 : Icons.inventory_2_outlined),
             onPressed: () => setState(() => _showArchived = !_showArchived),
           ),
@@ -97,19 +98,19 @@ class _OtpVaultScreenState extends State<OtpVaultScreen> with WidgetsBindingObse
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           const Icon(Icons.lock_outline, size: 56, color: AppTheme.accent),
           const SizedBox(height: 12),
-          const Text('OTP Vault is locked', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
+          Text(AppLocalizations.of(context).vaultLocked, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
           const SizedBox(height: 8),
-          const Text(
-            'Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.',
+          Text(
+            AppLocalizations.of(context).vaultLockedBody,
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppTheme.textSecondary),
+            style: const TextStyle(color: AppTheme.textSecondary),
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
             key: const Key('vaultUnlock'),
             onPressed: _authing ? null : _unlock,
             icon: const Icon(Icons.fingerprint),
-            label: const Text('Unlock'),
+            label: Text(AppLocalizations.of(context).vaultUnlock),
           ),
         ]),
       ),
@@ -121,7 +122,7 @@ class _OtpVaultScreenState extends State<OtpVaultScreen> with WidgetsBindingObse
     if (shown.isEmpty) {
       return Center(
         child: Text(
-          _showArchived ? 'No archived OTPs' : 'No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.',
+          _showArchived ? AppLocalizations.of(context).vaultNoArchived : AppLocalizations.of(context).vaultEmpty,
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppTheme.textSecondary),
         ),
@@ -159,9 +160,9 @@ class _OtpVaultScreenState extends State<OtpVaultScreen> with WidgetsBindingObse
                 await _reload();
               },
               itemBuilder: (_) => [
-                const PopupMenuItem(value: 'copy', child: Text('Copy')),
-                PopupMenuItem(value: 'archive', child: Text(e.isArchived ? 'Unarchive' : 'Archive')),
-                const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                PopupMenuItem(value: 'copy', child: Text(AppLocalizations.of(context).vaultCopy)),
+                PopupMenuItem(value: 'archive', child: Text(e.isArchived ? AppLocalizations.of(context).vaultUnarchive : AppLocalizations.of(context).vaultArchive)),
+                PopupMenuItem(value: 'delete', child: Text(AppLocalizations.of(context).vaultDelete)),
               ],
             ),
           ),

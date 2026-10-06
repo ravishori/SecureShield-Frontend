@@ -212,5 +212,51 @@
   "panicTitle": "প্যানিক অ্যালার্ট",
   "panicBody": "এটি আপনার জরুরি যোগাযোগদের বার্তা পাঠাবে এবং একটি গুরুতর সতর্কতা নথিভুক্ত করবে (আপনার অনুমোদিত পরিবারের সদস্যরা এটি দেখতে পারবেন)। আপনি কি নিশ্চিত?",
   "sendAlert": "অ্যালার্ট পাঠান",
-  "panicSent": "প্যানিক অ্যালার্ট পাঠানো হয়েছে! জরুরি যোগাযোগদের জানানো হয়েছে।"
+  "panicSent": "প্যানিক অ্যালার্ট পাঠানো হয়েছে! জরুরি যোগাযোগদের জানানো হয়েছে।",
+  "menuScamCalls": "স্ক্যাম কল",
+  "menuOtpVault": "ওটিপি ভল্ট",
+  "scamIntro": "কোনো কল সন্দেহজনক মনে হয়েছে? নম্বরটি রিপোর্ট করুন: SecureShield স্কোর দেয়, সতর্ক করে এবং ব্লক করতে দেয়।",
+  "scamCallerNumber": "কলারের নম্বর",
+  "scamCallLength": "কলের দৈর্ঘ্য (মিনিট)",
+  "scamWhatAsked": "তারা কী চেয়েছিল? (ঐচ্ছিক)",
+  "scamReportBtn": "এই কলটি রিপোর্ট করুন",
+  "scamEnterNumber": "কলারের ফোন নম্বর লিখুন",
+  "scamReportFailed": "কলটি রিপোর্ট করা যায়নি। আপনার সংযোগ পরীক্ষা করুন।",
+  "scamRiskScore": "ঝুঁকির স্কোর {score}/100",
+  "@scamRiskScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scamBlockedSuffix": " - ব্লক করা হয়েছে",
+  "scamYourReports": "আপনার রিপোর্ট",
+  "scamNoReports": "এখনও কোনো কল রিপোর্ট করা হয়নি।",
+  "scamBlockBtn": "ব্লক করুন",
+  "scamNumberBlocked": "{number} ব্লক করা হয়েছে",
+  "@scamNumberBlocked": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "scamBlockFailed": "নম্বরটি ব্লক করা যায়নি",
+  "vaultTitle": "ওটিপি ভল্ট",
+  "vaultLocked": "ওটিপি ভল্ট লক করা আছে",
+  "vaultLockedBody": "ফিঙ্গারপ্রিন্ট, মুখ বা ডিভাইস পিন দিয়ে আনলক করুন। ফোনে স্ক্রিন লক না থাকলে ভল্ট ব্যবহার করতে একটি সেট করুন।",
+  "vaultUnlock": "আনলক করুন",
+  "vaultReason": "আপনার ওটিপি ভল্ট আনলক করুন",
+  "vaultHideArchived": "আর্কাইভ লুকান",
+  "vaultShowArchived": "আর্কাইভ দেখান",
+  "vaultNoArchived": "কোনো আর্কাইভ করা ওটিপি নেই",
+  "vaultEmpty": "এখনও কোনো ওটিপি সংরক্ষিত নেই।\nব্যাংক ওটিপি মনিটরের শনাক্ত করা ব্যাংক ওটিপি এখানে দেখা যাবে।",
+  "vaultCopy": "কপি",
+  "vaultArchive": "আর্কাইভ",
+  "vaultUnarchive": "আর্কাইভ থেকে সরান",
+  "vaultDelete": "মুছুন",
+  "vpnBlockingActive": "পরিচিত ক্ষতিকর নেটওয়ার্কে সংযোগ ব্লক করা হচ্ছে",
+  "vpnNoBlocked": "এখনও কোনো ব্লক করা সংযোগ প্রচেষ্টা নেই",
+  "vpnTapToStart": "পর্যবেক্ষণ শুরু করতে শিল্ডে ট্যাপ করুন"
 }

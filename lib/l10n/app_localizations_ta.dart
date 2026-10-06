@@ -551,4 +551,109 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get panicSent =>
       'பீதி எச்சரிக்கை அனுப்பப்பட்டது! அவசர தொடர்புகளுக்குத் தெரிவிக்கப்பட்டது.';
+
+  @override
+  String get menuScamCalls => 'மோசடி அழைப்புகள்';
+
+  @override
+  String get menuOtpVault => 'OTP பெட்டகம்';
+
+  @override
+  String get scamIntro =>
+      'சந்தேகமான அழைப்பு வந்ததா? எண்ணைப் புகாரளியுங்கள்: SecureShield மதிப்பிடும், எச்சரிக்கும், தடுக்க உதவும்.';
+
+  @override
+  String get scamCallerNumber => 'அழைத்தவரின் எண்';
+
+  @override
+  String get scamCallLength => 'அழைப்பு நேரம் (நிமிடங்கள்)';
+
+  @override
+  String get scamWhatAsked => 'அவர்கள் என்ன கேட்டார்கள்? (விருப்பம்)';
+
+  @override
+  String get scamReportBtn => 'இந்த அழைப்பைப் புகாரளி';
+
+  @override
+  String get scamEnterNumber => 'அழைத்தவரின் தொலைபேசி எண்ணை உள்ளிடவும்';
+
+  @override
+  String get scamReportFailed =>
+      'அழைப்பைப் புகாரளிக்க முடியவில்லை. இணைப்பைச் சரிபார்க்கவும்.';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'ஆபத்து மதிப்பெண் $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - தடுக்கப்பட்டது';
+
+  @override
+  String get scamYourReports => 'உங்கள் புகார்கள்';
+
+  @override
+  String get scamNoReports => 'இதுவரை புகாரளித்த அழைப்புகள் இல்லை.';
+
+  @override
+  String get scamBlockBtn => 'தடு';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number தடுக்கப்பட்டது';
+  }
+
+  @override
+  String get scamBlockFailed => 'எண்ணைத் தடுக்க முடியவில்லை';
+
+  @override
+  String get vaultTitle => 'OTP பெட்டகம்';
+
+  @override
+  String get vaultLocked => 'OTP பெட்டகம் பூட்டப்பட்டுள்ளது';
+
+  @override
+  String get vaultLockedBody =>
+      'கைரேகை, முகம் அல்லது சாதன PIN மூலம் திறக்கவும். உங்கள் தொலைபேசியில் திரைப் பூட்டு இல்லையெனில், பெட்டகத்தைப் பயன்படுத்த ஒன்றை அமைக்கவும்.';
+
+  @override
+  String get vaultUnlock => 'திற';
+
+  @override
+  String get vaultReason => 'உங்கள் OTP பெட்டகத்தைத் திறக்கவும்';
+
+  @override
+  String get vaultHideArchived => 'காப்பகத்தை மறை';
+
+  @override
+  String get vaultShowArchived => 'காப்பகத்தைக் காட்டு';
+
+  @override
+  String get vaultNoArchived => 'காப்பகப்படுத்திய OTP இல்லை';
+
+  @override
+  String get vaultEmpty =>
+      'இன்னும் OTP எதுவும் சேமிக்கப்படவில்லை.\nவங்கி OTP கண்காணிப்பு கண்டறிந்தவை இங்கே தோன்றும்.';
+
+  @override
+  String get vaultCopy => 'நகலெடு';
+
+  @override
+  String get vaultArchive => 'காப்பகப்படுத்து';
+
+  @override
+  String get vaultUnarchive => 'காப்பகத்திலிருந்து நீக்கு';
+
+  @override
+  String get vaultDelete => 'நீக்கு';
+
+  @override
+  String get vpnBlockingActive =>
+      'அறியப்பட்ட தீங்கிழைக்கும் நெட்வொர்க்குகளுடனான இணைப்புகள் தடுக்கப்படுகின்றன';
+
+  @override
+  String get vpnNoBlocked => 'இதுவரை தடுக்கப்பட்ட இணைப்பு முயற்சிகள் இல்லை';
+
+  @override
+  String get vpnTapToStart => 'கண்காணிப்பைத் தொடங்க கவசத்தைத் தட்டவும்';
 }

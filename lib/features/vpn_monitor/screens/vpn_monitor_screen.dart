@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
@@ -151,8 +152,8 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                       const SizedBox(height: 4),
                       Text(
                         isOn
-                            ? 'Blocking connections to known-malicious networks'
-                            : 'Tap shield to start monitoring',
+                            ? AppLocalizations.of(context).vpnBlockingActive
+                            : AppLocalizations.of(context).vpnTapToStart,
                         style: const TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                       if (isOn && allLog.isNotEmpty) ...[
@@ -264,8 +265,8 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                           Icon(Icons.wifi_tethering, size: 56,
                             color: AppTheme.accent.withValues(alpha: 0.3)),
                           const SizedBox(height: 12),
-                          const Text('No blocked connection attempts yet',
-                            style: TextStyle(color: AppTheme.textSecondary)),
+                          Text(AppLocalizations.of(context).vpnNoBlocked,
+                            style: const TextStyle(color: AppTheme.textSecondary)),
                         ],
                       ),
                     )

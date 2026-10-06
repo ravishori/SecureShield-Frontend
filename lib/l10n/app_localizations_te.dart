@@ -550,4 +550,109 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get panicSent =>
       'పానిక్ అలర్ట్ పంపబడింది! అత్యవసర సంప్రదింపులకు తెలియజేయబడింది.';
+
+  @override
+  String get menuScamCalls => 'స్కామ్ కాల్స్';
+
+  @override
+  String get menuOtpVault => 'OTP వాల్ట్';
+
+  @override
+  String get scamIntro =>
+      'అనుమానాస్పద కాల్ వచ్చిందా? నంబర్‌ను రిపోర్ట్ చేయండి: SecureShield స్కోర్ ఇస్తుంది, హెచ్చరిస్తుంది, బ్లాక్ చేయనిస్తుంది.';
+
+  @override
+  String get scamCallerNumber => 'కాలర్ నంబర్';
+
+  @override
+  String get scamCallLength => 'కాల్ నిడివి (నిమిషాలు)';
+
+  @override
+  String get scamWhatAsked => 'వారు ఏమి అడిగారు? (ఐచ్ఛికం)';
+
+  @override
+  String get scamReportBtn => 'ఈ కాల్‌ను రిపోర్ట్ చేయండి';
+
+  @override
+  String get scamEnterNumber => 'కాలర్ ఫోన్ నంబర్ నమోదు చేయండి';
+
+  @override
+  String get scamReportFailed =>
+      'కాల్‌ను రిపోర్ట్ చేయలేకపోయాం. మీ కనెక్షన్‌ను తనిఖీ చేయండి.';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'రిస్క్ స్కోర్ $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - బ్లాక్ చేయబడింది';
+
+  @override
+  String get scamYourReports => 'మీ రిపోర్టులు';
+
+  @override
+  String get scamNoReports => 'ఇంకా రిపోర్ట్ చేసిన కాల్స్ లేవు.';
+
+  @override
+  String get scamBlockBtn => 'బ్లాక్ చేయి';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number బ్లాక్ చేయబడింది';
+  }
+
+  @override
+  String get scamBlockFailed => 'నంబర్‌ను బ్లాక్ చేయలేకపోయాం';
+
+  @override
+  String get vaultTitle => 'OTP వాల్ట్';
+
+  @override
+  String get vaultLocked => 'OTP వాల్ట్ లాక్ చేయబడింది';
+
+  @override
+  String get vaultLockedBody =>
+      'వేలిముద్ర, ముఖం లేదా పరికర PINతో అన్‌లాక్ చేయండి. మీ ఫోన్‌కు స్క్రీన్ లాక్ లేకపోతే, వాల్ట్ కోసం ఒకటి సెట్ చేయండి.';
+
+  @override
+  String get vaultUnlock => 'అన్‌లాక్';
+
+  @override
+  String get vaultReason => 'మీ OTP వాల్ట్‌ను అన్‌లాక్ చేయండి';
+
+  @override
+  String get vaultHideArchived => 'ఆర్కైవ్ దాచు';
+
+  @override
+  String get vaultShowArchived => 'ఆర్కైవ్ చూపు';
+
+  @override
+  String get vaultNoArchived => 'ఆర్కైవ్ చేసిన OTPలు లేవు';
+
+  @override
+  String get vaultEmpty =>
+      'ఇంకా OTPలు సేవ్ కాలేదు.\nబ్యాంక్ OTP మానిటర్ గుర్తించిన బ్యాంక్ OTPలు ఇక్కడ కనిపిస్తాయి.';
+
+  @override
+  String get vaultCopy => 'కాపీ';
+
+  @override
+  String get vaultArchive => 'ఆర్కైవ్ చేయి';
+
+  @override
+  String get vaultUnarchive => 'ఆర్కైవ్ నుండి తొలగించు';
+
+  @override
+  String get vaultDelete => 'తొలగించు';
+
+  @override
+  String get vpnBlockingActive =>
+      'తెలిసిన హానికర నెట్‌వర్క్‌లకు కనెక్షన్‌లు బ్లాక్ చేయబడుతున్నాయి';
+
+  @override
+  String get vpnNoBlocked => 'ఇంకా బ్లాక్ చేసిన కనెక్షన్ ప్రయత్నాలు లేవు';
+
+  @override
+  String get vpnTapToStart => 'పర్యవేక్షణ ప్రారంభించడానికి షీల్డ్‌ను నొక్కండి';
 }

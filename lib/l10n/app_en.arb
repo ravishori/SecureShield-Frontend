@@ -239,5 +239,51 @@
   "panicTitle": "Panic Alert",
   "panicBody": "This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?",
   "sendAlert": "SEND ALERT",
-  "panicSent": "Panic alert sent! Emergency contacts notified."
+  "panicSent": "Panic alert sent! Emergency contacts notified.",
+  "menuScamCalls": "Scam Calls",
+  "menuOtpVault": "OTP Vault",
+  "scamIntro": "Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.",
+  "scamCallerNumber": "Caller number",
+  "scamCallLength": "Call length (minutes)",
+  "scamWhatAsked": "What did they ask for? (optional)",
+  "scamReportBtn": "Report this call",
+  "scamEnterNumber": "Enter the caller's phone number",
+  "scamReportFailed": "Could not report the call. Check your connection.",
+  "scamRiskScore": "Risk score {score}/100",
+  "@scamRiskScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scamBlockedSuffix": " - blocked",
+  "scamYourReports": "Your reports",
+  "scamNoReports": "No reported calls yet.",
+  "scamBlockBtn": "Block",
+  "scamNumberBlocked": "{number} blocked",
+  "@scamNumberBlocked": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "scamBlockFailed": "Could not block the number",
+  "vaultTitle": "OTP Vault",
+  "vaultLocked": "OTP Vault is locked",
+  "vaultLockedBody": "Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.",
+  "vaultUnlock": "Unlock",
+  "vaultReason": "Unlock your OTP vault",
+  "vaultHideArchived": "Hide archived",
+  "vaultShowArchived": "Show archived",
+  "vaultNoArchived": "No archived OTPs",
+  "vaultEmpty": "No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.",
+  "vaultCopy": "Copy",
+  "vaultArchive": "Archive",
+  "vaultUnarchive": "Unarchive",
+  "vaultDelete": "Delete",
+  "vpnBlockingActive": "Blocking connections to known-malicious networks",
+  "vpnNoBlocked": "No blocked connection attempts yet",
+  "vpnTapToStart": "Tap shield to start monitoring"
 }

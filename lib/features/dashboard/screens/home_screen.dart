@@ -956,8 +956,8 @@ class _AppDrawer extends ConsumerWidget {
                 _drawerSection(context, '🛡️  ${AppLocalizations.of(context).secThreat}', [
                   _DrawerItem(Icons.link,           AppLocalizations.of(context).menuLinkScanner,        '/link-scanner',       const Color(0xFF00E5FF), badge: 'AI'),
                   _DrawerItem(Icons.sms,            AppLocalizations.of(context).menuMessageAnalyzer,    '/message-analyzer',   const Color(0xFF00E5FF), badge: 'AI'),
-                  const _DrawerItem(Icons.phone_callback, 'Scam Calls', '/scam-calls', Color(0xFFFF5252)),
-                  const _DrawerItem(Icons.lock_person, 'OTP Vault', '/otp-vault', Color(0xFF7C4DFF)),
+                  _DrawerItem(Icons.phone_callback, AppLocalizations.of(context).menuScamCalls, '/scam-calls', const Color(0xFFFF5252)),
+                  _DrawerItem(Icons.lock_person, AppLocalizations.of(context).menuOtpVault, '/otp-vault', const Color(0xFF7C4DFF)),
                   _DrawerItem(Icons.wifi,           AppLocalizations.of(context).menuWifi,        '/wifi-scanner',       const Color(0xFF00BCD4)),
                   _DrawerItem(Icons.apps,           AppLocalizations.of(context).menuAppRisk,    '/home/scanner',       const Color(0xFF00E5FF)),
                   _DrawerItem(Icons.install_mobile, AppLocalizations.of(context).menuPackageMonitor,     '/package-monitor',    const Color(0xFFFF9800)),

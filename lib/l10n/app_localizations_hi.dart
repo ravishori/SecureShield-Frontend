@@ -547,4 +547,109 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get panicSent =>
       'पैनिक अलर्ट भेजा गया! आपातकालीन संपर्कों को सूचित किया गया।';
+
+  @override
+  String get menuScamCalls => 'स्कैम कॉल';
+
+  @override
+  String get menuOtpVault => 'ओटीपी वॉल्ट';
+
+  @override
+  String get scamIntro =>
+      'कोई कॉल संदिग्ध लगी? नंबर रिपोर्ट करें: SecureShield उसे स्कोर करता है, चेतावनी देता है और ब्लॉक करने देता है।';
+
+  @override
+  String get scamCallerNumber => 'कॉल करने वाले का नंबर';
+
+  @override
+  String get scamCallLength => 'कॉल की अवधि (मिनट)';
+
+  @override
+  String get scamWhatAsked => 'उन्होंने क्या माँगा? (वैकल्पिक)';
+
+  @override
+  String get scamReportBtn => 'यह कॉल रिपोर्ट करें';
+
+  @override
+  String get scamEnterNumber => 'कॉल करने वाले का फ़ोन नंबर दर्ज करें';
+
+  @override
+  String get scamReportFailed =>
+      'कॉल रिपोर्ट नहीं हो सका। अपना कनेक्शन जाँचें।';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'जोखिम स्कोर $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - ब्लॉक किया गया';
+
+  @override
+  String get scamYourReports => 'आपकी रिपोर्ट';
+
+  @override
+  String get scamNoReports => 'अभी तक कोई कॉल रिपोर्ट नहीं हुई।';
+
+  @override
+  String get scamBlockBtn => 'ब्लॉक करें';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number ब्लॉक किया गया';
+  }
+
+  @override
+  String get scamBlockFailed => 'नंबर ब्लॉक नहीं हो सका';
+
+  @override
+  String get vaultTitle => 'ओटीपी वॉल्ट';
+
+  @override
+  String get vaultLocked => 'ओटीपी वॉल्ट लॉक है';
+
+  @override
+  String get vaultLockedBody =>
+      'फ़िंगरप्रिंट, चेहरे या डिवाइस पिन से अनलॉक करें। यदि आपके फ़ोन में स्क्रीन लॉक नहीं है, तो वॉल्ट के लिए एक सेट करें।';
+
+  @override
+  String get vaultUnlock => 'अनलॉक करें';
+
+  @override
+  String get vaultReason => 'अपना ओटीपी वॉल्ट अनलॉक करें';
+
+  @override
+  String get vaultHideArchived => 'संग्रहीत छुपाएँ';
+
+  @override
+  String get vaultShowArchived => 'संग्रहीत दिखाएँ';
+
+  @override
+  String get vaultNoArchived => 'कोई संग्रहीत ओटीपी नहीं';
+
+  @override
+  String get vaultEmpty =>
+      'अभी कोई ओटीपी सहेजा नहीं गया।\nबैंक ओटीपी मॉनिटर द्वारा पकड़े गए बैंक ओटीपी यहाँ दिखेंगे।';
+
+  @override
+  String get vaultCopy => 'कॉपी करें';
+
+  @override
+  String get vaultArchive => 'संग्रहीत करें';
+
+  @override
+  String get vaultUnarchive => 'संग्रह से हटाएँ';
+
+  @override
+  String get vaultDelete => 'हटाएँ';
+
+  @override
+  String get vpnBlockingActive =>
+      'ज्ञात दुर्भावनापूर्ण नेटवर्क से कनेक्शन ब्लॉक किए जा रहे हैं';
+
+  @override
+  String get vpnNoBlocked => 'अभी तक कोई ब्लॉक किया गया कनेक्शन प्रयास नहीं';
+
+  @override
+  String get vpnTapToStart => 'निगरानी शुरू करने के लिए शील्ड दबाएँ';
 }

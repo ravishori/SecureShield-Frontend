@@ -212,5 +212,51 @@
   "panicTitle": "पैनिक अलर्ट",
   "panicBody": "यह आपके आपातकालीन संपर्कों को संदेश भेजेगा और एक गंभीर अलर्ट दर्ज करेगा (आपके स्वीकृत परिवार के सदस्य इसे देख सकते हैं)। क्या आप निश्चित हैं?",
   "sendAlert": "अलर्ट भेजें",
-  "panicSent": "पैनिक अलर्ट भेजा गया! आपातकालीन संपर्कों को सूचित किया गया।"
+  "panicSent": "पैनिक अलर्ट भेजा गया! आपातकालीन संपर्कों को सूचित किया गया।",
+  "menuScamCalls": "स्कैम कॉल",
+  "menuOtpVault": "ओटीपी वॉल्ट",
+  "scamIntro": "कोई कॉल संदिग्ध लगी? नंबर रिपोर्ट करें: SecureShield उसे स्कोर करता है, चेतावनी देता है और ब्लॉक करने देता है।",
+  "scamCallerNumber": "कॉल करने वाले का नंबर",
+  "scamCallLength": "कॉल की अवधि (मिनट)",
+  "scamWhatAsked": "उन्होंने क्या माँगा? (वैकल्पिक)",
+  "scamReportBtn": "यह कॉल रिपोर्ट करें",
+  "scamEnterNumber": "कॉल करने वाले का फ़ोन नंबर दर्ज करें",
+  "scamReportFailed": "कॉल रिपोर्ट नहीं हो सका। अपना कनेक्शन जाँचें।",
+  "scamRiskScore": "जोखिम स्कोर {score}/100",
+  "@scamRiskScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scamBlockedSuffix": " - ब्लॉक किया गया",
+  "scamYourReports": "आपकी रिपोर्ट",
+  "scamNoReports": "अभी तक कोई कॉल रिपोर्ट नहीं हुई।",
+  "scamBlockBtn": "ब्लॉक करें",
+  "scamNumberBlocked": "{number} ब्लॉक किया गया",
+  "@scamNumberBlocked": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "scamBlockFailed": "नंबर ब्लॉक नहीं हो सका",
+  "vaultTitle": "ओटीपी वॉल्ट",
+  "vaultLocked": "ओटीपी वॉल्ट लॉक है",
+  "vaultLockedBody": "फ़िंगरप्रिंट, चेहरे या डिवाइस पिन से अनलॉक करें। यदि आपके फ़ोन में स्क्रीन लॉक नहीं है, तो वॉल्ट के लिए एक सेट करें।",
+  "vaultUnlock": "अनलॉक करें",
+  "vaultReason": "अपना ओटीपी वॉल्ट अनलॉक करें",
+  "vaultHideArchived": "संग्रहीत छुपाएँ",
+  "vaultShowArchived": "संग्रहीत दिखाएँ",
+  "vaultNoArchived": "कोई संग्रहीत ओटीपी नहीं",
+  "vaultEmpty": "अभी कोई ओटीपी सहेजा नहीं गया।\nबैंक ओटीपी मॉनिटर द्वारा पकड़े गए बैंक ओटीपी यहाँ दिखेंगे।",
+  "vaultCopy": "कॉपी करें",
+  "vaultArchive": "संग्रहीत करें",
+  "vaultUnarchive": "संग्रह से हटाएँ",
+  "vaultDelete": "हटाएँ",
+  "vpnBlockingActive": "ज्ञात दुर्भावनापूर्ण नेटवर्क से कनेक्शन ब्लॉक किए जा रहे हैं",
+  "vpnNoBlocked": "अभी तक कोई ब्लॉक किया गया कनेक्शन प्रयास नहीं",
+  "vpnTapToStart": "निगरानी शुरू करने के लिए शील्ड दबाएँ"
 }

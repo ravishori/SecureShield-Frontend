@@ -212,5 +212,51 @@
   "panicTitle": "पॅनिक अलर्ट",
   "panicBody": "हे तुमच्या आणीबाणी संपर्कांना संदेश पाठवेल आणि गंभीर सूचना नोंदवेल (तुम्ही मंजूर केलेले कुटुंबीय ती पाहू शकतात). तुम्हाला खात्री आहे का?",
   "sendAlert": "सूचना पाठवा",
-  "panicSent": "पॅनिक अलर्ट पाठवला! आणीबाणी संपर्कांना कळवले."
+  "panicSent": "पॅनिक अलर्ट पाठवला! आणीबाणी संपर्कांना कळवले.",
+  "menuScamCalls": "स्कॅम कॉल",
+  "menuOtpVault": "ओटीपी व्हॉल्ट",
+  "scamIntro": "एखादा कॉल संशयास्पद वाटला? नंबर रिपोर्ट करा: SecureShield त्याला गुण देतो, इशारा देतो आणि ब्लॉक करू देतो.",
+  "scamCallerNumber": "कॉल करणाऱ्याचा नंबर",
+  "scamCallLength": "कॉलचा कालावधी (मिनिटे)",
+  "scamWhatAsked": "त्यांनी काय मागितले? (ऐच्छिक)",
+  "scamReportBtn": "हा कॉल रिपोर्ट करा",
+  "scamEnterNumber": "कॉल करणाऱ्याचा फोन नंबर टाका",
+  "scamReportFailed": "कॉल रिपोर्ट करता आला नाही. कनेक्शन तपासा.",
+  "scamRiskScore": "जोखीम गुण {score}/100",
+  "@scamRiskScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scamBlockedSuffix": " - ब्लॉक केले",
+  "scamYourReports": "तुमचे अहवाल",
+  "scamNoReports": "अजून कोणताही कॉल रिपोर्ट केलेला नाही.",
+  "scamBlockBtn": "ब्लॉक करा",
+  "scamNumberBlocked": "{number} ब्लॉक केला",
+  "@scamNumberBlocked": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "scamBlockFailed": "नंबर ब्लॉक करता आला नाही",
+  "vaultTitle": "ओटीपी व्हॉल्ट",
+  "vaultLocked": "ओटीपी व्हॉल्ट लॉक आहे",
+  "vaultLockedBody": "फिंगरप्रिंट, चेहरा किंवा डिव्हाइस पिनने अनलॉक करा. फोनला स्क्रीन लॉक नसल तर व्हॉल्टसाठी तो सेट करा.",
+  "vaultUnlock": "अनलॉक करा",
+  "vaultReason": "तुमचा ओटीपी व्हॉल्ट अनलॉक करा",
+  "vaultHideArchived": "संग्रहित लपवा",
+  "vaultShowArchived": "संग्रहित दाखवा",
+  "vaultNoArchived": "कोणतेही संग्रहित ओटीपी नाहीत",
+  "vaultEmpty": "अजून कोणतेही ओटीपी जतन केलेले नाहीत.\nबँक ओटीपी मॉनिटरने शोधलेले बँक ओटीपी इथे दिसतील.",
+  "vaultCopy": "कॉपी करा",
+  "vaultArchive": "संग्रहित करा",
+  "vaultUnarchive": "संग्रहातून काढा",
+  "vaultDelete": "हटवा",
+  "vpnBlockingActive": "ज्ञात दुर्भावनापूर्ण नेटवर्कशी कनेक्शन ब्लॉक केले जात आहेत",
+  "vpnNoBlocked": "अजून कोणताही ब्लॉक केलेला कनेक्शन प्रयत्न नाही",
+  "vpnTapToStart": "देखरेख सुरू करण्यासाठी शील्डला स्पर्श करा"
 }

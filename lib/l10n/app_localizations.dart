@@ -1131,6 +1131,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Panic alert sent! Emergency contacts notified.'**
   String get panicSent;
+
+  /// No description provided for @menuScamCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam Calls'**
+  String get menuScamCalls;
+
+  /// No description provided for @menuOtpVault.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault'**
+  String get menuOtpVault;
+
+  /// No description provided for @scamIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.'**
+  String get scamIntro;
+
+  /// No description provided for @scamCallerNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Caller number'**
+  String get scamCallerNumber;
+
+  /// No description provided for @scamCallLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Call length (minutes)'**
+  String get scamCallLength;
+
+  /// No description provided for @scamWhatAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'What did they ask for? (optional)'**
+  String get scamWhatAsked;
+
+  /// No description provided for @scamReportBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this call'**
+  String get scamReportBtn;
+
+  /// No description provided for @scamEnterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the caller\'s phone number'**
+  String get scamEnterNumber;
+
+  /// No description provided for @scamReportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not report the call. Check your connection.'**
+  String get scamReportFailed;
+
+  /// No description provided for @scamRiskScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk score {score}/100'**
+  String scamRiskScore(int score);
+
+  /// No description provided for @scamBlockedSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' - blocked'**
+  String get scamBlockedSuffix;
+
+  /// No description provided for @scamYourReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reports'**
+  String get scamYourReports;
+
+  /// No description provided for @scamNoReports.
+  ///
+  /// In en, this message translates to:
+  /// **'No reported calls yet.'**
+  String get scamNoReports;
+
+  /// No description provided for @scamBlockBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get scamBlockBtn;
+
+  /// No description provided for @scamNumberBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} blocked'**
+  String scamNumberBlocked(String number);
+
+  /// No description provided for @scamBlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not block the number'**
+  String get scamBlockFailed;
+
+  /// No description provided for @vaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault'**
+  String get vaultTitle;
+
+  /// No description provided for @vaultLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault is locked'**
+  String get vaultLocked;
+
+  /// No description provided for @vaultLockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.'**
+  String get vaultLockedBody;
+
+  /// No description provided for @vaultUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get vaultUnlock;
+
+  /// No description provided for @vaultReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your OTP vault'**
+  String get vaultReason;
+
+  /// No description provided for @vaultHideArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide archived'**
+  String get vaultHideArchived;
+
+  /// No description provided for @vaultShowArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Show archived'**
+  String get vaultShowArchived;
+
+  /// No description provided for @vaultNoArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived OTPs'**
+  String get vaultNoArchived;
+
+  /// No description provided for @vaultEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.'**
+  String get vaultEmpty;
+
+  /// No description provided for @vaultCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get vaultCopy;
+
+  /// No description provided for @vaultArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get vaultArchive;
+
+  /// No description provided for @vaultUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get vaultUnarchive;
+
+  /// No description provided for @vaultDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get vaultDelete;
+
+  /// No description provided for @vpnBlockingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocking connections to known-malicious networks'**
+  String get vpnBlockingActive;
+
+  /// No description provided for @vpnNoBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'No blocked connection attempts yet'**
+  String get vpnNoBlocked;
+
+  /// No description provided for @vpnTapToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap shield to start monitoring'**
+  String get vpnTapToStart;
 }
 
 class _AppLocalizationsDelegate

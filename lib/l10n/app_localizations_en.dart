@@ -546,4 +546,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get panicSent => 'Panic alert sent! Emergency contacts notified.';
+
+  @override
+  String get menuScamCalls => 'Scam Calls';
+
+  @override
+  String get menuOtpVault => 'OTP Vault';
+
+  @override
+  String get scamIntro =>
+      'Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.';
+
+  @override
+  String get scamCallerNumber => 'Caller number';
+
+  @override
+  String get scamCallLength => 'Call length (minutes)';
+
+  @override
+  String get scamWhatAsked => 'What did they ask for? (optional)';
+
+  @override
+  String get scamReportBtn => 'Report this call';
+
+  @override
+  String get scamEnterNumber => 'Enter the caller\'s phone number';
+
+  @override
+  String get scamReportFailed =>
+      'Could not report the call. Check your connection.';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'Risk score $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - blocked';
+
+  @override
+  String get scamYourReports => 'Your reports';
+
+  @override
+  String get scamNoReports => 'No reported calls yet.';
+
+  @override
+  String get scamBlockBtn => 'Block';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number blocked';
+  }
+
+  @override
+  String get scamBlockFailed => 'Could not block the number';
+
+  @override
+  String get vaultTitle => 'OTP Vault';
+
+  @override
+  String get vaultLocked => 'OTP Vault is locked';
+
+  @override
+  String get vaultLockedBody =>
+      'Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.';
+
+  @override
+  String get vaultUnlock => 'Unlock';
+
+  @override
+  String get vaultReason => 'Unlock your OTP vault';
+
+  @override
+  String get vaultHideArchived => 'Hide archived';
+
+  @override
+  String get vaultShowArchived => 'Show archived';
+
+  @override
+  String get vaultNoArchived => 'No archived OTPs';
+
+  @override
+  String get vaultEmpty =>
+      'No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.';
+
+  @override
+  String get vaultCopy => 'Copy';
+
+  @override
+  String get vaultArchive => 'Archive';
+
+  @override
+  String get vaultUnarchive => 'Unarchive';
+
+  @override
+  String get vaultDelete => 'Delete';
+
+  @override
+  String get vpnBlockingActive =>
+      'Blocking connections to known-malicious networks';
+
+  @override
+  String get vpnNoBlocked => 'No blocked connection attempts yet';
+
+  @override
+  String get vpnTapToStart => 'Tap shield to start monitoring';
 }
