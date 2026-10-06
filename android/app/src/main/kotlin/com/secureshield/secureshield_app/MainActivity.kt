@@ -24,12 +24,17 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterFragmentActivity() {
 
+    private var screenRecordingSink: EventChannel.EventSink? = null
+    private val screenRecordingDetector by lazy { ScreenRecordingDetector(this) }
+
     companion object {
         private const val WINDOW_CHANNEL          = "secureshield/window_flags"
         private const val SCANNER_CHANNEL         = "secureshield/device_scanner"
         private const val CALL_STATE_CHANNEL      = "secureshield/call_state"
         private const val REMOTE_DETECT_CHANNEL   = "secureshield/remote_detector"
         private const val SCREEN_RECORD_CHANNEL   = "secureshield/screen_record"
+        private const val SCREEN_DETECT_CHANNEL   = "secureshield/screen_recording_detector"
+        private const val SCREEN_DETECT_EVENTS    = "secureshield/screen_recording_events"
         private const val BANK_OTP_CHANNEL        = "secureshield/bank_otp_events"
         private const val VPN_CHANNEL             = "secureshield/vpn_monitor"
         private const val VPN_EVENTS_CHANNEL      = "secureshield/vpn_events"
@@ -122,6 +127,28 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        // ── Screen-recording detector (Android 15+ only; see ScreenRecordingDetector) ─────────────
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SCREEN_DETECT_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "isSupported" -> result.success(ScreenRecordingDetector.isSupported)
+                    "isRecording" -> result.success(screenRecordingDetector.isRecording)
+                    else -> result.notImplemented()
+                }
+            }
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, SCREEN_DETECT_EVENTS)
+            .setStreamHandler(object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+                    screenRecordingSink = events
+                    screenRecordingDetector.start { recording -> screenRecordingSink?.success(recording) }
+                }
+
+                override fun onCancel(arguments: Any?) {
+                    screenRecordingDetector.stop()
+                    screenRecordingSink = null
+                }
+            })
 
         // ── Screenshot prevention ────────────────────────────────────────────
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, WINDOW_CHANNEL)

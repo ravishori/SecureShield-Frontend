@@ -65,7 +65,7 @@ const _categories = [
     _Feature(Icons.lock_clock,      'Bank OTP Monitor',  '/bank-otp-monitor',  Color(0xFFFF9800)),
     _Feature(Icons.vpn_lock,        'VPN Monitor',       '/vpn-monitor',       Color(0xFF7C4DFF)),
     _Feature(Icons.desktop_access_disabled, 'Remote Detector', '/remote-detector', Color(0xFFFF5252)),
-    _Feature(Icons.videocam_off,    'Screen Rec Detect', '/screen-recorder',   Color(0xFF00E5FF)),
+    _Feature(Icons.videocam_off,    'Screen Rec Detect', '/screen-recording-detector',   Color(0xFF00E5FF)),
   ]),
   _Category(Icons.family_restroom, 'Family Safety', Color(0xFF9C27B0), [
     _Feature(Icons.family_restroom, 'Family Dashboard',  '/family',            Color(0xFF9C27B0)),
@@ -966,6 +966,7 @@ class _AppDrawer extends ConsumerWidget {
                 _drawerSection(context, '🚨  ${AppLocalizations.of(context).secEmergency}', [
                   _DrawerItem(Icons.video_call,     AppLocalizations.of(context).menuPoliceCall,   '/video-call',         const Color(0xFF4CAF50), badge: 'NEW'),
                   _DrawerItem(Icons.description,    AppLocalizations.of(context).menuFir,           '/fir-draft',          const Color(0xFFFF9800), badge: 'AI'),
+                  _DrawerItem(Icons.screen_share,   AppLocalizations.of(context).menuScreenRecorder, '/screen-recorder', const Color(0xFFFF5252)),
                   _DrawerItem(Icons.mic,            AppLocalizations.of(context).menuCallRecorder,       '/call-recorder',      const Color(0xFFFF5252)),
                   _DrawerItem(Icons.share,          AppLocalizations.of(context).menuEmergencyShare,     '/emergency-share',    const Color(0xFFFF5252)),
                   _DrawerItem(Icons.folder_special, AppLocalizations.of(context).evidenceLocker,     '/evidence',           const Color(0xFF7C4DFF)),
@@ -979,7 +980,7 @@ class _AppDrawer extends ConsumerWidget {
                   _DrawerItem(Icons.lock_clock,     AppLocalizations.of(context).menuBankOtp,    '/bank-otp-monitor',   const Color(0xFFFF9800)),
                   _DrawerItem(Icons.vpn_lock,       AppLocalizations.of(context).menuVpn,         '/vpn-monitor',        const Color(0xFF7C4DFF)),
                   _DrawerItem(Icons.desktop_access_disabled, AppLocalizations.of(context).menuRemote, '/remote-detector', const Color(0xFFFF5252)),
-                  _DrawerItem(Icons.videocam_off,   AppLocalizations.of(context).menuScreenRec,   '/screen-recorder',    const Color(0xFF00E5FF)),
+                  _DrawerItem(Icons.videocam_off,   AppLocalizations.of(context).srdTitle,   '/screen-recording-detector',    const Color(0xFF00E5FF)),
                 ]),
                 _drawerSection(context, '👨‍👩‍👧  ${AppLocalizations.of(context).secFamily}', [
                   _DrawerItem(Icons.family_restroom,AppLocalizations.of(context).familyDashboard,    '/family',             const Color(0xFF9C27B0)),

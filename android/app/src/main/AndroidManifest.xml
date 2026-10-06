@@ -4,6 +4,8 @@
 
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 15+: lets the app learn whether its own window is being screen-recorded. -->
+    <uses-permission android:name="android.permission.DETECT_SCREEN_RECORDING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- SMS permissions for OTP Vault -->

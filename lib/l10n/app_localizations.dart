@@ -2139,6 +2139,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This action cannot be undone.'**
   String get evCannotUndo;
+
+  /// No description provided for @menuScreenRecorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Recorder'**
+  String get menuScreenRecorder;
+
+  /// No description provided for @srdTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Recording Detector'**
+  String get srdTitle;
+
+  /// No description provided for @srdUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported on this Android version'**
+  String get srdUnsupported;
+
+  /// No description provided for @srdUnsupportedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.'**
+  String get srdUnsupportedBody;
+
+  /// No description provided for @srdIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not being recorded'**
+  String get srdIdle;
+
+  /// No description provided for @srdIdleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SecureShield screens are not visible in any screen recording right now.'**
+  String get srdIdleBody;
+
+  /// No description provided for @srdActive.
+  ///
+  /// In en, this message translates to:
+  /// **'SCREEN IS BEING RECORDED'**
+  String get srdActive;
+
+  /// No description provided for @srdActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.'**
+  String get srdActiveBody;
+
+  /// No description provided for @srdScope.
+  ///
+  /// In en, this message translates to:
+  /// **'This only covers SecureShield\'s own screens (an Android limit). It cannot see recordings of other apps.'**
+  String get srdScope;
+
+  /// No description provided for @srdLog.
+  ///
+  /// In en, this message translates to:
+  /// **'This session'**
+  String get srdLog;
+
+  /// No description provided for @srdNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No recording detected so far.'**
+  String get srdNoEvents;
+
+  /// No description provided for @srdStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get srdStarted;
+
+  /// No description provided for @srdStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording stopped'**
+  String get srdStopped;
 }
 
 class _AppLocalizationsDelegate

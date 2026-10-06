@@ -1064,4 +1064,47 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get evCannotUndo => 'यह कार्रवाई पूर्ववत नहीं की जा सकती।';
+
+  @override
+  String get menuScreenRecorder => 'स्क्रीन रिकॉर्डर';
+
+  @override
+  String get srdTitle => 'स्क्रीन रिकॉर्डिंग डिटेक्टर';
+
+  @override
+  String get srdUnsupported => 'इस एंड्रॉइड संस्करण पर समर्थित नहीं';
+
+  @override
+  String get srdUnsupportedBody =>
+      'एंड्रॉइड 15 से ही कोई ऐप जान सकता है कि उसकी स्क्रीन रिकॉर्ड हो रही है। आपके फ़ोन पर यह जाँच संभव नहीं है, इसलिए SecureShield नहीं बता सकता कि कोई दूसरा ऐप स्क्रीन रिकॉर्ड कर रहा है या नहीं।';
+
+  @override
+  String get srdIdle => 'रिकॉर्ड नहीं हो रही';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield की स्क्रीन अभी किसी स्क्रीन रिकॉर्डिंग में दिखाई नहीं दे रहीं।';
+
+  @override
+  String get srdActive => 'स्क्रीन रिकॉर्ड हो रही है';
+
+  @override
+  String get srdActiveBody =>
+      'कोई SecureShield की स्क्रीन रिकॉर्ड कर रहा है। यदि आपने शुरू नहीं किया, तो इसे रोकें और OTP या बैंक स्क्रीन न खोलें।';
+
+  @override
+  String get srdScope =>
+      'यह केवल SecureShield की अपनी स्क्रीन पर लागू होता है (एंड्रॉइड की सीमा)। यह दूसरे ऐप्स की रिकॉर्डिंग नहीं देख सकता।';
+
+  @override
+  String get srdLog => 'यह सत्र';
+
+  @override
+  String get srdNoEvents => 'अब तक कोई रिकॉर्डिंग नहीं मिली।';
+
+  @override
+  String get srdStarted => 'रिकॉर्डिंग शुरू हुई';
+
+  @override
+  String get srdStopped => 'रिकॉर्डिंग रुकी';
 }

@@ -40,7 +40,8 @@ Future<void> main() async {
   await AppConfig.initialize();
 
   // 2. Initialize AES-256 encryption (generates/loads key from Keystore)
-  await EncryptionService.initialize();
+  // If this fails the app still starts, but nothing can be saved encrypted (and nothing is saved in plaintext).
+  await _bestEffort('encryption', EncryptionService.initialize);
 
   // 3. Initialize notification service (must be called before any notifications)
   await _bestEffort('notifications', NotificationService.initialize);

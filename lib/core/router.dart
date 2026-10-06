@@ -16,6 +16,7 @@ import '../features/link_scanner/screens/link_scanner_screen.dart';
 import '../features/evidence/screens/evidence_screen.dart';
 import '../features/family/screens/family_screen.dart';
 import '../features/scam_calls/screens/scam_calls_screen.dart';
+import '../features/screen_recorder/screens/screen_recording_detector_screen.dart';
 import '../features/otp_vault/screens/otp_vault_screen.dart';
 import '../features/wifi_scanner/screens/wifi_scanner_screen.dart';
 import '../features/settings/screens/settings_screen.dart';
@@ -209,6 +210,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/bank-otp-monitor',  builder: (_, __) => const BankOtpScreen()),
       GoRoute(path: '/remote-detector',   builder: (_, __) => const RemoteDetectorScreen()),
       GoRoute(path: '/complaint-email',   builder: (_, __) => const ComplaintEmailScreen()),
+      GoRoute(path: '/screen-recording-detector', builder: (_, __) => const ScreenRecordingDetectorScreen()),
       GoRoute(path: '/screen-recorder',   builder: (_, __) => const ScreenRecorderScreen()),
       GoRoute(path: '/consent-manager',   builder: (_, __) => const ConsentManagerScreen()),
       GoRoute(path: '/vpn-monitor',          builder: (_, __) => const VpnMonitorScreen()),

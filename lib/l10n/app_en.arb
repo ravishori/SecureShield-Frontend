@@ -421,5 +421,18 @@
   "evEmpty": "Evidence Locker is empty",
   "evEmptyBody": "Store screenshots, audio, and documents here",
   "evDeleteQ": "Delete Evidence?",
-  "evCannotUndo": "This action cannot be undone."
+  "evCannotUndo": "This action cannot be undone.",
+  "menuScreenRecorder": "Screen Recorder",
+  "srdTitle": "Screen Recording Detector",
+  "srdUnsupported": "Not supported on this Android version",
+  "srdUnsupportedBody": "Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.",
+  "srdIdle": "Not being recorded",
+  "srdIdleBody": "SecureShield screens are not visible in any screen recording right now.",
+  "srdActive": "SCREEN IS BEING RECORDED",
+  "srdActiveBody": "Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.",
+  "srdScope": "This only covers SecureShield's own screens (an Android limit). It cannot see recordings of other apps.",
+  "srdLog": "This session",
+  "srdNoEvents": "No recording detected so far.",
+  "srdStarted": "Recording started",
+  "srdStopped": "Recording stopped"
 }

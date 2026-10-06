@@ -1064,4 +1064,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get evCannotUndo => 'This action cannot be undone.';
+
+  @override
+  String get menuScreenRecorder => 'Screen Recorder';
+
+  @override
+  String get srdTitle => 'Screen Recording Detector';
+
+  @override
+  String get srdUnsupported => 'Not supported on this Android version';
+
+  @override
+  String get srdUnsupportedBody =>
+      'Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.';
+
+  @override
+  String get srdIdle => 'Not being recorded';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield screens are not visible in any screen recording right now.';
+
+  @override
+  String get srdActive => 'SCREEN IS BEING RECORDED';
+
+  @override
+  String get srdActiveBody =>
+      'Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.';
+
+  @override
+  String get srdScope =>
+      'This only covers SecureShield\'s own screens (an Android limit). It cannot see recordings of other apps.';
+
+  @override
+  String get srdLog => 'This session';
+
+  @override
+  String get srdNoEvents => 'No recording detected so far.';
+
+  @override
+  String get srdStarted => 'Recording started';
+
+  @override
+  String get srdStopped => 'Recording stopped';
 }

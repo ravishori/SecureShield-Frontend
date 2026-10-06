@@ -1074,4 +1074,47 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get evCannotUndo => 'இந்தச் செயலைத் திரும்பப் பெற முடியாது.';
+
+  @override
+  String get menuScreenRecorder => 'திரை பதிவி';
+
+  @override
+  String get srdTitle => 'திரை பதிவு கண்டறிவி';
+
+  @override
+  String get srdUnsupported => 'இந்த ஆண்ட்ராய்டு பதிப்பில் ஆதரிக்கப்படவில்லை';
+
+  @override
+  String get srdUnsupportedBody =>
+      'ஆண்ட்ராய்டு 15 முதல்தான் ஒரு செயலி தன் திரை பதிவு செய்யப்படுகிறதா என்பதை அறிய முடியும். உங்கள் தொலைபேசியில் இந்தச் சோதனை சாத்தியமில்லை; எனவே வேறு செயலி திரையைப் பதிவு செய்கிறதா என்பதை SecureShield சொல்ல முடியாது.';
+
+  @override
+  String get srdIdle => 'பதிவு செய்யப்படவில்லை';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield திரைகள் இப்போது எந்தத் திரைப் பதிவிலும் தெரியவில்லை.';
+
+  @override
+  String get srdActive => 'திரை பதிவு செய்யப்படுகிறது';
+
+  @override
+  String get srdActiveBody =>
+      'SecureShield காட்டுவதை ஏதோ ஒன்று பதிவு செய்கிறது. நீங்கள் தொடங்கவில்லை என்றால் நிறுத்துங்கள்; OTP அல்லது வங்கித் திரைகளைத் திறக்காதீர்கள்.';
+
+  @override
+  String get srdScope =>
+      'இது SecureShield இன் சொந்தத் திரைகளுக்கு மட்டுமே (ஆண்ட்ராய்டு வரம்பு). பிற செயலிகளின் பதிவுகளைப் பார்க்க முடியாது.';
+
+  @override
+  String get srdLog => 'இந்த அமர்வு';
+
+  @override
+  String get srdNoEvents => 'இதுவரை பதிவு எதுவும் கண்டறியப்படவில்லை.';
+
+  @override
+  String get srdStarted => 'பதிவு தொடங்கியது';
+
+  @override
+  String get srdStopped => 'பதிவு நின்றது';
 }

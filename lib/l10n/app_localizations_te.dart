@@ -1072,4 +1072,47 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get evCannotUndo => 'ఈ చర్యను రద్దు చేయలేరు.';
+
+  @override
+  String get menuScreenRecorder => 'స్క్రీన్ రికార్డర్';
+
+  @override
+  String get srdTitle => 'స్క్రీన్ రికార్డింగ్ డిటెక్టర్';
+
+  @override
+  String get srdUnsupported => 'ఈ ఆండ్రాయిడ్ వెర్షన్‌లో మద్దతు లేదు';
+
+  @override
+  String get srdUnsupportedBody =>
+      'ఆండ్రాయిడ్ 15 నుండి మాత్రమే యాప్ తన స్క్రీన్ రికార్డ్ అవుతోందో తెలుసుకోగలదు. మీ ఫోన్‌లో ఈ తనిఖీ సాధ్యం కాదు, కాబట్టి మరొక యాప్ స్క్రీన్‌ను రికార్డ్ చేస్తోందో SecureShield చెప్పలేదు.';
+
+  @override
+  String get srdIdle => 'రికార్డ్ కావడం లేదు';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield స్క్రీన్‌లు ప్రస్తుతం ఏ స్క్రీన్ రికార్డింగ్‌లోనూ కనిపించడం లేదు.';
+
+  @override
+  String get srdActive => 'స్క్రీన్ రికార్డ్ అవుతోంది';
+
+  @override
+  String get srdActiveBody =>
+      'SecureShield చూపేదాన్ని ఏదో రికార్డ్ చేస్తోంది. మీరు ప్రారంభించకపోతే ఆపండి మరియు OTP లేదా బ్యాంక్ స్క్రీన్‌లను తెరవకండి.';
+
+  @override
+  String get srdScope =>
+      'ఇది SecureShield యొక్క సొంత స్క్రీన్‌లకు మాత్రమే (ఆండ్రాయిడ్ పరిమితి). ఇతర యాప్‌ల రికార్డింగ్‌లను ఇది చూడలేదు.';
+
+  @override
+  String get srdLog => 'ఈ సెషన్';
+
+  @override
+  String get srdNoEvents => 'ఇప్పటివరకు ఏ రికార్డింగ్ గుర్తించబడలేదు.';
+
+  @override
+  String get srdStarted => 'రికార్డింగ్ ప్రారంభమైంది';
+
+  @override
+  String get srdStopped => 'రికార్డింగ్ ఆగింది';
 }
