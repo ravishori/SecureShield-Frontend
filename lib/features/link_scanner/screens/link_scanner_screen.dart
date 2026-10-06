@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme.dart';
@@ -40,7 +41,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
     final url = _urlController.text.trim();
     if (url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a URL to scan')),
+        SnackBar(content: Text(AppLocalizations.of(context).lsEnterUrl)),
       );
       return;
     }
@@ -73,7 +74,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Link Scanner')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).lsTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -90,7 +91,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
               keyboardType: TextInputType.url,
               autocorrect: false,
               decoration: InputDecoration(
-                labelText: 'Enter URL to scan',
+                labelText: AppLocalizations.of(context).lsEnterToScan,
                 hintText: 'https://example.com',
                 prefixIcon: const Icon(Icons.link),
                 suffixIcon: _urlController.text.isNotEmpty
@@ -147,7 +148,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
                         color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      'Recent Scans',
+                      AppLocalizations.of(context).lsRecent,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
@@ -311,7 +312,7 @@ class _ScanResultCard extends StatelessWidget {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: url));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('URL copied'), duration: Duration(seconds: 1)),
+                      SnackBar(content: Text(AppLocalizations.of(context).lsCopied), duration: const Duration(seconds: 1)),
                     );
                   },
                 ),
@@ -502,7 +503,7 @@ class _RiskScoreBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Risk Score',
+              AppLocalizations.of(context).lsRisk,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 12,

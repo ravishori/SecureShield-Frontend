@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../fake_bank_sms_classifier.dart';
@@ -26,7 +27,7 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
     final body = _bodyCtrl.text.trim();
     if (sender.isEmpty || body.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide both the sender and the message body.')),
+        SnackBar(content: Text(AppLocalizations.of(context).fbBothReq)),
       );
       return;
     }
@@ -60,9 +61,9 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
         backgroundColor: const Color(0xFF0A0E27),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Fake Bank SMS Detector',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context).fbTitle,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
@@ -108,24 +109,24 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
         ),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.account_balance, color: Colors.white, size: 36),
-          SizedBox(width: 12),
+          const Icon(Icons.account_balance, color: Colors.white, size: 36),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Verify before you trust',
-                  style: TextStyle(
+                  AppLocalizations.of(context).fbVerify,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
+                const SizedBox(height: 4),
+                const Text(
                   'Banks send SMS only from TRAI-registered headers (VK-HDFCBK, etc.). A 10-digit number claiming to be your bank is a scam.',
                   style: TextStyle(color: Colors.white70, fontSize: 12.5, height: 1.4),
                 ),
@@ -148,9 +149,9 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Sender',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          Text(
+            AppLocalizations.of(context).fbSender,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           TextField(
@@ -170,15 +171,15 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
           const SizedBox(height: 14),
           Row(
             children: [
-              const Text(
-                'Message body',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              Text(
+                AppLocalizations.of(context).fbBody,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
               const Spacer(),
               TextButton.icon(
                 onPressed: _pasteBody,
                 icon: const Icon(Icons.content_paste, size: 16, color: Color(0xFF00E5FF)),
-                label: const Text('Paste', style: TextStyle(color: Color(0xFF00E5FF))),
+                label: Text(AppLocalizations.of(context).fbPaste, style: const TextStyle(color: Color(0xFF00E5FF))),
               ),
             ],
           ),
@@ -203,7 +204,7 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
           ElevatedButton.icon(
             onPressed: _analyze,
             icon: const Icon(Icons.shield_outlined),
-            label: const Text('Check authenticity'),
+            label: Text(AppLocalizations.of(context).fbCheck),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00E5FF),
               foregroundColor: const Color(0xFF0A0E27),
@@ -274,9 +275,9 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Why this verdict',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).fbWhy,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 15,
@@ -315,13 +316,13 @@ class _FakeBankSmsScreenState extends State<FakeBankSmsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.shield, color: Color(0xFF4CAF50)),
-              SizedBox(width: 8),
+              const Icon(Icons.shield, color: Color(0xFF4CAF50)),
+              const SizedBox(width: 8),
               Text(
-                'Recommended next steps',
-                style: TextStyle(
+                AppLocalizations.of(context).fbNext,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

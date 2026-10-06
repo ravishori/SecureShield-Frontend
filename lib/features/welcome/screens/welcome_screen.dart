@@ -106,14 +106,14 @@ class WelcomeScreen extends ConsumerWidget {
         ),
         _CardData(
           icon:     Icons.person_rounded,
-          title:    'My Profile',
+          title:    AppLocalizations.of(context).profMy,
           subtitle: 'Edit details & emergency contacts',
           color:    const Color(0xFF69F0AE),
           action:   () => context.push('/profile'),
         ),
         _CardData(
           icon:      Icons.logout_rounded,
-          title:     'Logout',
+          title:     AppLocalizations.of(context).logout,
           subtitle:  'Sign out of your account',
           color:     AppTheme.errorColor,
           fullWidth: true,
@@ -125,14 +125,14 @@ class WelcomeScreen extends ConsumerWidget {
       getStartedCards.addAll([
         _CardData(
           icon:     Icons.lock_open_rounded,
-          title:    'Login',
+          title:    AppLocalizations.of(context).welLogin,
           subtitle: 'Access your security reports',
           color:    AppTheme.accent,
           action:   () => context.push('/login'),
         ),
         _CardData(
           icon:     Icons.person_add_rounded,
-          title:    'Register',
+          title:    AppLocalizations.of(context).welRegister,
           subtitle: 'Create your free account',
           color:    const Color(0xFF69F0AE),
           action:   () => context.push('/register'),
@@ -168,14 +168,14 @@ class WelcomeScreen extends ConsumerWidget {
         ),
         _CardData(
           icon:     Icons.video_call_rounded,
-          title:    'Share Evidence',
+          title:    AppLocalizations.of(context).welShareEvidence,
           subtitle: 'Send fraud video via WhatsApp',
           color:    const Color(0xFF25D366),
           action:   () => _shareOnWhatsApp(context),
         ),
         _CardData(
           icon:     Icons.contacts_rounded,
-          title:    'Cyber Contacts',
+          title:    AppLocalizations.of(context).welCyberContacts,
           subtitle: 'Helplines & reporting portals',
           color:    const Color(0xFF7986CB),
           action:   () => context.push('/contacts'),
@@ -184,7 +184,7 @@ class WelcomeScreen extends ConsumerWidget {
       'support': [
         _CardData(
           icon:      Icons.email_rounded,
-          title:     'Send Email Report',
+          title:     AppLocalizations.of(context).welSendEmailReport,
           subtitle:  'Email the cyber crime cell directly',
           color:     const Color(0xFF4FC3F7),
           fullWidth: true,
@@ -202,10 +202,10 @@ class WelcomeScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(children: [
-          Icon(Icons.logout_rounded, color: AppTheme.errorColor, size: 22),
-          SizedBox(width: 10),
-          Text('Logout', style: TextStyle(color: AppTheme.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+        title: Row(children: [
+          const Icon(Icons.logout_rounded, color: AppTheme.errorColor, size: 22),
+          const SizedBox(width: 10),
+          Text(AppLocalizations.of(context).logout, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
         ]),
         content: const Text(
           'Are you sure you want to logout?\nYour session will be ended.',
@@ -214,7 +214,7 @@ class WelcomeScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.accent)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: AppTheme.accent)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -223,7 +223,7 @@ class WelcomeScreen extends ConsumerWidget {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(AppLocalizations.of(context).logout, style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -255,7 +255,7 @@ class WelcomeScreen extends ConsumerWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('WhatsApp is not installed')),
+        SnackBar(content: Text(AppLocalizations.of(context).welWhatsappMissing)),
       );
     }
   }
@@ -281,7 +281,7 @@ class WelcomeScreen extends ConsumerWidget {
       await launchUrl(uri);
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No email app found on this device')),
+        SnackBar(content: Text(AppLocalizations.of(context).welNoEmailApp)),
       );
     }
   }
@@ -352,13 +352,13 @@ class _Header extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(color: AppTheme.success.withValues(alpha: 0.45)),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.verified_rounded, size: 12, color: AppTheme.success),
-                    SizedBox(width: 4),
-                    Text('PROTECTED',
-                      style: TextStyle(
+                    const Icon(Icons.verified_rounded, size: 12, color: AppTheme.success),
+                    const SizedBox(width: 4),
+                    Text(AppLocalizations.of(context).welProtected,
+                      style: const TextStyle(
                         color: AppTheme.success,
                         fontSize: 10.5,
                         fontWeight: FontWeight.w800,
@@ -395,8 +395,8 @@ class _Header extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          child: const Text('AI-POWERED',
-                            style: TextStyle(
+                          child: Text(AppLocalizations.of(context).welAiPowered,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 9,
                               fontWeight: FontWeight.w800,
@@ -416,7 +416,7 @@ class _Header extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text('Enterprise Cyber Protection',
+                    Text(AppLocalizations.of(context).welEnterprise,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: const Color(0xFFB8C2D1),
                         fontWeight: FontWeight.w500,
@@ -678,7 +678,7 @@ class _SosSheet extends StatelessWidget {
             decoration: BoxDecoration(color: AppTheme.textSecondary.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2))),
           const Icon(Icons.sos_rounded, color: AppTheme.errorColor, size: 44),
           const SizedBox(height: 12),
-          const Text('Emergency Contacts', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context).menuEmergencyContacts, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           _sosTile('1930', 'National Cyber Crime Helpline', Icons.phone_rounded, AppTheme.errorColor),
           _sosTile('100',  'Police Emergency',              Icons.local_police_rounded, AppTheme.accent),

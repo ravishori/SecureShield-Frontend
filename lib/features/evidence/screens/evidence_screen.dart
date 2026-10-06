@@ -42,13 +42,13 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDlg) => AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Add Evidence', style: TextStyle(color: AppTheme.textPrimary)),
+          title: Text(AppLocalizations.of(context).evAdd, style: const TextStyle(color: AppTheme.textPrimary)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Title')),
+              TextField(controller: titleCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context).gTitle)),
               const SizedBox(height: 8),
-              TextField(controller: descCtrl, decoration: const InputDecoration(labelText: 'Description (optional)')),
+              TextField(controller: descCtrl, decoration: InputDecoration(labelText: AppLocalizations.of(context).evDescOpt)),
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 onPressed: () async {
@@ -61,7 +61,7 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary))),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: AppTheme.textSecondary))),
             ElevatedButton(
               onPressed: () async {
                 if (titleCtrl.text.trim().isEmpty || picked == null) return;
@@ -75,14 +75,14 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                   await _load();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Evidence uploaded'), backgroundColor: AppTheme.success),
+                      SnackBar(content: Text(AppLocalizations.of(context).evUploaded), backgroundColor: AppTheme.success),
                     );
                   }
                 } catch (e) {
                   if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                 }
               },
-              child: const Text('Upload'),
+              child: Text(AppLocalizations.of(context).gUpload),
             ),
           ],
         ),
@@ -123,10 +123,10 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                     children: [
                       const Icon(Icons.folder_special, size: 64, color: AppTheme.accent),
                       const SizedBox(height: 16),
-                      const Text('Evidence Locker is empty', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
-                      const Text('Store screenshots, audio, and documents here', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                      Text(AppLocalizations.of(context).evEmpty, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 18)),
+                      Text(AppLocalizations.of(context).evEmptyBody, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
                       const SizedBox(height: 16),
-                      ElevatedButton.icon(onPressed: _upload, icon: const Icon(Icons.add), label: const Text('Add Evidence')),
+                      ElevatedButton.icon(onPressed: _upload, icon: const Icon(Icons.add), label: Text(AppLocalizations.of(context).evAdd)),
                     ],
                   ),
                 )
@@ -150,14 +150,14 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                             context: context,
                             builder: (ctx) => AlertDialog(
                               backgroundColor: AppTheme.surface,
-                              title: const Text('Delete Evidence?', style: TextStyle(color: AppTheme.textPrimary)),
-                              content: const Text('This action cannot be undone.', style: TextStyle(color: AppTheme.textSecondary)),
+                              title: Text(AppLocalizations.of(context).evDeleteQ, style: const TextStyle(color: AppTheme.textPrimary)),
+                              content: Text(AppLocalizations.of(context).evCannotUndo, style: const TextStyle(color: AppTheme.textSecondary)),
                               actions: [
-                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(AppLocalizations.of(context).cancel)),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorColor),
                                   onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('Delete'),
+                                  child: Text(AppLocalizations.of(context).gDelete),
                                 ),
                               ],
                             ),

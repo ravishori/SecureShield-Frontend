@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -91,45 +92,45 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
     final isAndroid13Plus = Platform.isAndroid && _androidSdk >= 33;
 
     return [
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.sms,
-        title: 'SMS Access',
+        title: AppLocalizations.of(context).cmSms,
         reason: 'Read SMS to detect OTPs and alert you about bank messages.',
         icon: Icons.sms,
         critical: true,
       ),
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.camera,
-        title: 'Camera',
+        title: AppLocalizations.of(context).cmCamera,
         reason: 'Capture photo evidence for fraud reporting.',
         icon: Icons.camera_alt,
       ),
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.microphone,
-        title: 'Microphone',
+        title: AppLocalizations.of(context).cmMic,
         reason: 'Record audio during scam calls as evidence.',
         icon: Icons.mic,
       ),
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.location,
-        title: 'Location',
+        title: AppLocalizations.of(context).cmLocation,
         reason: 'Attach location to evidence and find nearby cyber cells.',
         icon: Icons.location_on,
       ),
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.phone,
-        title: 'Phone State',
+        title: AppLocalizations.of(context).cmPhoneState,
         reason: 'Detect incoming calls for scam call protection.',
         icon: Icons.phone,
       ),
       // ── Storage: version-aware ─────────────────────────────────────────
       if (isAndroid13Plus)
-        const PermissionItem(
+        PermissionItem(
           // Android 13+: ask for photos as the primary; videos + audio as extras.
           permission: Permission.photos,
           extraPermissions: [Permission.videos, Permission.audio],
           specialType: SpecialType.storage,
-          title: 'Storage (Media)',
+          title: AppLocalizations.of(context).cmStorageMedia,
           reason: 'Save evidence files, screenshots, and recordings.',
           icon: Icons.folder,
         )
@@ -142,18 +143,18 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
           reason: 'Save evidence files, recordings, and reports.',
           icon: Icons.folder,
         ),
-      const PermissionItem(
+      PermissionItem(
         permission: Permission.notification,
         specialType: SpecialType.notification,
-        title: 'Notifications',
+        title: AppLocalizations.of(context).cmNotifications,
         reason: 'Show security alerts and OTP warnings.',
         icon: Icons.notifications,
         critical: true,
       ),
-      const PermissionItem(
+      PermissionItem(
         // Android: PACKAGE_USAGE_STATS — not a runtime permission; opened via Settings
         specialType: SpecialType.usageStats,
-        title: 'Usage Stats',
+        title: AppLocalizations.of(context).cmUsageStats,
         reason: 'Analyze installed apps for security risks.',
         icon: Icons.bar_chart,
       ),
@@ -302,7 +303,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
           ),
           action: permanentlyDenied > 0
               ? SnackBarAction(
-                  label: 'Open Settings',
+                  label: AppLocalizations.of(context).gOpenSettings,
                   textColor: Colors.white,
                   onPressed: () => openAppSettings(),
                 )
@@ -331,10 +332,10 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(children: [
-          Icon(Icons.bar_chart, color: AppTheme.accent, size: 20),
-          SizedBox(width: 8),
-          Text('Usage Stats Access', style: TextStyle(fontSize: 16)),
+        title: Row(children: [
+          const Icon(Icons.bar_chart, color: AppTheme.accent, size: 20),
+          const SizedBox(width: 8),
+          Text(AppLocalizations.of(context).cmUsageStatsAccess, style: const TextStyle(fontSize: 16)),
         ]),
         content: const Text(
           'Usage Stats permission allows SecureShield to analyze '
@@ -346,7 +347,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -361,7 +362,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
               if (mounted) await _loadStatuses();
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accent),
-            child: const Text('Open Settings', style: TextStyle(color: AppTheme.background)),
+            child: Text(AppLocalizations.of(context).gOpenSettings, style: const TextStyle(color: AppTheme.background)),
           ),
         ],
       ),
@@ -387,7 +388,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
     // so we don't crash on `late final` access.
     if (_loading && _statuses.isEmpty && _specialGranted.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Permission Manager')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context).setPermManager)),
         body: const Center(child: CircularProgressIndicator(color: AppTheme.accent)),
       );
     }
@@ -404,7 +405,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Permission Manager'),
+        title: Text(AppLocalizations.of(context).setPermManager),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -466,7 +467,7 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
             ),
             const SizedBox(height: 20),
 
-            const Text('App Permissions', style: TextStyle(
+            Text(AppLocalizations.of(context).cmAppPermissions, style: const TextStyle(
               color: AppTheme.textPrimary,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -554,8 +555,8 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
                         color: AppTheme.errorColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Text('CRITICAL',
-                        style: TextStyle(color: AppTheme.errorColor, fontSize: 9,
+                      child: Text(AppLocalizations.of(context).cmCritical,
+                        style: const TextStyle(color: AppTheme.errorColor, fontSize: 9,
                             fontWeight: FontWeight.bold)),
                     ),
                   ],

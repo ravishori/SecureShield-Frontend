@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -250,10 +251,10 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: Theme.of(ctx).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(children: [
-          Icon(Icons.location_off, color: AppTheme.warning, size: 22),
-          SizedBox(width: 8),
-          Text('Location Services Off', style: TextStyle(fontSize: 16)),
+        title: Row(children: [
+          const Icon(Icons.location_off, color: AppTheme.warning, size: 22),
+          const SizedBox(width: 8),
+          Text(AppLocalizations.of(context).wifiLocOff, style: const TextStyle(fontSize: 16)),
         ]),
         content: const Text(
           'Android requires Location Services (GPS) to be enabled for Wi-Fi scanning '
@@ -264,12 +265,12 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel',
-              style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text(AppLocalizations.of(context).cancel,
+              style: const TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton.icon(
             icon: const Icon(Icons.settings, size: 16),
-            label: const Text('Open Settings'),
+            label: Text(AppLocalizations.of(context).gOpenSettings),
             onPressed: () async {
               Navigator.pop(ctx);
               // Open Android Location Settings
@@ -413,8 +414,8 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
               const SizedBox(height: 8),
             ],
             if (reasons.isNotEmpty) ...[
-              const Text('Risk Factors:',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+              Text(AppLocalizations.of(context).wifiRiskFactors,
+                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
               const SizedBox(height: 6),
               ...reasons.map((r) => Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -430,14 +431,14 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
                 ),
               )),
             ] else
-              const Text('No specific risk factors identified.',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+              Text(AppLocalizations.of(context).wifiNoRiskFactors,
+                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close', style: TextStyle(color: AppTheme.accent)),
+            child: Text(AppLocalizations.of(context).gClose, style: const TextStyle(color: AppTheme.accent)),
           ),
         ],
       ),
@@ -450,7 +451,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wi-Fi Safety'),
+        title: Text(AppLocalizations.of(context).wifiSafety),
         actions: [
           IconButton(
             icon: _scanning
@@ -460,7 +461,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
                       strokeWidth: 2, color: AppTheme.accent))
                 : const Icon(Icons.refresh),
             onPressed: _scanning ? null : _refreshAll,
-            tooltip: 'Rescan',
+            tooltip: AppLocalizations.of(context).wifiRescan,
           ),
         ],
       ),
@@ -474,7 +475,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
               _locationGateCard(
                 icon:    Icons.location_disabled,
                 color:   AppTheme.errorColor,
-                title:   'Location Permission Required',
+                title:   AppLocalizations.of(context).wifiLocPermReq,
                 message: 'Android requires Location permission to scan nearby '
                          'Wi-Fi networks and detect your connected network. '
                          'Your data is never shared.',
@@ -485,7 +486,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
               _locationGateCard(
                 icon:    Icons.location_off,
                 color:   AppTheme.warning,
-                title:   'Location Services Disabled',
+                title:   AppLocalizations.of(context).wifiLocDisabled,
                 message: 'Enable GPS / Location Services in your device settings. '
                          'Android needs it to scan Wi-Fi networks.',
                 buttonLabel: 'Open Settings',
@@ -678,14 +679,14 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.wifi_off, color: AppTheme.textSecondary, size: 20),
-            SizedBox(width: 12),
+            const Icon(Icons.wifi_off, color: AppTheme.textSecondary, size: 20),
+            const SizedBox(width: 12),
             Flexible(
               child: Text(
-                'Not connected to any Wi-Fi network',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                AppLocalizations.of(context).wifiNotConnected,
+                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
               ),
             ),
           ],
@@ -945,8 +946,8 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
                                 color: AppTheme.success.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text('CONNECTED',
-                                style: TextStyle(color: AppTheme.success,
+                              child: Text(AppLocalizations.of(context).wifiConnected,
+                                style: const TextStyle(color: AppTheme.success,
                                   fontSize: 8, fontWeight: FontWeight.bold)),
                             ),
                           ],
@@ -1012,8 +1013,8 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
                         ? const SizedBox(width: 14, height: 14,
                             child: CircularProgressIndicator(
                               strokeWidth: 2, color: AppTheme.accent))
-                        : const Text('Check',
-                            style: TextStyle(color: AppTheme.accent,
+                        : Text(AppLocalizations.of(context).wifiCheck,
+                            style: const TextStyle(color: AppTheme.accent,
                               fontWeight: FontWeight.bold, fontSize: 11)),
                   ),
               ],
@@ -1118,8 +1119,8 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
         children: [
           const Icon(Icons.wifi_find, size: 48, color: AppTheme.textSecondary),
           const SizedBox(height: 12),
-          const Text('No nearby networks found',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+          Text(AppLocalizations.of(context).wifiNoNearby,
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
           const SizedBox(height: 4),
           const Text('Make sure Wi-Fi is on and tap Refresh',
             style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
@@ -1128,7 +1129,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
           ElevatedButton.icon(
             onPressed: _scanning ? null : _scanNearby,
             icon: const Icon(Icons.radar, size: 16),
-            label: const Text('Scan Nearby'),
+            label: Text(AppLocalizations.of(context).wifiScanNearby),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.accent,
               foregroundColor: AppTheme.background,
@@ -1210,11 +1211,11 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.tips_and_updates, color: AppTheme.accent, size: 16),
-              SizedBox(width: 6),
-              Text('Public Wi-Fi Safety Tips', style: TextStyle(
+              const Icon(Icons.tips_and_updates, color: AppTheme.accent, size: 16),
+              const SizedBox(width: 6),
+              Text(AppLocalizations.of(context).wifiTips, style: const TextStyle(
                 color: AppTheme.textPrimary,
                 fontWeight: FontWeight.bold, fontSize: 13)),
             ],

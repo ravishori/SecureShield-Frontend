@@ -649,4 +649,419 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get vpnTapToStart => 'देखरेख सुरू करण्यासाठी शील्डला स्पर्श करा';
+
+  @override
+  String get gEdit => 'संपादित करा';
+
+  @override
+  String get gClose => 'बंद करा';
+
+  @override
+  String get gRemove => 'काढा';
+
+  @override
+  String get gShare => 'शेअर करा';
+
+  @override
+  String get gPlay => 'प्ले करा';
+
+  @override
+  String get gReset => 'रीसेट';
+
+  @override
+  String get gSave => 'जतन करा';
+
+  @override
+  String get gCopy => 'कॉपी करा';
+
+  @override
+  String get gDone => 'झाले';
+
+  @override
+  String get gOpenSettings => 'सेटिंग्ज उघडा';
+
+  @override
+  String get gVerified => 'सत्यापित';
+
+  @override
+  String get gUpload => 'अपलोड';
+
+  @override
+  String get gClear => 'साफ करा';
+
+  @override
+  String get gApply => 'लागू करा';
+
+  @override
+  String get gReport => 'रिपोर्ट करा';
+
+  @override
+  String get gTitle => 'शीर्षक';
+
+  @override
+  String get gDelete => 'हटवा';
+
+  @override
+  String get profMy => 'माझी प्रोफाइल';
+
+  @override
+  String get profSaved => 'प्रोफाइल जतन केली!';
+
+  @override
+  String get profChangeEmail =>
+      'प्रोफाइलमध्ये कोणताही बदल केल्यास तुम्हाला आपोआप सुरक्षा ईमेल पाठवला जातो.';
+
+  @override
+  String get profEmailAddr => 'ईमेल पत्ता';
+
+  @override
+  String get profSelectState => 'राज्य निवडा';
+
+  @override
+  String get profPin => 'पिन कोड';
+
+  @override
+  String get profContactRemoved => 'संपर्क काढला';
+
+  @override
+  String get profFullName => 'पूर्ण नाव *';
+
+  @override
+  String get profRelationship => 'नाते (उदा. वडील, मित्र)';
+
+  @override
+  String get profPhone => 'फोन नंबर';
+
+  @override
+  String get profContactsInfo =>
+      'आणीबाणीत या संपर्कांना कळवले जाईल आणि ते ईमेल किंवा व्हॉट्सअ‍ॅपवर घटना अहवाल मिळवू शकतात.';
+
+  @override
+  String get profAddContact => 'संपर्क जोडा';
+
+  @override
+  String get profNoContacts => 'आणीबाणी संपर्क नाहीत';
+
+  @override
+  String get profNoContactsBody =>
+      'विश्वासू कुटुंबीय किंवा मित्रांना जोडा ज्यांना आणीबाणी किंवा सायबर घटनेत कळवले जाईल.';
+
+  @override
+  String get profRemoveContact => 'संपर्क काढा';
+
+  @override
+  String get welLogin => 'लॉगिन';
+
+  @override
+  String get welRegister => 'नोंदणी';
+
+  @override
+  String get welShareEvidence => 'पुरावा शेअर करा';
+
+  @override
+  String get welCyberContacts => 'सायबर संपर्क';
+
+  @override
+  String get welSendEmailReport => 'ईमेल अहवाल पाठवा';
+
+  @override
+  String get welWhatsappMissing => 'व्हॉट्सअ‍ॅप इन्स्टॉल केलेले नाही';
+
+  @override
+  String get welNoEmailApp => 'या डिव्हाइसवर ईमेल अ‍ॅप आढळले नाही';
+
+  @override
+  String get welProtected => 'संरक्षित';
+
+  @override
+  String get welAiPowered => 'एआय-चालित';
+
+  @override
+  String get welEnterprise => 'एंटरप्राइझ सायबर संरक्षण';
+
+  @override
+  String get welEncrypted => 'एन्क्रिप्टेड';
+
+  @override
+  String get welOfflineFirst => 'ऑफलाइन-प्रथम';
+
+  @override
+  String get wifiLocOff => 'लोकेशन सेवा बंद';
+
+  @override
+  String get wifiRiskFactors => 'जोखीम घटक:';
+
+  @override
+  String get wifiNoRiskFactors => 'कोणतेही विशिष्ट जोखीम घटक आढळले नाहीत.';
+
+  @override
+  String get wifiSafety => 'वाय-फाय सुरक्षा';
+
+  @override
+  String get wifiRescan => 'पुन्हा स्कॅन करा';
+
+  @override
+  String get wifiLocPermReq => 'लोकेशन परवानगी आवश्यक';
+
+  @override
+  String get wifiLocDisabled => 'लोकेशन सेवा अक्षम';
+
+  @override
+  String get wifiNotConnected => 'कोणत्याही वाय-फाय नेटवर्कशी जोडलेले नाही';
+
+  @override
+  String get wifiConnected => 'जोडलेले';
+
+  @override
+  String get wifiCheck => 'तपासा';
+
+  @override
+  String get wifiNoNearby => 'जवळपास कोणतेही नेटवर्क आढळले नाही';
+
+  @override
+  String get wifiScanNearby => 'जवळपास स्कॅन करा';
+
+  @override
+  String get wifiTips => 'सार्वजनिक वाय-फाय सुरक्षा टिप्स';
+
+  @override
+  String get srSaved => 'रेकॉर्डिंग यशस्वीरित्या जतन केले.';
+
+  @override
+  String get srDenied =>
+      'परवानगी नाकारली. कृपया स्क्रीन कॅप्चरला परवानगी द्या.';
+
+  @override
+  String get srDeleteQ => 'रेकॉर्डिंग हटवायचे?';
+
+  @override
+  String get srTitle => 'स्क्रीन रेकॉर्डर';
+
+  @override
+  String get srRefresh => 'रेकॉर्डिंग रिफ्रेश करा';
+
+  @override
+  String get srPurpose => 'उद्देश';
+
+  @override
+  String get srTapStart => 'स्क्रीन रेकॉर्डिंग सुरू करण्यासाठी स्पर्श करा';
+
+  @override
+  String get srPast => 'मागील रेकॉर्डिंग';
+
+  @override
+  String get srNone => 'अजून रेकॉर्डिंग नाहीत';
+
+  @override
+  String get srTapRecordAbove =>
+      'स्क्रीन कॅप्चर करण्यासाठी वरील RECORD ला स्पर्श करा';
+
+  @override
+  String get srTapPlay => 'प्ले करण्यासाठी स्पर्श करा';
+
+  @override
+  String get setDeviceSafety => 'डिव्हाइस सुरक्षा सारांश';
+
+  @override
+  String get setDark => 'गडद';
+
+  @override
+  String get setLight => 'फिकट';
+
+  @override
+  String get setRemoteDetector => 'रिमोट कंट्रोल डिटेक्टर';
+
+  @override
+  String get setPermManager => 'परवानगी व्यवस्थापक';
+
+  @override
+  String get setVpnMonitor => 'व्हीपीएन ट्रॅफिक मॉनिटर';
+
+  @override
+  String get setDeveloper => 'डेव्हलपर';
+
+  @override
+  String get setServerUrl => 'सर्व्हर यूआरएल';
+
+  @override
+  String get setServerReset =>
+      'सर्व्हर यूआरएल आपोआप ओळखलेल्या मूल्यावर रीसेट झाला';
+
+  @override
+  String get cmSms => 'एसएमएस प्रवेश';
+
+  @override
+  String get cmCamera => 'कॅमेरा';
+
+  @override
+  String get cmMic => 'मायक्रोफोन';
+
+  @override
+  String get cmLocation => 'स्थान';
+
+  @override
+  String get cmPhoneState => 'फोन स्थिती';
+
+  @override
+  String get cmStorageMedia => 'स्टोरेज (मीडिया)';
+
+  @override
+  String get cmNotifications => 'सूचना';
+
+  @override
+  String get cmUsageStats => 'वापर आकडेवारी';
+
+  @override
+  String get cmUsageStatsAccess => 'वापर आकडेवारी प्रवेश';
+
+  @override
+  String get cmAppPermissions => 'अ‍ॅप परवानग्या';
+
+  @override
+  String get cmCritical => 'अत्यावश्यक';
+
+  @override
+  String get cmGrant => 'परवानगी द्या';
+
+  @override
+  String get esTitle => 'आणीबाणी शेअर';
+
+  @override
+  String get esIntro =>
+      'रेकॉर्डिंग लगेच विश्वासू संपर्कांशी शेअर करा किंवा सुरक्षितपणे अपलोड करा.';
+
+  @override
+  String get esWhatsapp => 'व्हॉट्सअ‍ॅप / एसएमएसने शेअर करा';
+
+  @override
+  String get esEmail => 'ईमेलने शेअर करा';
+
+  @override
+  String get esReport1930 => '1930 (सायबर गुन्हा) ला रिपोर्ट करा';
+
+  @override
+  String get esPoliceCells => 'स्थानिक पोलीस सायबर सेल';
+
+  @override
+  String get esFamily => 'कुटुंब संपर्कांशी शेअर करा';
+
+  @override
+  String get esSecureUpload => 'सुरक्षित अपलोड + कालबाह्य लिंक';
+
+  @override
+  String get es24h => '२४ तासांची डाउनलोड लिंक तयार करा';
+
+  @override
+  String get esUploaded => 'अपलोड यशस्वी! लिंक २४ तासांत कालबाह्य होईल';
+
+  @override
+  String get esCopyLink => 'लिंक कॉपी करा';
+
+  @override
+  String get esShareLink => 'लिंक शेअर करा';
+
+  @override
+  String get esUploadGet => 'अपलोड करा आणि लिंक मिळवा';
+
+  @override
+  String get csReport => 'स्कॅमची रिपोर्ट करा';
+
+  @override
+  String get csType => 'स्कॅमचा प्रकार';
+
+  @override
+  String get csTitleReq => 'शीर्षक *';
+
+  @override
+  String get csDescReq => 'वर्णन *';
+
+  @override
+  String get csUrl => 'स्कॅम यूआरएल (ऐच्छिक)';
+
+  @override
+  String get csCity => 'तुमचे शहर (ऐच्छिक)';
+
+  @override
+  String get csTitle => 'सामुदायिक स्कॅम सूचना';
+
+  @override
+  String get csFilterCity => 'शहरानुसार फिल्टर करा';
+
+  @override
+  String get csReportBtn => 'स्कॅम रिपोर्ट करा';
+
+  @override
+  String get csBeFirst => 'तुमच्या समुदायाला इशारा देणारे पहिले व्हा';
+
+  @override
+  String get csFilterByCity => 'शहरानुसार फिल्टर करा';
+
+  @override
+  String get csCityHint => 'शहर (उदा. मुंबई)';
+
+  @override
+  String get fbBothReq => 'कृपया प्रेषक आणि संदेश दोन्ही द्या.';
+
+  @override
+  String get fbTitle => 'बनावट बँक एसएमएस डिटेक्टर';
+
+  @override
+  String get fbVerify => 'विश्वास ठेवण्यापूर्वी तपासा';
+
+  @override
+  String get fbSender => 'प्रेषक';
+
+  @override
+  String get fbBody => 'संदेश';
+
+  @override
+  String get fbPaste => 'पेस्ट करा';
+
+  @override
+  String get fbCheck => 'प्रामाणिकता तपासा';
+
+  @override
+  String get fbWhy => 'हा निर्णय का';
+
+  @override
+  String get fbNext => 'शिफारस केलेले पुढील टप्पे';
+
+  @override
+  String get lsEnterUrl => 'स्कॅन करण्यासाठी यूआरएल टाका';
+
+  @override
+  String get lsTitle => 'लिंक स्कॅनर';
+
+  @override
+  String get lsEnterToScan => 'स्कॅनसाठी यूआरएल टाका';
+
+  @override
+  String get lsRecent => 'अलीकडील स्कॅन';
+
+  @override
+  String get lsCopied => 'यूआरएल कॉपी केला';
+
+  @override
+  String get lsRisk => 'जोखीम गुण';
+
+  @override
+  String get evAdd => 'पुरावा जोडा';
+
+  @override
+  String get evDescOpt => 'वर्णन (ऐच्छिक)';
+
+  @override
+  String get evUploaded => 'पुरावा अपलोड केला';
+
+  @override
+  String get evEmpty => 'पुरावा लॉकर रिकामे आहे';
+
+  @override
+  String get evEmptyBody => 'स्क्रीनशॉट, ऑडिओ आणि दस्तऐवज इथे साठवा';
+
+  @override
+  String get evDeleteQ => 'पुरावा हटवायचा?';
+
+  @override
+  String get evCannotUndo => 'ही कृती पूर्ववत करता येत नाही.';
 }
