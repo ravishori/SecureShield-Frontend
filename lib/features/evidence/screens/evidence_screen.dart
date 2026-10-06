@@ -52,7 +52,17 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 onPressed: () async {
-                  picked = await FilePicker.platform.pickFiles(allowMultiple: false);
+                  picked = await FilePicker.platform.pickFiles(
+                    allowMultiple: false,
+                    // keep in sync with backend app/services/upload_safety.py EVIDENCE_POLICY
+                    type: FileType.custom,
+                    allowedExtensions: const [
+                      'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic',
+                      'pdf', 'txt', 'doc', 'docx',
+                      'mp3', 'wav', 'aac', 'm4a', 'ogg',
+                      'mp4', 'mov', '3gp', 'avi', 'mkv', 'webm',
+                    ],
+                  );
                   setStateDlg(() {});
                 },
                 icon: const Icon(Icons.attach_file),
