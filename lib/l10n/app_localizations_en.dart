@@ -1054,6 +1054,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get evUploaded => 'Evidence uploaded';
 
   @override
+  String get evOpen => 'Open or share';
+
+  @override
+  String get evDownloadFailed =>
+      'Could not download this evidence. Check your connection and try again.';
+
+  @override
+  String get evFileGone => 'This file is no longer available on the server.';
+
+  @override
   String get evEmpty => 'Evidence Locker is empty';
 
   @override

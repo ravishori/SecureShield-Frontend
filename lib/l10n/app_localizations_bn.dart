@@ -1058,6 +1058,16 @@ class AppLocalizationsBn extends AppLocalizations {
   String get evUploaded => 'প্রমাণ আপলোড হয়েছে';
 
   @override
+  String get evOpen => 'খুলুন বা শেয়ার করুন';
+
+  @override
+  String get evDownloadFailed =>
+      'এই প্রমাণ ডাউনলোড করা যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+
+  @override
+  String get evFileGone => 'এই ফাইলটি আর সার্ভারে নেই।';
+
+  @override
   String get evEmpty => 'প্রমাণ লকার খালি';
 
   @override

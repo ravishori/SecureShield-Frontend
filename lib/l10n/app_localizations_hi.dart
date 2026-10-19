@@ -1054,6 +1054,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get evUploaded => 'सबूत अपलोड हुआ';
 
   @override
+  String get evOpen => 'खोलें या साझा करें';
+
+  @override
+  String get evDownloadFailed =>
+      'यह सबूत डाउनलोड नहीं हो सका। कनेक्शन जाँचें और फिर कोशिश करें।';
+
+  @override
+  String get evFileGone => 'यह फ़ाइल अब सर्वर पर उपलब्ध नहीं है।';
+
+  @override
   String get evEmpty => 'साक्ष्य लॉकर खाली है';
 
   @override

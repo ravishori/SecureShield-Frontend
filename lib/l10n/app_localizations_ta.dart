@@ -1064,6 +1064,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get evUploaded => 'ஆதாரம் பதிவேற்றப்பட்டது';
 
   @override
+  String get evOpen => 'திறக்கவும் அல்லது பகிரவும்';
+
+  @override
+  String get evDownloadFailed =>
+      'இந்த ஆதாரத்தைப் பதிவிறக்க முடியவில்லை. இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்.';
+
+  @override
+  String get evFileGone => 'இந்த கோப்பு இனி சர்வரில் இல்லை.';
+
+  @override
   String get evEmpty => 'ஆதாரப் பெட்டகம் காலியாக உள்ளது';
 
   @override

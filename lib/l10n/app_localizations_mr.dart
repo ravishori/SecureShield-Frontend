@@ -1054,6 +1054,16 @@ class AppLocalizationsMr extends AppLocalizations {
   String get evUploaded => 'पुरावा अपलोड केला';
 
   @override
+  String get evOpen => 'उघडा किंवा शेअर करा';
+
+  @override
+  String get evDownloadFailed =>
+      'हा पुरावा डाउनलोड करता आला नाही. कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.';
+
+  @override
+  String get evFileGone => 'ही फाइल आता सर्व्हरवर उपलब्ध नाही.';
+
+  @override
   String get evEmpty => 'पुरावा लॉकर रिकामे आहे';
 
   @override

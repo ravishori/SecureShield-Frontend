@@ -1061,6 +1061,16 @@ class AppLocalizationsTe extends AppLocalizations {
   String get evUploaded => 'సాక్ష్యం అప్‌లోడ్ చేయబడింది';
 
   @override
+  String get evOpen => 'తెరవండి లేదా షేర్ చేయండి';
+
+  @override
+  String get evDownloadFailed =>
+      'ఈ సాక్ష్యాన్ని డౌన్‌లోడ్ చేయలేకపోయాము. కనెక్షన్ తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get evFileGone => 'ఈ ఫైల్ ఇకపై సర్వర్‌లో అందుబాటులో లేదు.';
+
+  @override
   String get evEmpty => 'సాక్ష్య లాకర్ ఖాళీగా ఉంది';
 
   @override

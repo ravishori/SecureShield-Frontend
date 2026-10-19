@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/theme.dart';
 import '../evidence_api.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
@@ -15,11 +19,57 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
   final _api = EvidenceApi();
   List<dynamic> _items = [];
   bool _loading = true;
+  String? _openingId;
 
   @override
   void initState() {
     super.initState();
+    _purgeDownloads();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _purgeDownloads();
+    super.dispose();
+  }
+
+  // Downloaded copies are sensitive and only needed while being opened/shared.
+  Future<Directory> _downloadsRoot() async {
+    final base = await getTemporaryDirectory();
+    return Directory('${base.path}${Platform.pathSeparator}evidence_downloads');
+  }
+
+  Future<void> _purgeDownloads() async {
+    try {
+      await _api.purgeDownloads(await _downloadsRoot());
+    } catch (_) {/* best effort */}
+  }
+
+  /// Downloads the item (the server only serves the caller's own evidence) and hands it to the OS share sheet,
+  /// from which it can be opened or saved.
+  Future<void> _open(Map<String, dynamic> item) async {
+    if (_openingId != null) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final id = item['id'] as String;
+    setState(() => _openingId = id);
+    try {
+      final file = await _api.downloadEvidence(
+        id: id,
+        downloadsRoot: await _downloadsRoot(),
+        expectedBytes: item['file_size_bytes'] as int?,
+      );
+      await Share.shareXFiles([XFile(file.path)], subject: item['title'] as String?);
+    } on EvidenceDownloadException catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(SnackBar(content: Text(e.gone ? l10n.evFileGone : l10n.evDownloadFailed)));
+      }
+    } catch (_) {
+      if (mounted) messenger.showSnackBar(SnackBar(content: Text(l10n.evDownloadFailed)));
+    } finally {
+      if (mounted) setState(() => _openingId = null);
+    }
   }
 
   Future<void> _load() async {
@@ -200,9 +250,17 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                               '${fileType.toUpperCase()} • ${_formatSize(sizeBytes)}${item['case_id'] != null ? ' • Case: ${item['case_id']}' : ''}',
                               style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
                             ),
-                            trailing: item['is_encrypted'] == true
-                                ? const Icon(Icons.lock, color: AppTheme.accent, size: 16)
-                                : null,
+                            onTap: () => _open(item),
+                            trailing: _openingId == id
+                                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.accent))
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (item['is_encrypted'] == true)
+                                        const Padding(padding: EdgeInsets.only(right: 8), child: Icon(Icons.lock, color: AppTheme.accent, size: 16)),
+                                      Tooltip(message: AppLocalizations.of(context).evOpen, child: const Icon(Icons.open_in_new, color: AppTheme.accent, size: 18)),
+                                    ],
+                                  ),
                           ),
                         ),
                       );

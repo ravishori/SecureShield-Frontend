@@ -2116,6 +2116,24 @@ abstract class AppLocalizations {
   /// **'Evidence uploaded'**
   String get evUploaded;
 
+  /// No description provided for @evOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open or share'**
+  String get evOpen;
+
+  /// No description provided for @evDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download this evidence. Check your connection and try again.'**
+  String get evDownloadFailed;
+
+  /// No description provided for @evFileGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is no longer available on the server.'**
+  String get evFileGone;
+
   /// No description provided for @evEmpty.
   ///
   /// In en, this message translates to:
