@@ -167,4 +167,24 @@ void main() {
     expect(root.existsSync(), isFalse);
     await api.purgeDownloads(root); // no throw
   });
+
+  // The share sheet gives the receiving app a content URI it may read long after the screen closed, so the
+  // screen purges with a grace period instead of deleting immediately.
+  test('purgeDownloads(olderThan) keeps recent copies and removes old ones', () async {
+    final adapter = _FakeAdapter((_) => _ok([1, 2], disposition: 'attachment; filename="a.bin"'));
+    final api = _api(adapter);
+    final file = await api.downloadEvidence(id: _id, downloadsRoot: root);
+    const grace = Duration(minutes: 30);
+
+    // The screen closes right after sharing: the copy is minutes young and must survive.
+    await api.purgeDownloads(root, olderThan: grace);
+    expect(file.existsSync(), isTrue, reason: 'a fresh copy survives a closing screen');
+    await api.purgeDownloads(root, olderThan: grace, now: DateTime.now().add(const Duration(minutes: 29)));
+    expect(file.existsSync(), isTrue);
+
+    // Once the grace period has passed it is removed.
+    await api.purgeDownloads(root, olderThan: grace, now: DateTime.now().add(const Duration(minutes: 31)));
+    expect(file.existsSync(), isFalse);
+    expect(Directory('${root.path}${Platform.pathSeparator}$_id').existsSync(), isFalse);
+  });
 }

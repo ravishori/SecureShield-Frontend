@@ -130,10 +130,29 @@ class EvidenceApi {
     }
   }
 
-  /// Removes every downloaded copy (they are sensitive and only needed while being opened/shared).
-  Future<void> purgeDownloads(Directory downloadsRoot) async {
-    if (await downloadsRoot.exists()) {
+  /// Removes downloaded copies (they are sensitive and only needed while being opened/shared).
+  ///
+  /// With [olderThan] only per-item folders not modified within that window are removed. The share sheet hands the
+  /// receiving app a content URI that it may read long after the sheet (or this screen) is gone - e-mail attachments
+  /// and cloud uploads are read when sent - so a copy must outlive the screen that created it by a grace period.
+  /// Without [olderThan] everything is removed.
+  Future<void> purgeDownloads(
+    Directory downloadsRoot, {
+    Duration? olderThan,
+    DateTime? now, // test seam
+  }) async {
+    if (!await downloadsRoot.exists()) return;
+    if (olderThan == null) {
       await downloadsRoot.delete(recursive: true);
+      return;
+    }
+    final cutoff = (now ?? DateTime.now()).subtract(olderThan);
+    await for (final entry in downloadsRoot.list()) {
+      try {
+        if ((await entry.stat()).modified.isBefore(cutoff)) {
+          await entry.delete(recursive: true);
+        }
+      } catch (_) {/* best effort: a file still in use or already gone */}
     }
   }
 }

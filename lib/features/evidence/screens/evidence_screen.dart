@@ -34,7 +34,10 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
     super.dispose();
   }
 
-  // Downloaded copies are sensitive and only needed while being opened/shared.
+  // Downloaded copies are sensitive and only needed while being opened/shared. A receiving app may read the shared
+  // file well after the sheet and this screen are gone, so copies are removed only once they are older than this.
+  static const _downloadGrace = Duration(minutes: 30);
+
   Future<Directory> _downloadsRoot() async {
     final base = await getTemporaryDirectory();
     return Directory('${base.path}${Platform.pathSeparator}evidence_downloads');
@@ -42,7 +45,7 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
 
   Future<void> _purgeDownloads() async {
     try {
-      await _api.purgeDownloads(await _downloadsRoot());
+      await _api.purgeDownloads(await _downloadsRoot(), olderThan: _downloadGrace);
     } catch (_) {/* best effort */}
   }
 
