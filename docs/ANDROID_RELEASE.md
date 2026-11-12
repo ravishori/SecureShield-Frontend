@@ -25,6 +25,13 @@ python tool/verify_apk_signature.py build/app/outputs/flutter-apk/app-release.ap
 The script uses `apksigner` from the Android SDK build-tools, requires a verified v2/v3 signature, **fails on the Android debug certificate**, and prints only the
 public certificate subject and fingerprint. Compare the fingerprint with the one shown in your keystore (`keytool -list -v`) or Play Console.
 
+Play uploads: prefer an app bundle, `flutter build appbundle --release --dart-define=API_BASE_URL=...` (same signing rules). `apksigner` does not read bundles; verify a bundle with
+`jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.aab` and compare the certificate fingerprint with your upload key (`keytool -list -v -keystore <path> -alias <alias>`).
+Get the expected fingerprint from the keystore itself, never from the build output. Each upload needs a higher `versionCode` (`version: x.y.z+N` in `pubspec.yaml`).
+
+Checklist before the first upload: keystore backed up in two places and its passwords stored in a password manager; `key.properties` or the CI secrets present; a release build succeeds;
+`verify_apk_signature.py` PASSes against the expected fingerprint (not the debug certificate, v2/v3 verified); the app installs and starts on a physical device; `API_BASE_URL` points at the HTTPS API; Play App Signing is enabled.
+
 Reproducibility: `python tool/compare_apks.py first.apk second.apk` compares two builds ignoring signature files and lists any differing entry. Flutter/Gradle output is
 not guaranteed bit-for-bit reproducible (timestamps, build paths); treat a clean result as a bonus, not a requirement.
 
