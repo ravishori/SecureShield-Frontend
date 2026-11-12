@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'security/screenshot_prevention.dart';
 import '../features/auth/auth_provider.dart';
 import '../features/auth/screens/phone_screen.dart';
 import '../features/auth/screens/otp_screen.dart';
@@ -50,6 +51,9 @@ import '../features/fake_bank_sms/screens/fake_bank_sms_screen.dart';
 import '../features/qr_scanner/screens/qr_scanner_screen.dart';
 import '../features/payment_verifier/screens/payment_verifier_screen.dart';
 import '../features/scam_news/screens/scam_news_screen.dart';
+
+// Screens that show evidence, codes, personal data or private conversations hold FLAG_SECURE while mounted.
+Widget _secure(Widget child) => ScreenshotPrevention.protect(child: child);
 
 final _rootNavigatorKey  = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -171,30 +175,30 @@ final routerProvider = Provider<GoRouter>((ref) {
             final isRegister  = extra['isRegister']  as bool?  ?? false;
             final maskedEmail = extra['maskedEmail']  as String?;
             final maskedPhone = extra['maskedPhone']  as String?;
-            return OtpScreen(
+            return _secure(OtpScreen(
               identifier:  identifier,
               isRegister:  isRegister,
               maskedEmail: maskedEmail,
               maskedPhone: maskedPhone,
-            );
+            ));
           }
 
           // Legacy: extra was a plain String (phone number)
-          return OtpScreen(
+          return _secure(OtpScreen(
             identifier: extra as String? ?? '',
-          );
+          ));
         },
       ),
       GoRoute(
         path: '/profile-details',
-        builder: (_, __) => const ProfileDetailsScreen(),
+        builder: (_, __) => _secure(const ProfileDetailsScreen()),
       ),
 
       // ── Standalone authenticated screens ──────────────────────────────
       GoRoute(path: '/link-scanner',  builder: (_, __) => const LinkScannerScreen()),
-      GoRoute(path: '/evidence',      builder: (_, __) => const EvidenceScreen()),
-      GoRoute(path: '/family',        builder: (_, __) => const FamilyScreen()),
-      GoRoute(path: '/otp-vault',     builder: (_, __) => const OtpVaultScreen()),
+      GoRoute(path: '/evidence',      builder: (_, __) => _secure(const EvidenceScreen())),
+      GoRoute(path: '/family',        builder: (_, __) => _secure(const FamilyScreen())),
+      GoRoute(path: '/otp-vault',     builder: (_, __) => _secure(const OtpVaultScreen())),
       GoRoute(path: '/scam-calls',    builder: (_, __) => const ScamCallsScreen()),
       GoRoute(path: '/wifi-scanner',  builder: (_, __) => const WifiScannerScreen()),
       GoRoute(path: '/settings',      builder: (_, __) => const SettingsScreen()),
@@ -205,11 +209,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           return RecordingScreen(autoStart: autoStart);
         },
       ),
-      GoRoute(path: '/recording-preview', builder: (_, __) => const RecordingPreviewScreen()),
-      GoRoute(path: '/emergency-share',   builder: (_, __) => const EmergencyShareScreen()),
-      GoRoute(path: '/bank-otp-monitor',  builder: (_, __) => const BankOtpScreen()),
+      GoRoute(path: '/recording-preview', builder: (_, __) => _secure(const RecordingPreviewScreen())),
+      GoRoute(path: '/emergency-share',   builder: (_, __) => _secure(const EmergencyShareScreen())),
+      GoRoute(path: '/bank-otp-monitor',  builder: (_, __) => _secure(const BankOtpScreen())),
       GoRoute(path: '/remote-detector',   builder: (_, __) => const RemoteDetectorScreen()),
-      GoRoute(path: '/complaint-email',   builder: (_, __) => const ComplaintEmailScreen()),
+      GoRoute(path: '/complaint-email',   builder: (_, __) => _secure(const ComplaintEmailScreen())),
       GoRoute(path: '/screen-recording-detector', builder: (_, __) => const ScreenRecordingDetectorScreen()),
       GoRoute(path: '/screen-recorder',   builder: (_, __) => const ScreenRecorderScreen()),
       GoRoute(path: '/consent-manager',   builder: (_, __) => const ConsentManagerScreen()),
@@ -221,8 +225,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/app-monitor',           builder: (_, __) => const AppMonitorScreen()),
       GoRoute(path: '/clone-detector',        builder: (_, __) => const CloneDetectorScreen()),
       GoRoute(path: '/elderly-mode',          builder: (_, __) => const ElderlyModeScreen()),
-      GoRoute(path: '/fir-draft',            builder: (_, __) => const FirDraftScreen()),
-      GoRoute(path: '/profile',              builder: (_, __) => const ProfileScreen()),
+      GoRoute(path: '/fir-draft',            builder: (_, __) => _secure(const FirDraftScreen())),
+      GoRoute(path: '/profile',              builder: (_, __) => _secure(const ProfileScreen())),
       GoRoute(path: '/banking-protection',   builder: (_, __) => const BankingProtectionScreen()),
       GoRoute(path: '/digital-arrest',       builder: (_, __) => const DigitalArrestScreen()),
       GoRoute(path: '/fake-bank-sms',        builder: (_, __) => const FakeBankSmsScreen()),
@@ -261,7 +265,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/home/ai-coach',
-            pageBuilder: (_, __) => const NoTransitionPage(child: AiCoachScreen()),
+            pageBuilder: (_, __) => NoTransitionPage(child: _secure(const AiCoachScreen())),
           ),
         ],
       ),

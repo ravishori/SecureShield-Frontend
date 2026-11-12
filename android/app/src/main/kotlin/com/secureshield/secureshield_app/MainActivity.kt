@@ -156,6 +156,7 @@ class MainActivity : FlutterFragmentActivity() {
                 when (call.method) {
                     "enableSecure"  -> { window.addFlags(WindowManager.LayoutParams.FLAG_SECURE); result.success(null) }
                     "disableSecure" -> { window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE); result.success(null) }
+                    "isSecure"      -> result.success((window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE) != 0)
                     else            -> result.notImplemented()
                 }
             }
