@@ -7,14 +7,62 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Release signing comes from android/key.properties (git-ignored; see docs/ANDROID_RELEASE.md).
-// Without it the release build is signed with the debug key so local `flutter build` still works,
-// but such a build must never be uploaded to Play (a warning is printed).
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-val hasReleaseKeystore = keystorePropertiesFile.exists()
-if (hasReleaseKeystore) {
-    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+// ── Release signing ─────────────────────────────────────────────────────────────────────────────────────────────
+// Release builds are signed ONLY with an upload key supplied from outside the repository, and the build FAILS
+// when it is missing or invalid. There is no fallback to the debug key. Debug/profile builds are unaffected.
+//
+// Credentials come from (first match wins):
+//   1. environment variables (CI):  SECURESHIELD_KEYSTORE_PATH, SECURESHIELD_KEYSTORE_PASSWORD,
+//                                   SECURESHIELD_KEY_ALIAS, SECURESHIELD_KEY_PASSWORD
+//   2. android/key.properties (git-ignored; template: key.properties.example): storeFile, storePassword,
+//      keyAlias, keyPassword
+// The keystore must live OUTSIDE this project folder so it can never be committed. Passwords are never printed.
+// See docs/ANDROID_RELEASE.md and tool/verify_apk_signature.py.
+fun releaseSigningInputs(): Map<String, String> {
+    val env = System.getenv()
+    if (!env["SECURESHIELD_KEYSTORE_PATH"].isNullOrBlank()) {
+        return mapOf(
+            "storeFile" to (env["SECURESHIELD_KEYSTORE_PATH"] ?: ""),
+            "storePassword" to (env["SECURESHIELD_KEYSTORE_PASSWORD"] ?: ""),
+            "keyAlias" to (env["SECURESHIELD_KEY_ALIAS"] ?: ""),
+            "keyPassword" to (env["SECURESHIELD_KEY_PASSWORD"] ?: ""),
+        )
+    }
+    val file = rootProject.file("key.properties")
+    if (!file.exists()) return emptyMap()
+    val p = Properties()
+    file.inputStream().use { p.load(it) }
+    return listOf("storeFile", "storePassword", "keyAlias", "keyPassword").associateWith { p.getProperty(it, "") }
+}
+
+val releaseRequested = gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
+val signingInputs = releaseSigningInputs()
+var releaseStoreFile: File? = null
+
+if (releaseRequested) {
+    val problems = mutableListOf<String>()
+    if (signingInputs.isEmpty()) {
+        problems += "no signing configuration found (set the SECURESHIELD_* environment variables or create android/key.properties from key.properties.example)"
+    } else {
+        signingInputs.forEach { (k, v) ->
+            if (v.isBlank()) problems += "$k is empty"
+            else if (v.trim().uppercase().let { it.startsWith("CHANGE") || it.startsWith("YOUR_") || it == "TODO" }) problems += "$k is still a placeholder"
+        }
+        val path = signingInputs["storeFile"].orEmpty()
+        if (path.isNotBlank()) {
+            val f = File(path).let { if (it.isAbsolute) it else rootProject.file(path) }.canonicalFile
+            val projectRoot = rootProject.projectDir.parentFile.canonicalFile
+            if (!f.exists()) problems += "the keystore file does not exist"
+            else if (f.canonicalPath.startsWith(projectRoot.canonicalPath + File.separator)) problems += "the keystore is inside the project folder; keep it outside the repository"
+            else releaseStoreFile = f
+        }
+    }
+    if (problems.isNotEmpty()) {
+        throw GradleException(
+            "Release signing is not configured correctly: " + problems.joinToString("; ") +
+                ". Release builds are never signed with the debug key. Nothing was built.",
+        )
+    }
 }
 
 android {
@@ -33,10 +81,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.secureshield.secureshield_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion  // flutter_local_notifications requires API 21+
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -44,24 +89,21 @@ android {
     }
 
     signingConfigs {
-        if (hasReleaseKeystore) {
+        if (releaseRequested) {
             create("release") {
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
-                storePassword = keystoreProperties.getProperty("storePassword")
+                storeFile = releaseStoreFile
+                storePassword = signingInputs["storePassword"]
+                keyAlias = signingInputs["keyAlias"]
+                keyPassword = signingInputs["keyPassword"]
             }
         }
     }
 
     buildTypes {
         release {
-            if (hasReleaseKeystore) {
-                signingConfig = signingConfigs.getByName("release")
-            } else {
-                logger.warn("WARNING: android/key.properties not found - signing the release build with the DEBUG key. Not valid for Google Play.")
-                signingConfig = signingConfigs.getByName("debug")
-            }
+            // Only the externally supplied upload key; when no release task is requested (IDE sync, debug builds)
+            // no signing config is attached and nothing can be produced from it.
+            if (releaseRequested) signingConfig = signingConfigs.getByName("release")
             // R8 code shrinking/obfuscation + resource shrinking.
             isMinifyEnabled = true
             isShrinkResources = true

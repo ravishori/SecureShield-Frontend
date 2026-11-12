@@ -12,3 +12,9 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Additional signing material
+*.p12
+*.pfx
+upload-keystore*
+*.keystore.b64
