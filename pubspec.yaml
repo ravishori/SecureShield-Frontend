@@ -40,7 +40,6 @@ dependencies:
   package_info_plus: ^8.0.3
 
   # App scanning
-  installed_apps: ^1.4.2
 
   # Wi-Fi scanning
   wifi_scan: ^0.4.1

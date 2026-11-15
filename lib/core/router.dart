@@ -6,6 +6,11 @@ import '../features/auth/auth_provider.dart';
 import '../features/auth/screens/phone_screen.dart';
 import '../features/auth/screens/otp_screen.dart';
 import '../features/auth/screens/register_screen.dart';
+import '../features/auth/screens/phone_verify_screen.dart';
+import '../features/privacy/screens/consent_screen.dart';
+import '../features/privacy/screens/delete_account_screen.dart';
+import '../features/privacy/screens/privacy_notice_screen.dart';
+import '../features/privacy/screens/privacy_settings_screen.dart';
 import '../features/auth/screens/profile_details_screen.dart';
 import '../features/dashboard/screens/home_screen.dart';
 import '../features/app_scanner/screens/app_scanner_screen.dart';
@@ -14,6 +19,7 @@ import '../features/alerts/screens/alerts_screen.dart';
 import '../features/reports/screens/reports_screen.dart';
 import '../features/ai_coach/screens/ai_coach_screen.dart';
 import '../features/link_scanner/screens/link_scanner_screen.dart';
+import '../features/scam_hub/screens/scam_hub_screen.dart';
 import '../features/evidence/screens/evidence_screen.dart';
 import '../features/family/screens/family_screen.dart';
 import '../features/scam_calls/screens/scam_calls_screen.dart';
@@ -72,6 +78,8 @@ const _publicRoutes = {
   '/contacts',
   '/login',
   '/register',
+  '/privacy',
+  '/consent',
   '/otp',
   '/profile-details',
   '/banking-protection',
@@ -159,8 +167,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/register',
-        builder: (_, __) => const RegisterScreen(),
+        // The consent screen comes first; the form appears once the mandatory acknowledgements are accepted.
+        builder: (_, __) => const ConsentGate(child: RegisterScreen()),
       ),
+      GoRoute(path: '/privacy', builder: (_, __) => const PrivacyNoticeScreen()),
+      GoRoute(
+        path: '/consent',
+        // Used when a sign-in would CREATE an account (Google): returns the choices to the caller.
+        builder: (context, __) => ConsentScreen(
+          onAccepted: (c) => context.pop(c),
+        ),
+      ),
+      GoRoute(path: '/privacy-settings', builder: (_, __) => _secure(const PrivacySettingsScreen())),
+      GoRoute(path: '/delete-account', builder: (_, __) => _secure(const DeleteAccountScreen())),
       GoRoute(
         path: '/otp',
         builder: (context, state) {
@@ -190,12 +209,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/verify-phone',
+        builder: (_, __) => _secure(const PhoneVerifyScreen()),
+      ),
+      GoRoute(
         path: '/profile-details',
         builder: (_, __) => _secure(const ProfileDetailsScreen()),
       ),
 
       // ── Standalone authenticated screens ──────────────────────────────
       GoRoute(path: '/link-scanner',  builder: (_, __) => const LinkScannerScreen()),
+      GoRoute(path: '/scam-hub',      builder: (_, __) => const ScamHubScreen()),
       GoRoute(path: '/evidence',      builder: (_, __) => _secure(const EvidenceScreen())),
       GoRoute(path: '/family',        builder: (_, __) => _secure(const FamilyScreen())),
       GoRoute(path: '/otp-vault',     builder: (_, __) => _secure(const OtpVaultScreen())),

@@ -9,11 +9,18 @@ class AppConstants {
   static const String refreshTokenKey = 'refresh_token';
   static const String userIdKey       = 'user_id';
   static const String userPhoneKey    = 'user_phone';
+  /// E-mail of a registration that is waiting for its e-mail code (so the app can resume it). Not a credential.
+  static const String pendingRegistrationEmailKey = 'pending_registration_email';
 
   // ── Auth endpoints ────────────────────────────────────────────────────────
   static const String sendOtp      = '/auth/send-otp';
   static const String verifyOtp    = '/auth/verify-otp';
   static const String register     = '/auth/register';
+  static const String registerVerify = '/auth/register/verify';
+  static const String phoneAddStart      = '/auth/phone/add/start';
+  static const String phoneAddConfirm    = '/auth/phone/add/confirm';
+  static const String emailChangeStart   = '/auth/email/change/start';
+  static const String emailChangeConfirm = '/auth/email/change/confirm';
   static const String checkUser    = '/auth/check-user';
   static const String googleAuth   = '/auth/google';
   static const String refreshToken = '/auth/refresh';
