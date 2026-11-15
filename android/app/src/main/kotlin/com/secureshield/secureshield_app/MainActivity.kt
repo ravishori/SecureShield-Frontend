@@ -125,6 +125,16 @@ class MainActivity : FlutterFragmentActivity() {
     private var elderlyEventSink: EventChannel.EventSink? = null
     private var elderlyReceiver: BroadcastReceiver? = null
 
+    private val eventStoreExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
+
+    /** Runs a native event-store call on a worker thread and answers on the UI thread; a failure answers [fallback]. */
+    private fun eventStoreCall(result: MethodChannel.Result, fallback: Any?, block: () -> Any?) {
+        eventStoreExecutor.execute {
+            val out = try { block() } catch (_: Throwable) { fallback }
+            runOnUiThread { result.success(out) }
+        }
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -373,23 +383,98 @@ class MainActivity : FlutterFragmentActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "startMonitor" -> {
-                        val intent = Intent(this, AppMonitorService::class.java).apply {
-                            action = AppMonitorService.ACTION_START
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent)
+                        // The user must be able to SEE that monitoring is on: without the notification permission
+                        // (Android 13+) the persistent notice could be hidden, so the monitor is not started.
+                        val notifDenied = !NotificationVisibility.appLevelEnabled(this) // permission off, or blocked in Settings
+                        if (notifDenied) {
+                            result.error("NOTIFICATION_PERMISSION_DENIED",
+                                "Allow notifications so the monitoring notice can be shown.", null)
                         } else {
-                            startService(intent)
+                            var started = true
+                            try {
+                                val intent = Intent(this, AppMonitorService::class.java).apply {
+                                    action = AppMonitorService.ACTION_START
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startForegroundService(intent)
+                                } else {
+                                    startService(intent)
+                                }
+                            } catch (e: Exception) {
+                                started = false
+                                result.error("START_FAILED", e.javaClass.simpleName, null)
+                            }
+                            if (started) {
+                                // Answer only after the SERVICE confirms it is running (never before).
+                                Thread {
+                                    val up = MonitorLifecycle.awaitState(30, 100) { AppMonitorService.isRunning }
+                                    runOnUiThread {
+                                        if (up) {
+                                            MonitorPreference.set(this, true)   // persisted only once the service confirmed
+                                            result.success(true)
+                                        } else if (!NotificationVisibility.check(this)) {
+                                            // the service refused because the monitor notice could not be shown
+                                            result.error("NOTIFICATIONS_DISABLED",
+                                                "Turn SecureShield notifications (and the App Install Monitor channel) back on.", null)
+                                        } else {
+                                            result.error("START_TIMEOUT", "The monitor did not start.", null)
+                                        }
+                                    }
+                                }.start()
+                            }
                         }
-                        result.success(true)
+                    }
+                    "isEnabled" -> result.success(MonitorPreference.isEnabled(this))
+                    "enforceVisibility" -> {
+                        // Called whenever the app comes back to the screen. True = monitoring was ON but the user could no
+                        // longer see it, so it has just been paused (preference cleared, service stopped).
+                        val paused = MonitorPreference.isEnabled(this) && !NotificationVisibility.check(this)
+                        if (paused) MonitorPause.pause(this)
+                        result.success(paused)
                     }
                     "stopMonitor" -> {
-                        startService(Intent(this, AppMonitorService::class.java).apply {
-                            action = AppMonitorService.ACTION_STOP
-                        })
-                        result.success(true)
+                        MonitorPreference.set(this, false)   // the user's choice is recorded before anything else
+                        if (!AppMonitorService.isRunning) {
+                            result.success(true)
+                        } else {
+                            startService(Intent(this, AppMonitorService::class.java).apply {
+                                action = AppMonitorService.ACTION_STOP
+                            })
+                            Thread {
+                                val down = MonitorLifecycle.awaitState(30, 100) { !AppMonitorService.isRunning }
+                                runOnUiThread { result.success(down) }
+                            }.start()
+                        }
                     }
                     "isRunning" -> result.success(AppMonitorService.isRunning)
+                    // ── F19 Stage 2B: native event store (worker thread; never throws into Flutter) ──
+                    "setOwner" -> eventStoreCall(result, false) {
+                        MonitorEvents.get(this).setOwner(call.argument<String>("ownerId"))
+                    }
+                    "drainEvents" -> eventStoreCall(result, emptyList<Map<String, Any?>>()) {
+                        MonitorEvents.recoverStalled(this)
+                        MonitorEvents.get(this).drain(call.argument<Int>("limit") ?: MonitorEventStore.MAX_DRAIN)
+                    }
+                    "markResults" -> eventStoreCall(result, mapOf("updated" to 0, "ignored" to 0)) {
+                        val items = call.argument<List<Map<String, Any?>>>("results") ?: emptyList()
+                        val summary = MonitorEvents.get(this).markResults(
+                            items.map {
+                                MonitorEventStore.Result(
+                                    it["id"] as? String, it["history"] as? String, it["guardian"] as? String,
+                                    it["guardianReason"] as? String, it["reason"] as? String,
+                                )
+                            },
+                        )
+                        mapOf("updated" to summary.updated, "ignored" to summary.ignored)
+                    }
+                    "purge" -> eventStoreCall(result, mapOf("ok" to false, "deleted" to 0)) {
+                        val r = MonitorEvents.get(this).purge(call.argument<String>("ownerId"))
+                        mapOf("ok" to r.ok, "deleted" to r.deleted)
+                    }
+                    "stats" -> eventStoreCall(result, mapOf("available" to false)) {
+                        // dbRecoveries lives outside the database, so it survives the recreate it reports
+                        MonitorEvents.get(this).stats() + ("dbRecoveries" to MonitorEvents.dbRecoveries(this))
+                    }
                     "analyzePackage" -> {
                         val pkg = call.argument<String>("packageName") ?: return@setMethodCallHandler result.success(null)
                         val analysis = AppInstallAnalyzer.analyze(this, pkg, "installed")

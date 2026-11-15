@@ -9,19 +9,35 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 
 /**
- * Detects newly installed packages and sends a security alert notification.
- * WorkManager will handle the heavy risk analysis asynchronously.
+ * Detects newly installed packages and sends a security alert notification, but ONLY while the user has turned app
+ * monitoring on ([MonitorPreference], fail closed). While the foreground service is running it handles the event itself, so
+ * this receiver stays silent to avoid a duplicate notification. Declared non-exported: package broadcasts are protected
+ * system broadcasts and still reach it.
  */
 class PackageInstallReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_PACKAGE_ADDED) return
+        val enabled = MonitorPreference.isEnabled(context)
+        // Checked at the moment of the event, so a revoked permission is noticed even though the app was not running.
+        val visible = enabled && NotificationVisibility.check(context)
+        val decision = MonitorPolicy.decide(
+            action = intent.action,
+            replacing = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false),
+            monitoringEnabled = enabled,
+            notificationsVisible = visible,
+            serviceRunning = AppMonitorService.isRunning,
+        )
+        if (decision == MonitorPolicy.Decision.PAUSE_NOTIFICATIONS_OFF) {
+            MonitorPause.pause(context) // monitoring cannot be disclosed: stop, clear the preference, process nothing
+            return
+        }
+        if (decision != MonitorPolicy.Decision.HANDLE) return
 
         val packageName = intent.data?.schemeSpecificPart ?: return
-        val isReplacing = intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
 
-        // Skip updates (only care about fresh installs)
-        if (isReplacing) return
+        // F19 Stage 2B: the event is stored FIRST, before analysis or the notification, so a process death cannot
+        // lose it. Nothing is stored while no account is signed in; the local alert below still runs.
+        MonitorEvents.recordFirst(context, packageName, "installed")
 
         val pm      = context.packageManager
         val appName = try {

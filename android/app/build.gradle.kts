@@ -126,4 +126,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     // local_auth (BiometricPrompt) needs a FragmentActivity with an AppCompat theme.
     implementation("androidx.appcompat:appcompat:1.7.0")
+    // JVM unit tests for the pure-Kotlin service lifecycle rules (MonitorLifecycleTest).
+    testImplementation("junit:junit:4.12")
+    // Real SQLite on the JVM, so the native event store is tested against actual SQL, not a fake.
+    testImplementation("org.xerial:sqlite-jdbc:3.46.1.3")
 }

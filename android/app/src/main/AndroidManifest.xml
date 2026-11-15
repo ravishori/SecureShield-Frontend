@@ -8,9 +8,8 @@
     <uses-permission android:name="android.permission.DETECT_SCREEN_RECORDING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- SMS permissions for OTP Vault -->
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- No SMS or call-log permissions: nothing in the app reads the SMS inbox or the call log (Phase G review).
+         Removed: READ_SMS, RECEIVE_SMS, READ_CALL_LOG, PROCESS_OUTGOING_CALLS. -->
 
     <!-- Camera for evidence capture -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -35,6 +34,11 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
+    <!-- Uninstall dialogs: MainActivity.uninstallApp and ElderlyProtectionManager ("REMOVE THIS APP") launch ACTION_DELETE,
+         which needs this permission on Android 9+. Declared here so SecureShield owns it (it used to arrive only through the
+         unused installed_apps plugin). The user confirms every removal in the system dialog. -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+
     <!-- Biometric authentication for OTP Vault -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
@@ -42,8 +46,6 @@
     <!-- Phone state for call detection + SIM-swap detection (SubscriptionManager) -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
     <!-- Storage for evidence -->
     <!-- Storage on Android 9 and below (auto-no-op on 10+ thanks to scoped storage) -->
@@ -137,10 +139,23 @@
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
 
-        <!-- Package install receiver for new app detection -->
+        <!-- App install monitor: foreground service started only from the app UI (exported=false). specialUse because no
+             standard foreground-service type describes "watch package installs"; needs only FOREGROUND_SERVICE and
+             FOREGROUND_SERVICE_SPECIAL_USE, which are already declared. Stopped from the notification or the screen. -->
+        <service
+            android:name=".AppMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="On-device monitoring of app install, update and removal events to warn about risky or fake apps. Reads package metadata only; stopped by the user from the persistent notification." />
+        </service>
+
+        <!-- Package install receiver: PACKAGE_ADDED is a protected system broadcast and is delivered to a NON-exported
+             receiver, so nothing else can address it. It acts only while the user has monitoring turned on. -->
         <receiver
             android:name=".PackageInstallReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <data android:scheme="package" />
