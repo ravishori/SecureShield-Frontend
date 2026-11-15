@@ -93,13 +93,6 @@ class _ConsentManagerScreenState extends State<ConsentManagerScreen> {
 
     return [
       PermissionItem(
-        permission: Permission.sms,
-        title: AppLocalizations.of(context).cmSms,
-        reason: 'Read SMS to detect OTPs and alert you about bank messages.',
-        icon: Icons.sms,
-        critical: true,
-      ),
-      PermissionItem(
         permission: Permission.camera,
         title: AppLocalizations.of(context).cmCamera,
         reason: 'Capture photo evidence for fraud reporting.',

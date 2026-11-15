@@ -8,6 +8,7 @@ import '../../../core/utils/validators.dart';
 import '../user_api.dart';
 import '../user_profile_provider.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class ProfileDetailsScreen extends ConsumerStatefulWidget {
   const ProfileDetailsScreen({super.key});
@@ -85,7 +86,7 @@ class _ProfileDetailsScreenState extends ConsumerState<ProfileDetailsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to save: ${e.toString()}'),
+          content: Text(safeErrorMessage(e, prefix: 'Failed to save')),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

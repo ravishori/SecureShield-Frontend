@@ -6,6 +6,7 @@ import '../../../core/theme.dart';
 import '../../../core/security/biometric_service.dart';
 import '../../../core/security/google_auth_service.dart';
 import '../auth_provider.dart';
+import '../../privacy/consent_choices.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ── Country codes ─────────────────────────────────────────────────────────────
@@ -131,17 +132,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
         : _emailCtrl.text.trim().toLowerCase();
 
     try {
-      // Check if user is registered
-      final check = await ref.read(authProvider.notifier).checkUserExists(identifier);
-      if (!check.exists) {
-        setState(() {
-          _checking = false;
-          _errorMsg = 'No account found for this ${_mode == _InputMode.email ? "email" : "number"}. Please register first.';
-        });
-        return;
-      }
-
-      // Send OTP (backend sends to both email + phone if user has both)
+      // The server answers the same whether or not an account exists, and sends a code only to an identifier that
+      // belongs to an account, so there is no separate existence check (it would let anyone enumerate users).
       await ref.read(authProvider.notifier).sendOtp(identifier);
 
       if (mounted) {
@@ -203,7 +195,14 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen>
       );
       return;
     }
-    await ref.read(authProvider.notifier).signInWithGoogle();
+    final notifier = ref.read(authProvider.notifier);
+    await notifier.signInWithGoogle();
+    // A Google sign-in that would CREATE an account is refused until the person has seen and accepted the terms and
+    // privacy notice; then the same Google result is sent again with their choices.
+    if (mounted && ref.read(authProvider).consentRequired) {
+      final choices = await context.push<ConsentChoices>('/consent');
+      if (choices != null) await notifier.signInWithGoogle(consent: choices);
+    }
   }
 
   // ── Build ───────────────────────────────────────────────────────────────

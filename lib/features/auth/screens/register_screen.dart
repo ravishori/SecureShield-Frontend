@@ -11,6 +11,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/data/india_locations.dart';
 import '../auth_provider.dart';
+import '../../privacy/screens/consent_screen.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ── Country codes ─────────────────────────────────────────────────────────────
@@ -103,6 +104,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
     try {
       final result = await ref.read(authProvider.notifier).register(
+        consent:   ref.read(consentDraftProvider),
         firstName: _firstNameCtrl.text.trim(),
         lastName:  _lastNameCtrl.text.trim().isEmpty ? null : _lastNameCtrl.text.trim(),
         email:     _emailCtrl.text.trim().toLowerCase(),
@@ -117,11 +119,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       );
 
       if (mounted) {
-        // Navigate to OTP screen — verify against email, show both channels
+        // The code goes to the e-mail address only; the phone number is verified separately afterwards.
         context.push('/otp', extra: {
           'identifier':  _emailCtrl.text.trim().toLowerCase(),
           'maskedEmail': result.maskedEmail,
-          'maskedPhone': result.maskedPhone,
           'isRegister':  true,
         });
       }
@@ -306,7 +307,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                               Expanded(
                                 child: Text(
                                   'Both email and phone number are required. '
-                                  'OTP will be sent to both for verification.',
+                                  'We verify your email first; your phone is verified next, separately.',
                                   style: TextStyle(
                                     color: onSurf.withValues(alpha: 0.7),
                                     fontSize: 11,
@@ -553,7 +554,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Email & phone required — OTP sent to both',
+                      'Email & phone required - email is verified first',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                         fontSize: 11,

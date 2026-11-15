@@ -264,6 +264,8 @@ class _AiCoachScreenState extends ConsumerState<AiCoachScreen> {
           return 'connect';
         case DioExceptionType.badResponse:
           final code = e.response?.statusCode ?? 0;
+          // The server answers 503 + X-AI-Status: disabled while external AI processing is switched off.
+          if (e.response?.headers.value('x-ai-status') == 'disabled') return 'aiDisabled';
           if (code == 401) return 'auth';
           if (code == 429) return 'rateLimited';
           if (code >= 500) return 'server';
@@ -276,6 +278,10 @@ class _AiCoachScreenState extends ConsumerState<AiCoachScreen> {
   }
 
   static const Map<String, Map<String, String>> _errorByKindAndLang = {
+    'aiDisabled': {
+      'en': 'The AI coach is switched off for now, so it cannot answer. Nothing you typed was sent to an AI service. '
+          'Our built-in checks (message analyser, link scanner) still work.',
+    },
     'aiSlow': {
       'en': '_The AI is taking longer than expected to respond._ It happens '
           'sometimes with long answers — please tap **Send** again or try '

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
 import '../../../core/data/india_locations.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
 import '../profile_api.dart';
+import '../widgets/email_change_dialog.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Profile Screen — edit profile + manage emergency contacts
@@ -84,6 +87,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
   String? _selectedCity;
   bool _loading = true;
   bool _saving  = false;
+  // Verification state exactly as the server reports it.
+  bool _emailVerified = false;
+  bool _phoneVerified = false;
 
   final _api = UserApi();
 
@@ -118,6 +124,8 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
           _pinCtrl.text       = user['pin_code']    as String? ?? '';
           _selectedState      = user['state']       as String?;
           _selectedCity       = user['city']        as String?;
+          _emailVerified      = user['email_verified'] == true;
+          _phoneVerified      = user['phone_verified'] == true;
           _loading = false;
         });
       }
@@ -133,14 +141,14 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
       await _api.updateProfile(
         firstName: _firstNameCtrl.text.trim(),
         lastName:  _lastNameCtrl.text.trim(),
-        email:     _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+        // The e-mail address is NOT sent here: it can only be changed with proof of the new address.
         city:      _selectedCity,
         state:     _selectedState,
         pinCode:   _pinCtrl.text.trim().isEmpty ? null : _pinCtrl.text.trim(),
       );
       ref.invalidate(userProfileProvider);
       if (mounted) {
-        _showSuccess('Profile updated! A security notification has been sent to your email.');
+        _showSuccess('Profile updated.');
       }
     } catch (e) {
       if (mounted) _showError('Failed to save: ${e.toString()}');
@@ -308,55 +316,33 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             _sectionHeader(accent, Icons.contact_mail_outlined, 'Contact Details'),
             const SizedBox(height: 12),
 
-            _field(
-              controller: _emailCtrl,
-              label: AppLocalizations.of(context).profEmailAddr,
+            _contactTile(
               icon: Icons.email_outlined,
+              label: AppLocalizations.of(context).profEmailAddr,
+              value: _emailCtrl.text.isEmpty ? 'Not set' : _emailCtrl.text,
+              verified: _emailVerified,
+              actionLabel: 'Change',
+              actionKey: const Key('changeEmailButton'),
+              onAction: _changeEmail,
               accent: accent,
-              keyboardType: TextInputType.emailAddress,
-              hint: 'your@email.com',
-              validator: (v) {
-                if (v != null && v.isNotEmpty && !v.contains('@')) return 'Enter valid email';
-                return null;
-              },
+              onSurf: onSurf,
             ),
             const SizedBox(height: 14),
 
-            // Phone (read-only, shown from backend)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              decoration: BoxDecoration(
-                color: Theme.of(context).inputDecorationTheme.fillColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Theme.of(context).dividerColor),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.phone_outlined, color: accent, size: 18),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(AppLocalizations.of(context).mobileNumber, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
-                        const SizedBox(height: 2),
-                        Text(
-                          _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
-                          style: TextStyle(color: onSurf, fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppTheme.textSecondary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(AppLocalizations.of(context).gVerified, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 9, fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
+            // Phone: the badge reflects what the server says; an unverified number cannot be used to sign in.
+            _contactTile(
+              icon: Icons.phone_outlined,
+              label: AppLocalizations.of(context).mobileNumber,
+              value: _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
+              verified: _phoneVerified,
+              actionLabel: _phoneCtrl.text.isEmpty ? 'Add & verify' : 'Verify',
+              actionKey: const Key('verifyPhoneButton'),
+              onAction: () async {
+                await context.push('/verify-phone');
+                if (mounted) _load();
+              },
+              accent: accent,
+              onSurf: onSurf,
             ),
             const SizedBox(height: 14),
 
@@ -425,6 +411,61 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _changeEmail() async {
+    final changed = await showEmailChangeDialog(context);
+    if (!changed || !mounted) return;
+    ref.invalidate(userProfileProvider);
+    await _load();
+    if (mounted) _showSuccess('Email address changed.');
+  }
+
+  Widget _contactTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool verified,
+    required String actionLabel,
+    required Key actionKey,
+    required Future<void> Function() onAction,
+    required Color accent,
+    required Color onSurf,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).inputDecorationTheme.fillColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).dividerColor),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: accent, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                const SizedBox(height: 2),
+                Text(value, style: TextStyle(color: onSurf, fontSize: 14, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 2),
+                Text(
+                  verified ? 'Verified' : 'Not verified',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: verified ? AppTheme.success : AppTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(key: actionKey, onPressed: onAction, child: Text(actionLabel)),
+        ],
       ),
     );
   }
@@ -522,7 +563,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not delete contact: $e'),
+            content: Text(safeErrorMessage(e, prefix: 'Could not delete contact')),
             backgroundColor: AppTheme.errorColor,
             duration: const Duration(seconds: 4),
           ),
@@ -678,7 +719,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                             if (context.mounted) {
                               // ignore: use_build_context_synchronously (guarded by context.mounted above)
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
+                                SnackBar(content: Text(safeErrorMessage(e)), backgroundColor: AppTheme.errorColor),
                               );
                             }
                           }

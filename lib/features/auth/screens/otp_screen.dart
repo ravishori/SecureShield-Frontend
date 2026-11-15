@@ -89,6 +89,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
         widget.identifier,
         code,
         deviceInfo: deviceInfo,
+        registration: widget.isRegister,
       );
 
       if (!mounted) return;
@@ -114,6 +115,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
 
   void _navigateHome() {
     if (mounted) context.go('/home');
+  }
+
+  /// After a registration the SERVER decides the next step: `verify_phone` when a phone number was given at sign-up.
+  /// The account is already usable (e-mail is verified); the phone is verified on its own screen.
+  void _navigateAfterRegister() {
+    if (!mounted) return;
+    final next = ref.read(authProvider).nextStep;
+    context.go(next == 'verify_phone' ? '/verify-phone' : '/home');
   }
 
   void _clearBoxes() {
@@ -167,14 +176,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen>
         icon: Icons.how_to_reg_rounded,
         iconColor: AppTheme.success,
         title: 'Account Created!',
-        message: 'Welcome to SecureShield AI.\nYour account is verified and secured.',
+        message: 'Welcome to SecureShield AI.\nYour email address is verified.',
         badgeIcon: Icons.shield_rounded,
-        badgeLabel: 'Identity verified · JWT secured',
+        badgeLabel: 'Email verified',
         badgeColor: accent,
-        buttonLabel: 'Start Protecting',
+        buttonLabel: 'Continue',
         onDismiss: () {
           if (ctx.mounted) Navigator.of(ctx).pop();
-          _navigateHome();
+          _navigateAfterRegister();
         },
       ),
     );

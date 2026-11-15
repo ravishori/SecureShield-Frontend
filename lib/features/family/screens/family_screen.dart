@@ -6,6 +6,7 @@ import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
 import '../family_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class FamilyScreen extends StatefulWidget {
   const FamilyScreen({super.key});
@@ -167,7 +168,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                     );
                   }
                 } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(safeErrorMessage(e))));
                 }
               },
               style: ElevatedButton.styleFrom(
