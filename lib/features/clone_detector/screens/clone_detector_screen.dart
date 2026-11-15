@@ -4,6 +4,7 @@ import '../../../core/theme.dart';
 import '../clone_detector_api.dart';
 import '../models/clone_result.dart';
 import '../../app_monitor/app_monitor_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 final _historyProvider = FutureProvider<List<CloneResult>>((ref) async {
   return CloneDetectorApi().fetchHistory();
@@ -269,7 +270,7 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
     final histAV = ref.watch(_historyProvider);
     return histAV.when(
       loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.accent)),
-      error:   (e, _) => Center(child: Text('Error: $e',
+      error:   (e, _) => Center(child: Text(safeErrorMessage(e),
           style: const TextStyle(color: AppTheme.errorColor))),
       data:    (results) {
         if (results.isEmpty) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
 import '../remote_detector_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class RemoteDetectorScreen extends ConsumerWidget {
   const RemoteDetectorScreen({super.key});
@@ -23,7 +24,7 @@ class RemoteDetectorScreen extends ConsumerWidget {
       body: report.when(
         loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.accent)),
         error: (e, _) => Center(
-          child: Text('Scan failed: $e',
+          child: Text(safeErrorMessage(e, prefix: 'Scan failed'),
             style: const TextStyle(color: AppTheme.errorColor)),
         ),
         data: (data) => _buildReport(context, ref, data),

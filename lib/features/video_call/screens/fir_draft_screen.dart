@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../video_call_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class FirDraftScreen extends ConsumerStatefulWidget {
   const FirDraftScreen({super.key});
@@ -194,11 +195,6 @@ class _FirDraftScreenState extends ConsumerState<FirDraftScreen> {
               'mobile data and tap Retry.';
         case DioExceptionType.badResponse:
           final code = e.response?.statusCode ?? 0;
-          final detail = (e.response?.data is Map)
-              ? ((e.response!.data as Map)['detail']
-                  ?? (e.response!.data as Map)['error']
-                  ?? '')
-              : '';
           if (code == 401) {
             return 'Your session has expired. Please log in again.';
           }
@@ -209,12 +205,12 @@ class _FirDraftScreenState extends ConsumerState<FirDraftScreen> {
             return 'The SecureShield server is having trouble. '
                 'Our team has been notified. Please try again in a few minutes.';
           }
-          return 'Could not generate FIR draft: $detail';
+          return safeErrorMessage(e, prefix: 'Could not generate FIR draft');
         default:
           break;
       }
     }
-    return 'Could not generate FIR draft: $e';
+    return safeErrorMessage(e, prefix: 'Could not generate FIR draft');
   }
 
   @override

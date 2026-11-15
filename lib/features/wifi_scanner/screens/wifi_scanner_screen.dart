@@ -7,6 +7,7 @@ import 'package:wifi_scan/wifi_scan.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import '../../../core/theme.dart';
 import '../wifi_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Security type helpers
@@ -317,7 +318,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Check failed: $e'),
+          SnackBar(content: Text(safeErrorMessage(e, prefix: 'Check failed')),
             backgroundColor: AppTheme.errorColor),
         );
       }
@@ -349,7 +350,7 @@ class _WifiScannerScreenState extends State<WifiScannerScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Check failed: $e'),
+          SnackBar(content: Text(safeErrorMessage(e, prefix: 'Check failed')),
             backgroundColor: AppTheme.errorColor),
         );
       }

@@ -2,6 +2,7 @@ import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../alerts_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -73,7 +74,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed: $e'), backgroundColor: AppTheme.errorColor),
+                    SnackBar(content: Text(safeErrorMessage(e, prefix: 'Failed')), backgroundColor: AppTheme.errorColor),
                   );
                 }
               }

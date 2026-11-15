@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/theme.dart';
 import '../evidence_api.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class EvidenceScreen extends StatefulWidget {
   const EvidenceScreen({super.key});
@@ -142,7 +143,7 @@ class _EvidenceScreenState extends State<EvidenceScreen> {
                     );
                   }
                 } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(safeErrorMessage(e))));
                 }
               },
               child: Text(AppLocalizations.of(context).gUpload),

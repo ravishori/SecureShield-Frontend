@@ -2,6 +2,7 @@ import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../community_scam_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class CommunityScamScreen extends StatefulWidget {
   const CommunityScamScreen({super.key});
@@ -126,7 +127,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                     );
                   }
                 } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(safeErrorMessage(e))));
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorColor),

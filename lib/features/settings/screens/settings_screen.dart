@@ -13,6 +13,7 @@ import '../../../features/auth/auth_provider.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
+import '../widgets/notification_preferences_section.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -190,6 +191,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 20),
 
+                  const NotificationPreferencesSection(),
+
                   // ── Appearance section ──────────────────────────────────
                   Text(AppLocalizations.of(context).appearance, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
@@ -268,6 +271,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       onChanged: _toggleSeniorMode,
                       activeThumbColor: AppTheme.accent,
                     ),
+                  ),
+                  _settingTile(
+                    icon: Icons.privacy_tip_outlined,
+                    label: 'Privacy and data',
+                    subtitle: 'Privacy notice, AI choice, delete account',
+                    onTap: () => context.push('/privacy-settings'),
                   ),
                   _settingTile(
                     icon: Icons.folder_special,

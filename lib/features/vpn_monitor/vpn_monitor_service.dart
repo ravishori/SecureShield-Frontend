@@ -82,13 +82,13 @@ class VpnMonitorService {
       return VpnStartResult.failure(
         'VPN monitor is unavailable on this device (plugin missing).',
       );
-    } on PlatformException catch (e) {
+    } on PlatformException {
       return VpnStartResult.failure(
-        'Could not start the VPN monitor: ${e.message ?? e.code}',
+        'Could not start the VPN monitor. Please check the VPN permission and try again.',
       );
     } catch (e) {
       return VpnStartResult.failure(
-        'Could not start the VPN monitor: $e',
+        'Could not start the VPN monitor. Please try again.',
       );
     }
   }

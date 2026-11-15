@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme.dart';
 import '../screen_recorder_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main screen
@@ -98,7 +99,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Share failed: $e'),
+          SnackBar(content: Text(safeErrorMessage(e, prefix: 'Share failed')),
             backgroundColor: AppTheme.errorColor),
         );
       }

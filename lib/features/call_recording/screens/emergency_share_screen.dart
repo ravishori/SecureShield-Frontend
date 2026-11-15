@@ -13,6 +13,7 @@ import '../../../core/theme.dart';
 import '../call_recording_provider.dart';
 import '../services/recording_storage_service.dart';
 import '../services/recording_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ── Cyber Cell data for major Indian cities ────────────────────────────────────
 
@@ -108,7 +109,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
         text: 'Secure audio recording from SecureShield AI',
       );
     } catch (e) {
-      _showSnack('Share failed: $e');
+      _showSnack(safeErrorMessage(e, prefix: 'Share failed'));
     }
   }
 

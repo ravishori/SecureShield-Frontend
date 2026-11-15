@@ -11,6 +11,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io';
+import 'notification_content.dart';
+import 'notification_preferences.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -137,6 +139,7 @@ class NotificationService {
             'Fake App Alerts',
             channelDescription: 'Alerts when suspicious/fake apps are detected',
             importance: Importance.max,
+            visibility: NotificationVisibility.private,
             priority: Priority.high,
             ticker: 'Fake App Detected',
             styleInformation: BigTextStyleInformation(
@@ -171,18 +174,23 @@ class NotificationService {
   }
 
   /// Show a fraud/scam detection notification.
+  ///
+  /// Privacy (1.6D-3): shows a SAFE SUMMARY only (scam category + advice). The analysed message, its sender and any number in
+  /// it never enter a notification, so nothing sensitive reaches the lock screen, the shade or a paired watch.
   static Future<void> showFraudAlert({
     required String fraudType, // e.g., "KYC Update", "Digital Arrest", "Customs Parcel"
-    required String message,
-    String? matchedKeywords,
+    int matchedCount = 0,
   }) async {
     _checkInitialized();
+    if (!await NotificationPreferencesStore.isEnabled(NotificationCategory.scamMessages)) return;
 
-    final title = '⚠️ Scam Alert: $fraudType';
-    final body = message.length > 100
-        ? '${message.substring(0, 97)}...'
-        : message;
-    final payload = 'fraud:$fraudType';
+    final content = buildFraudNotificationContent(
+      fraudType: fraudType,
+      matchedCount: matchedCount,
+    );
+    final title = content.title;
+    final body = content.body;
+    final payload = 'fraud:${safeNotificationText(fraudType, max: 40)}';
 
     if (Platform.isAndroid) {
       await _plugin.show(
@@ -198,10 +206,8 @@ class NotificationService {
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'Scam Detected',
-            styleInformation: BigTextStyleInformation(
-              '$body\n\n${matchedKeywords ?? "Unknown scam type"}\n\n'
-                  'Do not share OTP, Aadhaar, or bank details.',
-            ),
+            visibility: NotificationVisibility.private,
+            styleInformation: BigTextStyleInformation(content.expandedBody),
             color: const Color.fromARGB(255, 255, 193, 7),
           ),
           iOS: const DarwinNotificationDetails(
@@ -253,6 +259,7 @@ class NotificationService {
             'Banking Security',
             channelDescription: 'Banking app security warnings',
             importance: Importance.max,
+            visibility: NotificationVisibility.private,
             priority: Priority.high,
             ticker: 'Banking Alert',
             styleInformation: BigTextStyleInformation(
@@ -293,6 +300,7 @@ class NotificationService {
     String? action,
   }) async {
     _checkInitialized();
+    if (!await NotificationPreferencesStore.isEnabled(NotificationCategory.securityWarnings)) return;
 
     if (Platform.isAndroid) {
       await _plugin.show(
@@ -305,6 +313,7 @@ class NotificationService {
             'Security Warnings',
             channelDescription: 'General security & privacy warnings',
             importance: Importance.defaultImportance,
+            visibility: NotificationVisibility.private,
             priority: Priority.defaultPriority,
             styleInformation: BigTextStyleInformation(message),
             color: const Color.fromARGB(255, 33, 150, 243),

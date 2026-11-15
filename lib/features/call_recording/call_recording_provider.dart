@@ -5,6 +5,7 @@ import 'package:record/record.dart';
 
 import 'services/recording_service.dart';
 import 'services/recording_storage_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ── Recording status enum ─────────────────────────────────────────────────────
 
@@ -135,7 +136,7 @@ class CallRecordingNotifier extends StateNotifier<RecordingState> {
     } catch (e) {
       state = state.copyWith(
         status: RecordingStatus.error,
-        errorMessage: 'Save failed: $e',
+        errorMessage: safeErrorMessage(e, prefix: 'Save failed'),
       );
       return null;
     }

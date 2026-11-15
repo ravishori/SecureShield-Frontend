@@ -184,12 +184,12 @@ class QrSafetyService {
         extracted: extracted,
       );
     } catch (e) {
-      return QrSafetyReport(
+      return const QrSafetyReport(
         kind: QrPayloadKind.upi,
         verdict: QrSafetyVerdict.danger,
         headline: 'Malformed UPI URI',
-        reasons: ['Could not parse QR as a valid UPI URI: $e'],
-        extracted: const {},
+        reasons: ['Could not parse QR as a valid UPI URI.'],
+        extracted: {},
       );
     }
   }

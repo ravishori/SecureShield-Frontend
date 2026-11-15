@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import '../payment_screenshot_verifier.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class PaymentVerifierScreen extends StatefulWidget {
   const PaymentVerifierScreen({super.key});
@@ -50,7 +51,7 @@ class _PaymentVerifierScreenState extends State<PaymentVerifierScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Could not analyze image: $e';
+        _error = safeErrorMessage(e, prefix: 'Could not analyze image');
         _processing = false;
       });
     }

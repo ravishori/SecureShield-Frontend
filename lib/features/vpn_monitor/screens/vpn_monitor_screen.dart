@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
 import '../vpn_monitor_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class VpnMonitorScreen extends ConsumerStatefulWidget {
   const VpnMonitorScreen({super.key});
@@ -60,7 +61,7 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppTheme.errorColor,
-            content: Text('Unexpected error: $e'),
+            content: Text(safeErrorMessage(e, prefix: 'Unexpected error')),
           ),
         );
       }
