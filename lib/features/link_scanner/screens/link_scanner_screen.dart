@@ -2,7 +2,10 @@ import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme.dart';
+import '../../../core/verdict/scam_verdict.dart';
+import '../../../core/verdict/verdict_headline.dart';
 import '../link_scanner_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class LinkScannerScreen extends StatefulWidget {
   const LinkScannerScreen({super.key});
@@ -63,7 +66,7 @@ class _LinkScannerScreenState extends State<LinkScannerScreen> {
         setState(() => _scanning = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(safeErrorMessage(e)),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -210,7 +213,8 @@ class _ScanResultCard extends StatelessWidget {
     final isPhishing = result['is_phishing'] as bool? ?? false;
     final riskScore = (result['risk_score'] as num?)?.toDouble() ?? 0.0;
     final threatCategory = result['threat_category'] as String? ?? '';
-    final scanProvider = result['scan_provider'] as String? ?? 'internal';
+    // A missing provider must not look like a verified scan: treat it as the "unable to fully verify" case (X-1 safe-default correction).
+    final scanProvider = result['scan_provider'] as String? ?? 'internal_fallback';
     final gsb = result['gsb_threats'] as List<dynamic>?;
     final url = result['url'] as String? ?? '';
 
@@ -220,32 +224,23 @@ class _ScanResultCard extends StatelessWidget {
     // provider could be consulted (true internal-only path).
     final isFallback = scanProvider == 'internal_fallback';
     final isHybrid = scanProvider == 'hybrid_fallback';
-    final isSuspicious = !isMalicious && (isPhishing || (riskScore >= 30 && riskScore < 60));
 
-    // Determine tier
-    final _Tier tier;
-    if (isMalicious) {
-      tier = _Tier.malicious;
-    } else if (isSuspicious || riskScore >= 30) {
-      tier = _Tier.suspicious;
-    } else {
-      tier = _Tier.safe;
-    }
+    // The headline comes from the verdict; the provider badge / fallback banner below never change it.
+    final (tier, label) = _headline(result);
 
     final color = switch (tier) {
       _Tier.safe => AppTheme.success,
+      _Tier.low => AppTheme.success,
+      _Tier.unknown => AppTheme.warning,
       _Tier.suspicious => AppTheme.warning,
       _Tier.malicious => AppTheme.errorColor,
     };
     final icon = switch (tier) {
       _Tier.safe => Icons.verified_user,
+      _Tier.low => Icons.info_outline,
+      _Tier.unknown => Icons.help_outline,
       _Tier.suspicious => Icons.warning_amber_rounded,
       _Tier.malicious => Icons.gpp_bad,
-    };
-    final label = switch (tier) {
-      _Tier.safe => 'SAFE',
-      _Tier.suspicious => 'SUSPICIOUS',
-      _Tier.malicious => 'MALICIOUS',
     };
 
     return Container(
@@ -276,8 +271,8 @@ class _ScanResultCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Risk score bar
-                _RiskScoreBar(score: riskScore, color: color),
+                // Risk score bar (an unverifiable result has no score to show)
+                if (tier != _Tier.unknown) _RiskScoreBar(score: riskScore, color: color),
                 const SizedBox(height: 8),
                 // Provider badge
                 _ProviderBadge(scanProvider: scanProvider, isGsbVerified: isGsbVerified),
@@ -454,7 +449,7 @@ class _ScanResultCard extends StatelessWidget {
           ],
 
           // ── Action advice ─────────────────────────────────────────────
-          if (tier != _Tier.safe) ...[
+          if (tier != _Tier.safe && tier != _Tier.low) ...[
             Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -487,7 +482,29 @@ class _ScanResultCard extends StatelessWidget {
       };
 }
 
-enum _Tier { safe, suspicious, malicious }
+enum _Tier { safe, low, unknown, suspicious, malicious }
+
+/// Headline for a scan result. SAFE only for a `safe` verdict. A missing or malformed verdict never reads as safe: the
+/// legacy flags can still raise the headline (SUSPICIOUS / MALICIOUS), but a clean-looking legacy result is UNABLE TO VERIFY.
+(_Tier, String) _headline(Map<String, dynamic> result) {
+  final v = ScamVerdict.tryParse(result['verdict']);
+  if (v != null) {
+    return switch (v.riskLevel) {
+      RiskLevel.safe => (_Tier.safe, verdictHeadlineLabel(v.riskLevel)),
+      RiskLevel.low => (_Tier.low, verdictHeadlineLabel(v.riskLevel)),
+      RiskLevel.medium => (_Tier.suspicious, verdictHeadlineLabel(v.riskLevel)),
+      RiskLevel.high || RiskLevel.critical => (_Tier.malicious, verdictHeadlineLabel(v.riskLevel)),
+      RiskLevel.unknown => (_Tier.unknown, verdictHeadlineLabel(v.riskLevel)),
+    };
+  }
+  final isMalicious = result['is_malicious'] as bool? ?? false;
+  final isPhishing = result['is_phishing'] as bool? ?? false;
+  final riskScore = (result['risk_score'] as num?)?.toDouble() ?? 0.0;
+  if (isMalicious) return (_Tier.malicious, 'MALICIOUS');
+  if (isPhishing || riskScore >= 30) return (_Tier.suspicious, 'SUSPICIOUS');
+  return (_Tier.unknown, 'UNABLE TO VERIFY');
+}
+
 
 // ── Risk Score Bar ─────────────────────────────────────────────────────────────
 class _RiskScoreBar extends StatelessWidget {
@@ -615,10 +632,16 @@ class _ActionAdvice extends StatelessWidget {
           Icons.warning_amber,
           AppTheme.warning,
         ),
-      _Tier.safe => ('', '', Icons.check, AppTheme.success),
+      _Tier.unknown => (
+          'Verify before you trust it',
+          'This link could not be checked against any threat list, so nothing is known about it either way. Verify the source before opening or entering any information.',
+          Icons.help_outline,
+          AppTheme.warning,
+        ),
+      _Tier.safe || _Tier.low => ('', '', Icons.check, AppTheme.success),
     };
 
-    if (tier == _Tier.safe) return const SizedBox.shrink();
+    if (tier == _Tier.safe || tier == _Tier.low) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -680,27 +703,19 @@ class _HistoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    final isMalicious = item['is_malicious'] as bool? ?? false;
-    final isPhishing  = item['is_phishing']  as bool? ?? false;
     final riskScore   = (item['risk_score'] as num?)?.toDouble() ?? 0.0;
     final url         = item['url']           as String? ?? '';
     final provider    = item['scan_provider'] as String? ?? 'internal';
     final gsb         = item['gsb_threats']   as List<dynamic>?;
 
-    final isSuspicious = !isMalicious && (isPhishing || riskScore >= 30);
-
-    // Risk-tier palette — pulls from the live theme so light/dark both work.
-    final tierColor = isMalicious
-        ? const Color(0xFFB00020)
-        : isSuspicious
-            ? const Color(0xFFFF6D00)
-            : const Color(0xFF2E7D32);
-
-    final statusLabel = isMalicious
-        ? 'MALICIOUS'
-        : isSuspicious
-            ? 'SUSPICIOUS'
-            : 'SAFE';
+    final (hTier, hLabel) = _headline(item);
+    // Same verdict-first headline as the result card; a history row with no verdict is never shown as SAFE.
+    final tierColor = switch (hTier) {
+      _Tier.malicious => const Color(0xFFB00020),
+      _Tier.suspicious || _Tier.unknown => const Color(0xFFFF6D00),
+      _Tier.safe || _Tier.low => const Color(0xFF2E7D32),
+    };
+    final statusLabel = hLabel;
 
     final hasGsbThreats = gsb != null && gsb.isNotEmpty;
 
@@ -723,11 +738,13 @@ class _HistoryTile extends StatelessWidget {
               border: Border.all(color: tierColor.withValues(alpha: 0.5)),
             ),
             child: Icon(
-              isMalicious
-                  ? Icons.gpp_bad_rounded
-                  : isSuspicious
-                      ? Icons.warning_amber_rounded
-                      : Icons.verified_user_rounded,
+              switch (hTier) {
+                _Tier.malicious => Icons.gpp_bad_rounded,
+                _Tier.suspicious => Icons.warning_amber_rounded,
+                _Tier.unknown => Icons.help_outline,
+                _Tier.low => Icons.info_outline,
+                _Tier.safe => Icons.verified_user_rounded,
+              },
               color: tierColor,
               size: 18,
             ),

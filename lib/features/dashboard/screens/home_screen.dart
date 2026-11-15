@@ -37,6 +37,7 @@ class _Category {
 
 const _categories = [
   _Category(Icons.shield_outlined, 'Threat Detection', Color(0xFF00E5FF), [
+    _Feature(Icons.travel_explore,  'Scam Check',        '/scam-hub',          Color(0xFF00E5FF), badge: 'NEW'),
     _Feature(Icons.link,            'Link Scanner',      '/link-scanner',      Color(0xFF00E5FF), badge: 'AI'),
     _Feature(Icons.sms,             'Message Analyzer',  '/message-analyzer',  Color(0xFF00E5FF), badge: 'AI'),
     _Feature(Icons.qr_code_scanner, 'QR Safety Scanner', '/qr-scanner',        Color(0xFF00BCD4), badge: 'NEW'),
@@ -954,6 +955,7 @@ class _AppDrawer extends ConsumerWidget {
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               children: [
                 _drawerSection(context, '🛡️  ${AppLocalizations.of(context).secThreat}', [
+                  const _DrawerItem(Icons.travel_explore, 'Scam Check', '/scam-hub', Color(0xFF00E5FF), badge: 'NEW'),
                   _DrawerItem(Icons.link,           AppLocalizations.of(context).menuLinkScanner,        '/link-scanner',       const Color(0xFF00E5FF), badge: 'AI'),
                   _DrawerItem(Icons.sms,            AppLocalizations.of(context).menuMessageAnalyzer,    '/message-analyzer',   const Color(0xFF00E5FF), badge: 'AI'),
                   _DrawerItem(Icons.phone_callback, AppLocalizations.of(context).menuScamCalls, '/scam-calls', const Color(0xFFFF5252)),
