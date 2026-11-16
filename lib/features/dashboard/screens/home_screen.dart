@@ -13,6 +13,7 @@ import '../../../core/widgets/premium/premium.dart';
 import '../../../features/auth/auth_provider.dart';
 import '../../banking_protection/widgets/banking_threat_strip.dart';
 import '../dashboard_api.dart';
+import '../security_assessment.dart';
 import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ─────────────────────────────────────────────
@@ -176,12 +177,13 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
     final accent = AppTheme.accentOf(context);
     if (_loading) return const DashboardHeroSkeleton();
 
-    final riskScore   = (_report?['overall_risk_score'] as num?)?.toDouble() ?? 0.0;
-    // Prefer the server's computed security_score; fall back to the inverse of the risk score.
-    final safeScore   = ((_report?['security_score'] as num?)?.toDouble() ?? (100 - riskScore)).clamp(0.0, 100.0);
+    // No report or no activity is NOT ASSESSED, never 100/100 (F-DEV-1). A real report keeps the server's score.
+    final assessment  = SecurityAssessment.fromReport(_report);
+    final assessed    = assessment.isAssessed;
+    final safeScore   = assessment.score ?? 0.0;
     final threats     = _report?['threats_detected'] ?? 0;
-    final safeColor   = safeScore >= 70 ? AppTheme.success : safeScore >= 40 ? AppTheme.warning : AppTheme.errorColor;
-    final safeLabel   = safeScore >= 70 ? 'PROTECTED' : safeScore >= 40 ? 'FAIR' : 'AT RISK';
+    final safeColor   = !assessed ? AppTheme.textSecondary : safeScore >= 70 ? AppTheme.success : safeScore >= 40 ? AppTheme.warning : AppTheme.errorColor;
+    final safeLabel   = !assessed ? 'NOT ASSESSED' : safeScore >= 70 ? 'PROTECTED' : safeScore >= 40 ? 'FAIR' : 'AT RISK';
 
     return Stack(
       children: [
@@ -319,7 +321,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Icon(
-                                            safeScore >= 70 ? Icons.verified_user_rounded
+                                            !assessed ? Icons.help_outline_rounded
+                                              : safeScore >= 70 ? Icons.verified_user_rounded
                                               : safeScore >= 40 ? Icons.gpp_maybe_rounded
                                               : Icons.gpp_bad_rounded,
                                             color: safeColor, size: 13,
@@ -341,6 +344,12 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
                                       ),
                                     ),
                                   ),
+                                  if (!assessed) ...[
+                                    const SizedBox(height: 8),
+                                    Text(assessment.reason,
+                                      key: const Key('not_assessed_reason'),
+                                      style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                                  ],
                                 ],
                               ),
                             ),
@@ -349,7 +358,28 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
                             // Size derived from outer LayoutBuilder (rowW).
                             SizedBox(
                               width: gaugeSize, height: gaugeSize,
-                              child: SecurityScoreGauge(
+                              child: !assessed
+                                  ? Center(
+                                      child: Container(
+                                        key: const Key('not_assessed_gauge'),
+                                        width: gaugeSize, height: gaugeSize,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: AppTheme.textSecondary.withValues(alpha: 0.5), width: 3),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.help_outline_rounded, color: AppTheme.textSecondary, size: gaugeSize * 0.22),
+                                            const SizedBox(height: 4),
+                                            const Text('NOT\nASSESSED', textAlign: TextAlign.center,
+                                              style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w800, fontSize: 11, letterSpacing: 1.0)),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : SecurityScoreGauge(
                                 value: safeScore,
                                 label: safeScore >= 70 ? 'SECURE'
                                      : safeScore >= 40 ? 'FAIR' : 'AT RISK',
@@ -391,7 +421,21 @@ class _DashboardTabState extends ConsumerState<DashboardTab>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      child: MetricCard(
+                      child: !assessed
+                          ? const GlassCard(
+                              key: Key('not_assessed_metric'),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.help_outline_rounded, color: AppTheme.textSecondary, size: 20),
+                                  SizedBox(height: 8),
+                                  Text('Not assessed', style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.w700, fontSize: 16)),
+                                  SizedBox(height: 2),
+                                  Text('Security Score', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                                ],
+                              ),
+                            )
+                          : MetricCard(
                         icon:   Icons.verified_user_rounded,
                         label:  'Security Score',
                         value:  safeScore.round(),

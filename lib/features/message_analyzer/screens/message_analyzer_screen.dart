@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme.dart';
+import '../../../core/services/fraud_alert_policy.dart';
 import '../../../core/services/notification_service.dart';
 import '../../../core/security/fraud_keyword_engine.dart';
 import '../../../core/utils/safe_error.dart';
+import '../../../core/verdict/verdict_response.dart';
 import '../message_analyzer_api.dart';
 import '../widgets/message_result_view.dart';
 
@@ -161,6 +163,20 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
 
   // ── Analysis ───────────────────────────────────────────────────────────────
 
+  /// Privacy: a safe summary only. The message text is never put in a notification (lock screen, shade, watch).
+  /// A notification failure must never hide the analysis result.
+  Future<void> _maybeNotify(FraudAlertDecision decision, FraudAnalysis analysis) async {
+    if (!decision.notify) return;
+    try {
+      await NotificationService.showFraudAlert(
+        fraudType: analysis.category == FraudCategory.unknown ? 'Scam message' : analysis.category.label,
+        matchedCount: analysis.matchedKeywords.length,
+      );
+    } catch (e) {
+      logSafeError('MessageAnalyzer.notify', e);
+    }
+  }
+
   Future<void> _analyzeMessage() async {
     if (_messageCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -175,21 +191,21 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
     try {
       final messageText = _messageCtrl.text.trim();
 
-      // Check for fraud keywords offline first
+      // The server verdict is authoritative; the keyword engine is only an offline fallback (see fraud_alert_policy.dart).
       final fraudAnalysis = FraudKeywordEngine.analyze(messageText);
-
-      // Trigger notification if fraud is detected
-      if (fraudAnalysis.suspicionScore > 0.5) {
-        // Privacy: a safe summary only. The message text is never put in a notification (lock screen, shade, watch).
-        await NotificationService.showFraudAlert(
-          fraudType: fraudAnalysis.category.label,
-          matchedCount: fraudAnalysis.matchedKeywords.length,
+      final Map<String, dynamic> result;
+      try {
+        result = await _api.analyzeMessage(
+          messageText: messageText,
+          sender: _senderCtrl.text.trim().isEmpty ? null : _senderCtrl.text.trim(),
         );
+      } catch (_) {
+        await _maybeNotify(decideOffline(matchedKeywordCount: fraudAnalysis.matchedKeywords.length), fraudAnalysis);
+        rethrow;
       }
-
-      final result = await _api.analyzeMessage(
-        messageText: messageText,
-        sender: _senderCtrl.text.trim().isEmpty ? null : _senderCtrl.text.trim(),
+      await _maybeNotify(
+        decideFromServer(verdict: VerdictResponse.from(result).verdict, legacyRiskScore: result['risk_score']),
+        fraudAnalysis,
       );
       if (mounted) setState(() { _messageResult = result; _analyzing = false; });
     } catch (e) {
