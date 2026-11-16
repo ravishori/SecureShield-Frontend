@@ -23,6 +23,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: "3.41.0"  # pinned: the version verified in development; unpinned stable moved to 3.50.0 and failed analysis
           cache: true
       - run: flutter pub get
       - run: flutter analyze
@@ -62,6 +63,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: "3.41.0"  # pinned: the version verified in development; unpinned stable moved to 3.50.0 and failed analysis
           cache: true
       - run: flutter pub get
       - name: Build APK and AAB

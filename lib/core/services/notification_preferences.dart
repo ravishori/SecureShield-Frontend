@@ -40,7 +40,8 @@ abstract class NotificationPreferencesStore {
     if (category.essential) return false;
     try {
       final prefs = await SharedPreferences.getInstance();
-      return prefs.setBool(category.key, enabled);
+      // await: without it an asynchronous write failure escapes this try/catch instead of returning false
+      return await prefs.setBool(category.key, enabled);
     } catch (_) {
       return false;
     }
