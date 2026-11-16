@@ -102,7 +102,7 @@ class AppDropdownField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20) : null,
@@ -112,7 +112,7 @@ class AppDropdownField<T> extends StatelessWidget {
           : Text(
               disabledHint ?? 'Select…',
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 13),
             ),
       isExpanded: true,

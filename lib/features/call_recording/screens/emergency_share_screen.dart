@@ -1,3 +1,5 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
+import '../../../core/app_config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,7 @@ import '../../../core/theme.dart';
 import '../call_recording_provider.dart';
 import '../services/recording_storage_service.dart';
 import '../services/recording_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ── Cyber Cell data for major Indian cities ────────────────────────────────────
 
@@ -106,7 +109,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
         text: 'Secure audio recording from SecureShield AI',
       );
     } catch (e) {
-      _showSnack('Share failed: $e');
+      _showSnack(safeErrorMessage(e, prefix: 'Share failed'));
     }
   }
 
@@ -142,7 +145,9 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
 
       // 2. Generate expiring share link (24 h)
       final linkResp = await _dio.post('/recordings/$recordingId/share-link');
-      final url = linkResp.data['share_url'] as String;
+      // The API returns a path ("/api/v1/recordings/share/<token>"); a link someone can open needs the host.
+      final path = linkResp.data['share_url'] as String;
+      final url = path.startsWith('/') ? '${Uri.parse(AppConfig.baseUrl).origin}$path' : path;
 
       if (mounted) {
         setState(() {
@@ -265,7 +270,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emergency Share'),
+        title: Text(AppLocalizations.of(context).esTitle),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -277,20 +282,20 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.errorColor.withOpacity(0.1),
+                  color: AppTheme.errorColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: AppTheme.errorColor.withOpacity(0.3)),
+                      color: AppTheme.errorColor.withValues(alpha: 0.3)),
                 ),
                 child: Row(
-                  children: const [
-                    Icon(Icons.emergency_share_rounded,
+                  children: [
+                    const Icon(Icons.emergency_share_rounded,
                         color: AppTheme.errorColor, size: 28),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Share recording immediately with trusted contacts or upload securely.',
-                        style: TextStyle(
+                        AppLocalizations.of(context).esIntro,
+                        style: const TextStyle(
                             color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
                       ),
                     ),
@@ -303,7 +308,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               // ── Share options ────────────────────────────────────────────
               _ShareOptionCard(
                 icon: Icons.chat_rounded,
-                title: 'Share via WhatsApp / SMS',
+                title: AppLocalizations.of(context).esWhatsapp,
                 subtitle: 'Opens system share sheet — choose any app',
                 color: const Color(0xFF25D366),
                 onTap: () => _shareViaSystem(subject: 'Emergency Recording'),
@@ -313,7 +318,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
 
               _ShareOptionCard(
                 icon: Icons.email_rounded,
-                title: 'Share via Email',
+                title: AppLocalizations.of(context).esEmail,
                 subtitle: 'Opens system share sheet with email option',
                 color: AppTheme.accent,
                 onTap: () => _shareViaSystem(subject: 'Emergency Audio Evidence'),
@@ -324,7 +329,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               // ── 1930 WhatsApp ────────────────────────────────────────────
               _ShareOptionCard(
                 icon: Icons.support_agent,
-                title: 'Report to 1930 (Cybercrime)',
+                title: AppLocalizations.of(context).esReport1930,
                 subtitle: 'Open WhatsApp to National Cybercrime Helpline',
                 color: const Color(0xFF25D366),
                 onTap: _shareToNationalHelpline,
@@ -333,10 +338,10 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               const SizedBox(height: 20),
 
               // ── Cyber Cells ──────────────────────────────────────────────
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Local Police Cyber Cells',
-                  style: TextStyle(
+                child: Text(AppLocalizations.of(context).esPoliceCells,
+                  style: const TextStyle(
                     color: AppTheme.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -355,7 +360,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorColor.withOpacity(0.1),
+                        color: AppTheme.errorColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Icon(Icons.local_police, color: AppTheme.errorColor, size: 18),
@@ -380,10 +385,10 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               const SizedBox(height: 20),
 
               // ── Family Contacts ──────────────────────────────────────────
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Share with Family Contacts',
-                  style: TextStyle(
+                child: Text(AppLocalizations.of(context).esFamily,
+                  style: const TextStyle(
                     color: AppTheme.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -424,7 +429,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                         dense: true,
                         leading: CircleAvatar(
                           radius: 18,
-                          backgroundColor: AppTheme.primary.withOpacity(0.3),
+                          backgroundColor: AppTheme.primary.withValues(alpha: 0.3),
                           child: Text(
                             name.isNotEmpty ? name[0].toUpperCase() : '?',
                             style: const TextStyle(
@@ -461,7 +466,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                   color: AppTheme.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                      color: AppTheme.primary.withOpacity(0.5)),
+                      color: AppTheme.primary.withValues(alpha: 0.5)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -471,24 +476,24 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppTheme.primary.withOpacity(0.2),
+                            color: AppTheme.primary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.cloud_upload_rounded,
                               color: AppTheme.accent, size: 22),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Secure Upload + Expiring Link',
-                                  style: TextStyle(
+                              Text(AppLocalizations.of(context).esSecureUpload,
+                                  style: const TextStyle(
                                       color: AppTheme.textPrimary,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14)),
-                              Text('Generate a 24-hour download link',
-                                  style: TextStyle(
+                              Text(AppLocalizations.of(context).es24h,
+                                  style: const TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 12)),
                             ],
@@ -509,21 +514,21 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppTheme.success.withOpacity(0.1),
+                          color: AppTheme.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                              color: AppTheme.success.withOpacity(0.3)),
+                              color: AppTheme.success.withValues(alpha: 0.3)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              children: const [
-                                Icon(Icons.check_circle_rounded,
+                              children: [
+                                const Icon(Icons.check_circle_rounded,
                                     color: AppTheme.success, size: 16),
-                                SizedBox(width: 6),
-                                Text('Upload successful! Link expires in 24h',
-                                    style: TextStyle(
+                                const SizedBox(width: 6),
+                                Text(AppLocalizations.of(context).esUploaded,
+                                    style: const TextStyle(
                                         color: AppTheme.success,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600)),
@@ -549,13 +554,13 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.accent,
                                 side: BorderSide(
-                                    color: AppTheme.accent.withOpacity(0.5)),
+                                    color: AppTheme.accent.withValues(alpha: 0.5)),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
                               onPressed: _copyLink,
                               icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Copy Link'),
+                              label: Text(AppLocalizations.of(context).esCopyLink),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -564,7 +569,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.accent,
                                 side: BorderSide(
-                                    color: AppTheme.accent.withOpacity(0.5)),
+                                    color: AppTheme.accent.withValues(alpha: 0.5)),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
@@ -573,7 +578,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                                 subject: 'Emergency Recording Link',
                               ),
                               icon: const Icon(Icons.share_rounded, size: 16),
-                              label: const Text('Share Link'),
+                              label: Text(AppLocalizations.of(context).esShareLink),
                             ),
                           ),
                         ],
@@ -597,7 +602,7 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
                         ),
                         onPressed: _uploadToBackend,
                         icon: const Icon(Icons.upload_rounded, size: 18),
-                        label: const Text('Upload & Get Link'),
+                        label: Text(AppLocalizations.of(context).esUploadGet),
                       ),
                     ],
                   ],
@@ -609,9 +614,9 @@ class _EmergencyShareScreenState extends ConsumerState<EmergencyShareScreen> {
               // ── Done ─────────────────────────────────────────────────────
               TextButton(
                 onPressed: () => context.go('/home'),
-                child: const Text('Done',
+                child: Text(AppLocalizations.of(context).gDone,
                     style:
-                        TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
+                        const TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
               ),
             ],
           ),
@@ -648,14 +653,14 @@ class _ShareOptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 22),

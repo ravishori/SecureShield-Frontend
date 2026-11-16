@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/providers/language_provider.dart';
@@ -11,6 +12,9 @@ import '../../../core/network/dio_client.dart';
 import '../../../features/auth/auth_provider.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
+import '../../banking_protection/widgets/banking_threat_strip.dart';
+import '../widgets/notification_preferences_section.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -60,7 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context).settings),
         actions: const [ThemeSwitcher()],
       ),
       body: _loading
@@ -70,6 +74,42 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ── Device safety summary (banking-threat strip) ────────
+                  // Wrapped in a Consumer so the strip rebuilds reactively
+                  // when any other screen invalidates the shared provider.
+                  Consumer(builder: (_, ref, __) {
+                    final report = ref.watch(bankingThreatReportProvider);
+                    if (report == null || !report.hasThreats) {
+                      return const SizedBox.shrink();
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4, bottom: 8),
+                            child: Text(
+                              AppLocalizations.of(context).setDeviceSafety,
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ),
+                          BankingThreatStrip(
+                            report: report,
+                            margin: EdgeInsets.zero,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
                   // Profile section
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -151,8 +191,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 20),
 
+                  const NotificationPreferencesSection(),
+
                   // ── Appearance section ──────────────────────────────────
-                  Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).appearance, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
 
                   // Theme dropdown
@@ -163,7 +205,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     final accent = AppTheme.accentOf(context);
                     return _settingTile(
                       icon: isDark ? Icons.nights_stay_rounded : Icons.wb_sunny_rounded,
-                      label: 'App Theme',
+                      label: AppLocalizations.of(context).appTheme,
                       subtitle: isDark ? 'Dark Mode' : 'Light Mode',
                       trailing: DropdownButton<ThemeMode>(
                         value: themeMode,
@@ -183,7 +225,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               children: [
                                 Icon(Icons.nights_stay_rounded, size: 16, color: accent),
                                 const SizedBox(width: 6),
-                                Text('Dark', style: TextStyle(color: accent, fontSize: 12)),
+                                Text(AppLocalizations.of(context).setDark, style: TextStyle(color: accent, fontSize: 12)),
                               ],
                             ),
                           ),
@@ -194,7 +236,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               children: [
                                 Icon(Icons.wb_sunny_rounded, size: 16, color: accent),
                                 const SizedBox(width: 6),
-                                Text('Light', style: TextStyle(color: accent, fontSize: 12)),
+                                Text(AppLocalizations.of(context).setLight, style: TextStyle(color: accent, fontSize: 12)),
                               ],
                             ),
                           ),
@@ -211,19 +253,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     final current = langNotifier.current;
                     return _settingTile(
                       icon: Icons.language_rounded,
-                      label: 'Language',
+                      label: AppLocalizations.of(context).language,
                       subtitle: '${current.nativeName} (${current.name})',
                       onTap: () => _showLanguagePicker(langCode, langNotifier),
                     );
                   }),
 
                   const SizedBox(height: 16),
-                  Text('Security Settings', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).securitySettings, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   _settingTile(
                     icon: Icons.elderly,
-                    label: 'Senior Citizen Mode',
-                    subtitle: 'Larger text, simplified UI',
+                    label: AppLocalizations.of(context).seniorCitizenMode,
+                    subtitle: AppLocalizations.of(context).seniorModeSubtitle,
                     trailing: Switch(
                       value: _seniorMode,
                       onChanged: _toggleSeniorMode,
@@ -231,68 +273,74 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                   _settingTile(
+                    icon: Icons.privacy_tip_outlined,
+                    label: 'Privacy and data',
+                    subtitle: 'Privacy notice, AI choice, delete account',
+                    onTap: () => context.push('/privacy-settings'),
+                  ),
+                  _settingTile(
                     icon: Icons.folder_special,
-                    label: 'Evidence Locker',
-                    subtitle: 'Manage your evidence files',
+                    label: AppLocalizations.of(context).evidenceLocker,
+                    subtitle: AppLocalizations.of(context).evidenceLockerSubtitle,
                     onTap: () => context.push('/evidence'),
                   ),
                   _settingTile(
                     icon: Icons.family_restroom,
-                    label: 'Family Dashboard',
-                    subtitle: 'Manage family members',
+                    label: AppLocalizations.of(context).familyDashboard,
+                    subtitle: AppLocalizations.of(context).familyDashboardSubtitle,
                     onTap: () => context.push('/family'),
                   ),
                   _settingTile(
                     icon: Icons.lock_clock,
-                    label: 'Bank OTP Monitor',
+                    label: AppLocalizations.of(context).menuBankOtp,
                     subtitle: 'Detect bank OTPs in real-time',
                     onTap: () => context.push('/bank-otp-monitor'),
                   ),
                   _settingTile(
                     icon: Icons.desktop_access_disabled,
-                    label: 'Remote Control Detector',
+                    label: AppLocalizations.of(context).setRemoteDetector,
                     subtitle: 'Detect AnyDesk, TeamViewer & ADB',
                     onTap: () => context.push('/remote-detector'),
                   ),
                   _settingTile(
                     icon: Icons.tune,
-                    label: 'Permission Manager',
+                    label: AppLocalizations.of(context).setPermManager,
                     subtitle: 'View & manage app permissions',
                     onTap: () => context.push('/consent-manager'),
                   ),
                   _settingTile(
                     icon: Icons.vpn_lock,
-                    label: 'VPN Traffic Monitor',
+                    label: AppLocalizations.of(context).setVpnMonitor,
                     subtitle: 'Monitor outbound connections for threats',
                     onTap: () => context.push('/vpn-monitor'),
                   ),
                   _settingTile(
                     icon: Icons.install_mobile,
-                    label: 'App Install Monitor',
+                    label: AppLocalizations.of(context).menuAppInstall,
                     subtitle: 'Track newly installed apps',
                     onTap: () => context.push('/package-monitor'),
                   ),
                   const SizedBox(height: 16),
-                  Text('Developer', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).setDeveloper, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   _settingTile(
                     icon: Icons.dns_outlined,
-                    label: 'Server URL',
+                    label: AppLocalizations.of(context).setServerUrl,
                     subtitle: _currentServerUrl,
                     onTap: _showServerUrlDialog,
                   ),
                   const SizedBox(height: 16),
-                  Text('About', style: Theme.of(context).textTheme.titleMedium),
+                  Text(AppLocalizations.of(context).about, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   _settingTile(
                     icon: Icons.info_outline,
-                    label: 'App Version',
+                    label: AppLocalizations.of(context).appVersion,
                     subtitle: '1.0.0',
                   ),
                   _settingTile(
                     icon: Icons.shield,
-                    label: 'Cybercrime Helpline',
-                    subtitle: '1930 (India National Cybercrime Helpline)',
+                    label: AppLocalizations.of(context).cybercrimeHelpline,
+                    subtitle: AppLocalizations.of(context).cybercrimeHelplineNumber,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
@@ -304,7 +352,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (mounted) router.go('/welcome');
                       },
                       icon: const Icon(Icons.logout),
-                      label: const Text('Logout'),
+                      label: Text(AppLocalizations.of(context).logout),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.errorColor.withValues(alpha: 0.2),
                         foregroundColor: AppTheme.errorColor,
@@ -324,11 +372,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.cardColor,
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.dns_outlined, color: AppTheme.accent, size: 20),
-            SizedBox(width: 8),
-            Text('Server URL', style: TextStyle(color: AppTheme.textPrimary, fontSize: 16)),
+            const Icon(Icons.dns_outlined, color: AppTheme.accent, size: 20),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context).setServerUrl, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16)),
           ],
         ),
         content: Column(
@@ -353,7 +401,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.copy, size: 16, color: AppTheme.textSecondary),
                   onPressed: () => Clipboard.setData(ClipboardData(text: ctrl.text)),
-                  tooltip: 'Copy',
+                  tooltip: AppLocalizations.of(context).gCopy,
                 ),
               ),
             ),
@@ -373,6 +421,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onPressed: () async {
               final nav = Navigator.of(ctx);
               final messenger = ScaffoldMessenger.of(context);
+              final resetText = AppLocalizations.of(context).setServerReset;
               await AppConfig.clearCustomUrl();
               DioClient.reset();
               if (mounted) {
@@ -380,10 +429,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               }
               nav.pop();
               messenger.showSnackBar(
-                const SnackBar(content: Text('Server URL reset to auto-detected value')),
+                SnackBar(content: Text(resetText)),
               );
             },
-            child: const Text('Reset', style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text(AppLocalizations.of(context).gReset, style: const TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -408,7 +457,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               backgroundColor: AppTheme.accent,
               foregroundColor: AppTheme.background,
             ),
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context).gSave),
           ),
         ],
       ),
@@ -448,10 +497,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('Select Language',
-                  style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(AppLocalizations.of(context).selectLanguage,
+                  style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
             ),
             const Divider(color: Color(0xFF2A3560)),
             ...supportedLanguages.map((lang) => ListTile(

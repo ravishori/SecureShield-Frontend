@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Data models
@@ -74,7 +75,7 @@ const _sections = [
         description: 'RBI-designated helpline for banking and UPI fraud. '
                      'Also escalate through your bank\'s official customer care.',
         icon:  Icons.account_balance_rounded,
-        color: const Color(0xFF4FC3F7),
+        color: Color(0xFF4FC3F7),
         type:  _ActionType.call,
       ),
     ],
@@ -100,7 +101,7 @@ const _sections = [
         description: 'Central Equipment Identity Register. Block lost/stolen phones immediately. '
                      'Prevents unauthorized use and protects your data.',
         icon:  Icons.phone_locked_rounded,
-        color: const Color(0xFF4FC3F7),
+        color: Color(0xFF4FC3F7),
         type:  _ActionType.web,
         badge: 'OFFICIAL',
       ),
@@ -110,7 +111,7 @@ const _sections = [
         description: 'Track All Telecom Frequencies on Personal mobile number. '
                      'Verify active SIM cards on your number instantly.',
         icon:  Icons.sim_card_rounded,
-        color: const Color(0xFF69F0AE),
+        color: Color(0xFF69F0AE),
         type:  _ActionType.web,
         badge: 'OFFICIAL',
       ),
@@ -120,7 +121,7 @@ const _sections = [
         description: 'Know Your Mobile — Verify device IMEI and check if phone is stolen/blacklisted. '
                      'Ensure your device is legitimate.',
         icon:  Icons.phonelink_setup_rounded,
-        color: const Color(0xFF7986CB),
+        color: Color(0xFF7986CB),
         type:  _ActionType.web,
         badge: 'OFFICIAL',
       ),
@@ -140,7 +141,7 @@ const _sections = [
         description: 'Download the official Sanchar Saathi mobile app. '
                      'Instant access to fraud prevention and device security tools on the go.',
         icon:  Icons.android_rounded,
-        color: const Color(0xFF69F0AE),
+        color: Color(0xFF69F0AE),
         type:  _ActionType.web,
       ),
       _Contact(
@@ -149,7 +150,7 @@ const _sections = [
         description: 'Download Sanchar Saathi from Apple App Store. '
                      'Mobile-first access to security tools and fraud alerts.',
         icon:  Icons.apple_rounded,
-        color: const Color(0xFFFF6D00),
+        color: Color(0xFFFF6D00),
         type:  _ActionType.web,
       ),
     ],
@@ -175,7 +176,7 @@ const _sections = [
         description: 'RBI\'s portal to lodge complaints against unauthorized financial schemes '
                      'and fraudulent lending apps.',
         icon:  Icons.gavel_rounded,
-        color: const Color(0xFF7986CB),
+        color: Color(0xFF7986CB),
         type:  _ActionType.web,
       ),
       _Contact(
@@ -184,7 +185,7 @@ const _sections = [
         description: 'Public Grievance Portal for escalating unresolved cyber crime complaints '
                      'to ministry level.',
         icon:  Icons.assignment_rounded,
-        color: const Color(0xFF69F0AE),
+        color: Color(0xFF69F0AE),
         type:  _ActionType.web,
       ),
     ],
@@ -200,7 +201,7 @@ const _sections = [
         description: 'Email the Ministry of Home Affairs Cyber Crime Cell. '
                      'Include date, time, transaction ID, screenshots, and description.',
         icon:  Icons.email_rounded,
-        color: const Color(0xFFFF6D00),
+        color: Color(0xFFFF6D00),
         type:  _ActionType.email,
         badge: 'MHA INDIA',
       ),
@@ -210,7 +211,7 @@ const _sections = [
         description: 'Central Bureau of Investigation Cyber Crime Cell. '
                      'For serious cyber crime involving organized networks.',
         icon:  Icons.email_rounded,
-        color: const Color(0xFF4FC3F7),
+        color: Color(0xFF4FC3F7),
         type:  _ActionType.email,
       ),
     ],
@@ -225,7 +226,7 @@ const _sections = [
         detail:      'cybercell.mumbai@mahapolice.gov.in',
         description: 'Mumbai Police Cyber Crime Unit — Maharashtra.',
         icon:  Icons.email_rounded,
-        color: const Color(0xFFCE93D8),
+        color: Color(0xFFCE93D8),
         type:  _ActionType.email,
       ),
       _Contact(
@@ -233,7 +234,7 @@ const _sections = [
         detail:      'https://cybercrime.karnataka.gov.in',
         description: 'Karnataka Cyber Crime Police Station, Bengaluru.',
         icon:  Icons.web_rounded,
-        color: const Color(0xFF7986CB),
+        color: Color(0xFF7986CB),
         type:  _ActionType.web,
       ),
       _Contact(
@@ -241,7 +242,7 @@ const _sections = [
         detail:      'https://cybercrime.delhi.gov.in',
         description: 'Delhi Police Cyber Crime Branch — report online fraud in Delhi NCR.',
         icon:  Icons.web_rounded,
-        color: const Color(0xFF25D366),
+        color: Color(0xFF25D366),
         type:  _ActionType.web,
       ),
     ],
@@ -259,9 +260,9 @@ class ContactsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: const Text('Cyber Crime Contacts'),
+        title: Text(AppLocalizations.of(context).welcomeContactsTitle),
         backgroundColor: AppTheme.surface,
-        leading: BackButton(color: AppTheme.accent),
+        leading: const BackButton(color: AppTheme.accent),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -292,16 +293,16 @@ class _TopBanner extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.errorColor.withOpacity(0.08),
+        color: AppTheme.errorColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.errorColor.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.3)),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Icon(Icons.tips_and_updates_rounded,
                   color: AppTheme.warning, size: 20),
               SizedBox(width: 8),
@@ -314,8 +315,8 @@ class _TopBanner extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             '1. Call 1930 IMMEDIATELY\n'
             '2. Note the transaction ID / reference number\n'
             '3. Do NOT transfer more money to "recover" losses\n'
@@ -373,7 +374,7 @@ class _SectionWidget extends StatelessWidget {
         // Contacts
         ...section.contacts
             .map((c) => _ContactCard(contact: c))
-            .toList(),
+            ,
       ],
     );
   }
@@ -393,7 +394,7 @@ class _ContactCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: contact.color.withOpacity(0.2)),
+        border: Border.all(color: contact.color.withValues(alpha: 0.2)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -406,7 +407,7 @@ class _ContactCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: contact.color.withOpacity(0.12),
+                    color: contact.color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(contact.icon, color: contact.color, size: 20),
@@ -433,7 +434,7 @@ class _ContactCard extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: contact.color.withOpacity(0.15),
+                                color: contact.color.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
@@ -465,7 +466,7 @@ class _ContactCard extends StatelessWidget {
                             ),
                             Icon(Icons.copy_rounded,
                                 size: 11,
-                                color: contact.color.withOpacity(0.6)),
+                                color: contact.color.withValues(alpha: 0.6)),
                           ],
                         ),
                       ),
@@ -494,7 +495,7 @@ class _ContactCard extends StatelessWidget {
                 onPressed: () => _launch(contact, context),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: contact.color,
-                  side: BorderSide(color: contact.color.withOpacity(0.5)),
+                  side: BorderSide(color: contact.color.withValues(alpha: 0.5)),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -580,9 +581,9 @@ class _Footer extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFF2A3560)),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Row(
             children: [
               Icon(Icons.lightbulb_outline_rounded,

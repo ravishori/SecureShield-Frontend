@@ -1,29 +1,108 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/network/dio_client.dart';
 import 'models/install_event.dart';
+import 'monitor_sync_coordinator.dart';
 
 // ── Platform channels ─────────────────────────────────────────────────────────
 const _monitorChannel  = MethodChannel('secureshield/app_monitor');
 const _analysisChannel = EventChannel('secureshield/install_analysis');
 
-// ── Offline queue ─────────────────────────────────────────────────────────────
-const _queueKey = 'install_event_queue_v1';
+/// Why a start did not happen. The UI shows the reason and never shows "active" for any of these.
+enum MonitorStartFailure { notificationPermissionDenied, notificationsDisabled, startFailed, timeout, unsupported }
+
+/// Outcome of asking the native service to start. [running] is true ONLY when the native service itself confirmed it.
+class MonitorStartResult {
+  final bool running;
+  final MonitorStartFailure? failure;
+  final String? message;
+  const MonitorStartResult.confirmed()
+      : running = true,
+        failure = null,
+        message = null;
+  const MonitorStartResult.failed(MonitorStartFailure this.failure, this.message) : running = false;
+}
 
 class AppMonitorService {
   final _client = DioClient();
+  final Future<bool> Function() _requestNotifications;
+  final Future<bool> Function() _openSettings;
 
-  // ── Monitor lifecycle ─────────────────────────────────────────────────────
-  Future<bool> startMonitor() async {
-    try { return await _monitorChannel.invokeMethod<bool>('startMonitor') ?? false; }
+  /// The hooks exist so tests never touch the real permission plugin.
+  AppMonitorService({
+    Future<bool> Function()? requestNotificationPermission,
+    Future<bool> Function()? openAppSettingsHook,
+  })  : _requestNotifications = requestNotificationPermission ?? _defaultRequestNotifications,
+        _openSettings = openAppSettingsHook ?? openAppSettings;
+
+  static Future<bool> _defaultRequestNotifications() async => (await Permission.notification.request()).isGranted;
+
+  Future<bool> openSettings() => _openSettings();
+
+  // -- Monitor lifecycle
+  /// Starts the native service. Asks for the notification permission first (the persistent notice is the disclosure that
+  /// monitoring is on), then waits for the native side to CONFIRM; every other outcome is a typed failure.
+  Future<MonitorStartResult> start() async {
+    if (!await _requestNotifications()) {
+      return const MonitorStartResult.failed(
+        MonitorStartFailure.notificationPermissionDenied,
+        'Allow notifications so SecureShield can show that monitoring is on. Monitoring was not started.',
+      );
+    }
+    try {
+      final ok = await _monitorChannel.invokeMethod<bool>('startMonitor');
+      if (ok == true) return const MonitorStartResult.confirmed();
+      return const MonitorStartResult.failed(MonitorStartFailure.startFailed, 'The monitor could not be started.');
+    } on PlatformException catch (e) {
+      switch (e.code) {
+        case 'NOTIFICATION_PERMISSION_DENIED':
+          return const MonitorStartResult.failed(
+            MonitorStartFailure.notificationPermissionDenied,
+            'Allow notifications so SecureShield can show that monitoring is on. Monitoring was not started.',
+          );
+        case 'NOTIFICATIONS_DISABLED':
+          return const MonitorStartResult.failed(
+            MonitorStartFailure.notificationsDisabled,
+            'Notifications for SecureShield (or the App Install Monitor channel) are off, so monitoring cannot be shown. '
+            'Turn them on, then start the monitor again.',
+          );
+        case 'START_TIMEOUT':
+          return const MonitorStartResult.failed(
+              MonitorStartFailure.timeout, 'The monitor did not confirm that it started. It is not running.');
+        default:
+          return const MonitorStartResult.failed(
+              MonitorStartFailure.startFailed, 'Android refused to start the monitor. It is not running.');
+      }
+    } on MissingPluginException {
+      return const MonitorStartResult.failed(
+          MonitorStartFailure.unsupported, 'App monitoring is only available on Android.');
+    } catch (_) {
+      return const MonitorStartResult.failed(MonitorStartFailure.startFailed, 'The monitor could not be started.');
+    }
+  }
+
+  /// Compatibility wrapper: true only if the native service confirmed it is running.
+  Future<bool> startMonitor() async => (await start()).running;
+
+  /// True only if the native side confirmed the service is no longer running.
+  Future<bool> stopMonitor() async {
+    try { return await _monitorChannel.invokeMethod<bool>('stopMonitor') ?? false; }
     catch (_) { return false; }
   }
 
-  Future<bool> stopMonitor() async {
-    try { return await _monitorChannel.invokeMethod<bool>('stopMonitor') ?? false; }
+  /// Asks the native side to re-check that the user can still see the monitor. True = it WAS on and has just been
+  /// paused because notifications (or the monitor channel) are off. Unknown or unreadable is reported as not paused: the
+  /// native side is the only authority, and it has already failed closed on its own.
+  Future<bool> enforceVisibility() async {
+    try { return await _monitorChannel.invokeMethod<bool>('enforceVisibility') ?? false; }
+    catch (_) { return false; }
+  }
+
+  /// The persisted "monitoring is on" preference (native side). Unknown or unreadable means off.
+  Future<bool> isEnabled() async {
+    try { return await _monitorChannel.invokeMethod<bool>('isEnabled') ?? false; }
     catch (_) { return false; }
   }
 
@@ -46,37 +125,8 @@ class AppMonitorService {
       .receiveBroadcastStream()
       .map((e) => InstallEvent.fromMap(e as Map));
 
-  // ── Offline-first queue ───────────────────────────────────────────────────
-
-  /// Enqueue an event for backend sync (called right after receiving it from Kotlin)
-  Future<void> enqueue(InstallEvent event) async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw   = prefs.getStringList(_queueKey) ?? [];
-    raw.add(jsonEncode(event.toSyncPayload()));
-    await prefs.setStringList(_queueKey, raw);
-  }
-
-  /// Upload all queued events in one batch; clear queue on success
-  Future<int> syncQueue() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw   = prefs.getStringList(_queueKey) ?? [];
-    if (raw.isEmpty) return 0;
-
-    final events = raw.map(jsonDecode).toList();
-    try {
-      final resp = await _client.dio.post(
-        '/app-monitor/sync',
-        data: {'events': events},
-      );
-      if (resp.statusCode == 200) {
-        await prefs.remove(_queueKey);
-        return (resp.data['synced'] as int? ?? 0);
-      }
-      return 0;
-    } catch (_) {
-      return 0;   // keep in queue; retry later
-    }
-  }
+  // The old in-memory/SharedPreferences upload queue (enqueue / syncQueue) is retired: the native SQLite store is the
+  // only queue and MonitorSyncCoordinator is the only uploader.
 
   // ── History from backend ──────────────────────────────────────────────────
   Future<Map<String, dynamic>> fetchHistory({int page = 1, String? riskLevel}) async {
@@ -124,8 +174,8 @@ final installEventStreamProvider = StreamProvider<InstallEvent>((ref) {
   return svc.liveEventStream.map((ev) {
     // Side-effect: add to in-memory list
     ref.read(liveEventsProvider.notifier).add(ev);
-    // Side-effect: enqueue for backend sync
-    svc.enqueue(ev);
+    // The native store already holds this event (it is stored before analysis); just ask the coordinator to upload soon.
+    ref.read(monitorSyncProvider).requestSync();
     return ev;
   });
 });

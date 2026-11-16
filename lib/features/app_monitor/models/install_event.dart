@@ -51,7 +51,7 @@ class InstallEvent {
   });
 
   factory InstallEvent.fromMap(Map<dynamic, dynamic> m) {
-    List<String> _list(dynamic v) =>
+    List<String> list(dynamic v) =>
         (v is List) ? v.map((e) => e.toString()).toList() : [];
 
     return InstallEvent(
@@ -62,7 +62,7 @@ class InstallEvent {
       installerPackage:  m['installerPackage']?.toString(),
       isUnknownSource:   m['isUnknownSource'] as bool? ?? false,
       isSystemApp:       m['isSystemApp']     as bool? ?? false,
-      dangerousPerms:    _list(m['dangerousPerms']),
+      dangerousPerms:    list(m['dangerousPerms']),
       permCount:         (m['permCount'] as num?)?.toInt()        ?? 0,
       hasOverlay:         m['hasOverlay']     as bool? ?? false,
       firstInstallTime:  (m['firstInstallTime'] as num?)?.toInt() ?? 0,
@@ -70,10 +70,10 @@ class InstallEvent {
       cloneTargetPkg:    m['cloneTargetPkg']?.toString(),
       cloneTargetName:   m['cloneTargetName']?.toString(),
       cloneVerdict:      m['cloneVerdict']?.toString()            ?? 'safe',
-      cloneSignals:      _list(m['cloneSignals']),
+      cloneSignals:      list(m['cloneSignals']),
       localRiskScore:    (m['localRiskScore']  as num?)?.toInt()  ?? 0,
       localRiskLevel:    m['localRiskLevel']?.toString()          ?? 'safe',
-      localRiskTags:     _list(m['localRiskTags']),
+      localRiskTags:     list(m['localRiskTags']),
       serverRiskScore:   (m['serverRiskScore'] as num?)?.toInt()  ?? 0,
       timestamp: m['timestamp'] != null
           ? DateTime.fromMillisecondsSinceEpoch((m['timestamp'] as num).toInt())

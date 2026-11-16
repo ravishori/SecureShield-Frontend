@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
 import '../clone_detector_api.dart';
 import '../models/clone_result.dart';
 import '../../app_monitor/app_monitor_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 final _historyProvider = FutureProvider<List<CloneResult>>((ref) async {
   return CloneDetectorApi().fetchHistory();
@@ -53,6 +53,7 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
   }
 
   // One-tap scan of any installed app via AppMonitorService
+  // ignore: unused_element
   Future<void> _scanInstalled(String packageName) async {
     final ev = await ref.read(appMonitorServiceProvider).analyzePackage(packageName);
     if (ev == null || !context.mounted) return;
@@ -101,9 +102,9 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
   Widget _infoCard() => Container(
     padding: const EdgeInsets.all(14),
     decoration: BoxDecoration(
-      color: AppTheme.accent.withOpacity(0.08),
+      color: AppTheme.accent.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: AppTheme.accent.withOpacity(0.3)),
+      border: Border.all(color: AppTheme.accent.withValues(alpha: 0.3)),
     ),
     child: const Row(children: [
       Icon(Icons.info_outline, color: AppTheme.accent, size: 20),
@@ -161,9 +162,9 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Verdict header
@@ -257,7 +258,7 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
         child: LinearProgressIndicator(
           value: value / 100,
           minHeight: 6,
-          backgroundColor: color.withOpacity(0.15),
+          backgroundColor: color.withValues(alpha: 0.15),
           valueColor: AlwaysStoppedAnimation(color),
         ),
       ),
@@ -269,7 +270,7 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
     final histAV = ref.watch(_historyProvider);
     return histAV.when(
       loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.accent)),
-      error:   (e, _) => Center(child: Text('Error: $e',
+      error:   (e, _) => Center(child: Text(safeErrorMessage(e),
           style: const TextStyle(color: AppTheme.errorColor))),
       data:    (results) {
         if (results.isEmpty) {
@@ -292,9 +293,9 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.07),
+        color: color.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(children: [
         Icon(r.isClone ? Icons.dangerous : Icons.shield, color: color, size: 22),
@@ -334,7 +335,7 @@ class _CloneDetectorScreenState extends ConsumerState<CloneDetectorScreen>
         hintStyle:  const TextStyle(color: AppTheme.textSecondary),
         enabledBorder:  OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppTheme.textSecondary.withOpacity(0.3))),
+            borderSide: BorderSide(color: AppTheme.textSecondary.withValues(alpha: 0.3))),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: AppTheme.accent)),

@@ -26,11 +26,11 @@ class SecureShieldNotificationListener : NotificationListenerService() {
         )
 
         private val OTP_PATTERNS = listOf(
-            Regex("""(?i)otp[:\s]+(\d{4,8})"""),
-            Regex("""(?i)your\s+(?:otp|one.time.password)[:\s]+(\d{4,8})"""),
+            Regex("""(?i)otp\s*(?:is|:|-)?\s*(\d{4,8})"""),
+            Regex("""(?i)your\s+(?:otp|one.time.password)\s*(?:is|:|-)?\s*(\d{4,8})"""),
             Regex("""(?i)(\d{4,8})\s+is\s+your\s+otp"""),
             Regex("""(?i)use\s+(\d{4,8})\s+(?:for|to)"""),
-            Regex("""(?i)verification\s+code[:\s]+(\d{4,8})"""),
+            Regex("""(?i)verification\s+code\s*(?:is|:|-)?\s*(\d{4,8})"""),
             Regex("""(?i)(\d{4,8})\s+is\s+the\s+(?:otp|code|pin)"""),
             Regex("""(?i)security\s+code[:\s]+(\d{4,8})"""),
             Regex("""(?i)transaction\s+pin[:\s]+(\d{4,8})"""),
@@ -39,11 +39,14 @@ class SecureShieldNotificationListener : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         try {
+            android.util.Log.d("SSNotif", "onNotificationPosted from ${sbn.packageName}")
             val pkg   = sbn.packageName ?: return
             val extras: Bundle = sbn.notification?.extras ?: return
 
-            val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
-            val text  = extras.getString(Notification.EXTRA_TEXT)  ?: ""
+            // getString() returns null for SpannableString values (most real notifications); use CharSequence.
+            val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
+            val text  = (extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
+                ?: extras.getCharSequence(Notification.EXTRA_TEXT))?.toString() ?: ""
             val full  = "$title $text"
 
             // Check if it looks like a bank/financial message
@@ -56,6 +59,7 @@ class SecureShieldNotificationListener : NotificationListenerService() {
                                 full.contains("verification code", ignoreCase = true) ||
                                 full.contains("security code", ignoreCase = true)
 
+            android.util.Log.d("SSNotif", "posted pkg=$pkg bank=$isBankApp otpKeyword=$hasOtpKeyword")
             if (!isBankApp && !hasOtpKeyword) return
 
             // Extract OTP digits
@@ -63,6 +67,7 @@ class SecureShieldNotificationListener : NotificationListenerService() {
                 pattern.find(full)?.groupValues?.getOrNull(1)
             } ?: return
 
+            android.util.Log.d("SSNotif", "OTP pattern matched; broadcasting (value not logged)")
             // Broadcast to app
             val intent = android.content.Intent(ACTION_BANK_OTP).apply {
                 putExtra(EXTRA_OTP,     otp)

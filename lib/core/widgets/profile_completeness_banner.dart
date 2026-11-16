@@ -31,9 +31,9 @@ class _ProfileCompletenessBannerState
           margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.08),
+            color: accent.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: accent.withOpacity(0.25)),
+            border: Border.all(color: accent.withValues(alpha: 0.25)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +53,7 @@ class _ProfileCompletenessBannerState
                   ),
                   GestureDetector(
                     onTap: () => setState(() => _dismissed = true),
-                    child: Icon(Icons.close, size: 16, color: accent.withOpacity(0.6)),
+                    child: Icon(Icons.close, size: 16, color: accent.withValues(alpha: 0.6)),
                   ),
                 ],
               ),
@@ -62,7 +62,7 @@ class _ProfileCompletenessBannerState
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: percent / 100,
-                  backgroundColor: accent.withOpacity(0.15),
+                  backgroundColor: accent.withValues(alpha: 0.15),
                   valueColor: AlwaysStoppedAnimation<Color>(accent),
                   minHeight: 4,
                 ),

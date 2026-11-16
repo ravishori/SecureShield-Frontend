@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'network_activity_reporter.dart';
 
 class TrafficEvent {
   final String destIp;
@@ -17,43 +20,83 @@ class TrafficEvent {
   bool get isThreat => threatLevel != 'safe';
 }
 
+/// Result of attempting to start the VPN monitor.
+class VpnStartResult {
+  final bool started;
+  final String? errorMessage; // user-facing reason if started==false
+
+  const VpnStartResult({required this.started, this.errorMessage});
+
+  factory VpnStartResult.success() => const VpnStartResult(started: true);
+  factory VpnStartResult.failure(String msg) =>
+      VpnStartResult(started: false, errorMessage: msg);
+}
+
 class VpnMonitorService {
   static const _method = MethodChannel('secureshield/vpn_monitor');
   static const _events = EventChannel('secureshield/vpn_events');
 
+  /// Stream of traffic events from the native VPN service.
+  ///
+  /// Returns an empty stream that swallows ALL errors (cast errors, plugin
+  /// errors, native crashes). The UI just gets fewer events on failure
+  /// instead of throwing.
   Stream<TrafficEvent> get trafficStream {
     return _events
         .receiveBroadcastStream()
-        .handleError((dynamic _) {
-          // Silently swallow errors (e.g. service crash, MissingPluginException)
-          // so the UI degrades gracefully instead of crashing the app.
+        .handleError((Object e, StackTrace? st) {
+          debugPrint('[VPN] event-stream error swallowed: $e');
+        })
+        .where((dynamic e) => e is Map)
+        .map<TrafficEvent?>((dynamic e) {
+          try {
+            final m = e as Map;
+            return TrafficEvent(
+              destIp:      m['destIp']      as String? ?? '',
+              destDomain:  m['destDomain']  as String? ?? '',
+              threatLevel: m['threatLevel'] as String? ?? 'safe',
+              timestamp:   DateTime.now(),
+            );
+          } catch (err) {
+            debugPrint('[VPN] event-map decode failed: $err');
+            return null;
+          }
         })
         .where((e) => e != null)
-        .map((e) {
-          final m = e as Map;
-          return TrafficEvent(
-            destIp:      m['destIp']      as String? ?? '',
-            destDomain:  m['destDomain']  as String? ?? '',
-            threatLevel: m['threatLevel'] as String? ?? 'safe',
-            timestamp:   DateTime.now(),
-          );
-        })
-        .handleError((dynamic _) {
-          // Guard against map-cast errors
-        });
+        .cast<TrafficEvent>();
   }
 
-  Future<bool> startVpn() async {
+  /// Attempts to start the VPN. Never throws.
+  ///
+  /// Returns a [VpnStartResult] indicating whether the service started and
+  /// — if not — a friendly error message to surface to the user.
+  Future<VpnStartResult> startVpn() async {
     try {
-      return await _method.invokeMethod<bool>('startVpn') ?? false;
+      final ok = await _method.invokeMethod<bool>('startVpn') ?? false;
+      if (ok) return VpnStartResult.success();
+      return VpnStartResult.failure(
+        'VPN permission was not granted. Please allow it in the system dialog '
+        'and try again.',
+      );
+    } on MissingPluginException {
+      return VpnStartResult.failure(
+        'VPN monitor is unavailable on this device (plugin missing).',
+      );
+    } on PlatformException {
+      return VpnStartResult.failure(
+        'Could not start the VPN monitor. Please check the VPN permission and try again.',
+      );
     } catch (e) {
-      // MissingPluginException or foreground service permission error
-      return false;
+      return VpnStartResult.failure(
+        'Could not start the VPN monitor. Please try again.',
+      );
     }
   }
 
   Future<void> stopVpn() async {
-    try { await _method.invokeMethod('stopVpn'); } catch (_) {}
+    try { await _method.invokeMethod('stopVpn'); } catch (e) {
+      debugPrint('[VPN] stopVpn ignored error: $e');
+    }
   }
 
   Future<bool> isRunning() async {
@@ -71,10 +114,10 @@ class VpnStateNotifier extends StateNotifier<bool> {
   final VpnMonitorService _service;
   VpnStateNotifier(this._service) : super(false);
 
-  Future<bool> start() async {
-    final ok = await _service.startVpn();
-    if (ok) state = true;
-    return ok;
+  Future<VpnStartResult> start() async {
+    final result = await _service.startVpn();
+    if (result.started) state = true;
+    return result;
   }
 
   Future<void> stop() async {
@@ -106,11 +149,21 @@ class TrafficLogNotifier extends StateNotifier<List<TrafficEvent>> {
   void clear() => state = [];
 }
 
+final networkActivityReporterProvider = Provider<NetworkActivityReporter>((ref) {
+  final reporter = NetworkActivityReporter();
+  ref.onDispose(reporter.dispose);
+  return reporter;
+});
+
 final trafficLogProvider =
     StateNotifierProvider<TrafficLogNotifier, List<TrafficEvent>>((ref) {
   final notifier = TrafficLogNotifier();
+  final reporter = ref.watch(networkActivityReporterProvider);
   ref.listen(vpnTrafficStreamProvider, (_, next) {
-    next.whenData(notifier.add);
+    next.whenData((e) {
+      notifier.add(e);
+      reporter.add(destIp: e.destIp, destDomain: e.destDomain);
+    });
   });
   return notifier;
 });

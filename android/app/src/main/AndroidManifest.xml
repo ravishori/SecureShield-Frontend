@@ -4,12 +4,12 @@
 
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 15+: lets the app learn whether its own window is being screen-recorded. -->
+    <uses-permission android:name="android.permission.DETECT_SCREEN_RECORDING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- SMS permissions for OTP Vault -->
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- No SMS or call-log permissions: nothing in the app reads the SMS inbox or the call log (Phase G review).
+         Removed: READ_SMS, RECEIVE_SMS, READ_CALL_LOG, PROCESS_OUTGOING_CALLS. -->
 
     <!-- Camera for evidence capture -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -34,21 +34,46 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
+    <!-- Uninstall dialogs: MainActivity.uninstallApp and ElderlyProtectionManager ("REMOVE THIS APP") launch ACTION_DELETE,
+         which needs this permission on Android 9+. Declared here so SecureShield owns it (it used to arrive only through the
+         unused installed_apps plugin). The user confirms every removal in the system dialog. -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+
     <!-- Biometric authentication for OTP Vault -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
-    <!-- Phone state for call detection -->
+    <!-- Phone state for call detection + SIM-swap detection (SubscriptionManager) -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
     <!-- Storage for evidence -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Storage on Android 9 and below (auto-no-op on 10+ thanks to scoped storage) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- Storage on Android 13+ (API 33+): split into per-media permissions.
+         Requested via Permission.photos / .videos / .audio in Flutter. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- Android 14+ (API 34): if user grants only some images, this lets the
+         app re-prompt for full library access without a "permanently denied" trap. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
     <!-- Foreground service for monitoring -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Android 14+ (API 34) requires sub-type permissions for each foregroundServiceType.
+         VPN traffic monitoring uses "systemExempted" (system-exempted FGS for security). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Android 13+ (API 33) requires explicit POST_NOTIFICATIONS to show foreground-service notification.
+         If denied, the notification is silent but the service still runs. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- Vibration for alerts -->
@@ -64,7 +89,6 @@
 
     <!-- Background processing -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- VPN for traffic monitoring -->
     <uses-permission android:name="android.permission.BIND_VPN_SERVICE"
@@ -74,7 +98,8 @@
         android:label="SecureShield AI"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:allowBackup="false"
         android:requestLegacyExternalStorage="true">
 
         <activity
@@ -114,10 +139,23 @@
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
 
-        <!-- Package install receiver for new app detection -->
+        <!-- App install monitor: foreground service started only from the app UI (exported=false). specialUse because no
+             standard foreground-service type describes "watch package installs"; needs only FOREGROUND_SERVICE and
+             FOREGROUND_SERVICE_SPECIAL_USE, which are already declared. Stopped from the notification or the screen. -->
+        <service
+            android:name=".AppMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="On-device monitoring of app install, update and removal events to warn about risky or fake apps. Reads package metadata only; stopped by the user from the persistent notification." />
+        </service>
+
+        <!-- Package install receiver: PACKAGE_ADDED is a protected system broadcast and is delivered to a NON-exported
+             receiver, so nothing else can address it. It acts only while the user has monitoring turned on. -->
         <receiver
             android:name=".PackageInstallReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <data android:scheme="package" />
@@ -135,12 +173,19 @@
                 android:value="androidx.startup" />
         </provider>
 
-        <!-- VPN Traffic Monitor Service -->
+        <!-- VPN Traffic Monitor Service.
+             foregroundServiceType="systemExempted" is the correct type for a privacy/
+             security-focused VPN that monitors traffic. Android 14+ enforces that the
+             declared type matches the permission held; we declare BOTH
+             systemExempted and dataSync so the service self-selects at runtime. -->
         <service
             android:name=".SecureShieldVpnService"
             android:exported="false"
-            android:foregroundServiceType="dataSync"
+            android:foregroundServiceType="systemExempted|dataSync|specialUse"
             android:permission="android.permission.BIND_VPN_SERVICE">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Local-only VPN tunnel for on-device threat detection. No traffic leaves the device; only destination IPs are inspected." />
             <intent-filter>
                 <action android:name="android.net.VpnService" />
             </intent-filter>

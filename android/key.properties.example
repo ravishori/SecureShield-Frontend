@@ -1,0 +1,7 @@
+# Template only - contains no secrets. Copy to android/key.properties (git-ignored) and fill in YOUR upload key.
+# The keystore file must live OUTSIDE this repository (e.g. in a password manager-backed folder).
+# In CI use the SECURESHIELD_KEYSTORE_PATH / _KEYSTORE_PASSWORD / _KEY_ALIAS / _KEY_PASSWORD environment variables instead.
+storeFile=CHANGE_ME_absolute_path_to_upload_keystore.jks
+storePassword=CHANGE_ME
+keyAlias=CHANGE_ME
+keyPassword=CHANGE_ME

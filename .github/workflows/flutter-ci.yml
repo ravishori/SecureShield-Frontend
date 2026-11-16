@@ -1,0 +1,83 @@
+name: flutter-ci
+
+# Docker-free. Analysis, tests, dependency scan and tool tests run on every push/PR. The release build job runs only when the
+# Android upload-key secrets exist (so forks and pull requests never build signed artifacts) and verifies the signature with
+# tool/verify_apk_signature.py, which FAILS on the debug certificate. Never commit keys: the keystore comes from a secret.
+on:
+  push:
+    branches: [main, "release/**"]
+  pull_request:
+
+concurrency:
+  group: flutter-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.41.0"  # pinned: the version verified in development; unpinned stable moved to 3.50.0 and failed analysis
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Signing/APK tool tests
+        run: python3 -m unittest discover -s tool -p "test_*apk*.py" && python3 -m unittest discover -s tool -p "test_osv*.py"
+      - name: Dart dependency advisories (OSV, names and versions only)
+        run: python3 tool/osv_pub_scan.py pubspec.lock
+
+  release:
+    needs: verify
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))
+    runs-on: ubuntu-latest
+    environment: android-release # approval gate; holds the signing secrets
+    env:
+      KEYSTORE_B64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_B64 }}
+      SECURESHIELD_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+      SECURESHIELD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+      SECURESHIELD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+      EXPECTED_SHA256: ${{ vars.ANDROID_UPLOAD_CERT_SHA256 }}
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require signing inputs
+        run: |
+          for v in KEYSTORE_B64 SECURESHIELD_KEYSTORE_PASSWORD SECURESHIELD_KEY_ALIAS SECURESHIELD_KEY_PASSWORD EXPECTED_SHA256 API_BASE_URL; do
+            test -n "${!v}" || { echo "missing: $v (configure it in the android-release environment)"; exit 1; }
+          done
+      - name: Restore the keystore outside the workspace
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "SECURESHIELD_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.41.0"  # pinned: the version verified in development; unpinned stable moved to 3.50.0 and failed analysis
+          cache: true
+      - run: flutter pub get
+      - name: Build APK and AAB
+        run: |
+          flutter build apk --release --dart-define=API_BASE_URL="$API_BASE_URL"
+          flutter build appbundle --release --dart-define=API_BASE_URL="$API_BASE_URL"
+      - name: Verify signing certificate (fails on the debug key or a fingerprint mismatch)
+        run: python3 tool/verify_apk_signature.py build/app/outputs/flutter-apk/app-release.apk --expect-sha256 "$EXPECTED_SHA256"
+      - name: Verify the bundle signature
+        run: jarsigner -verify -certs build/app/outputs/bundle/release/app-release.aab | tee "$RUNNER_TEMP/jar.txt" && grep -q "jar verified" "$RUNNER_TEMP/jar.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.sha }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14

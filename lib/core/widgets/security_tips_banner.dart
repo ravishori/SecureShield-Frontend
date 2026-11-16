@@ -88,9 +88,9 @@ class _SecurityTipsBannerState extends State<SecurityTipsBanner>
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.07),
+        color: accent.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: accent.withOpacity(0.25)),
+        border: Border.all(color: accent.withValues(alpha: 0.25)),
       ),
       child: FadeTransition(
         opacity: _fade,
@@ -106,7 +106,7 @@ class _SecurityTipsBannerState extends State<SecurityTipsBanner>
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: accent.withOpacity(0.12),
+                    color: accent.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -132,7 +132,7 @@ class _SecurityTipsBannerState extends State<SecurityTipsBanner>
                       Text(
                         tip.$2,
                         style: TextStyle(
-                          color: onSurf.withOpacity(0.85),
+                          color: onSurf.withValues(alpha: 0.85),
                           fontSize: 12,
                           height: 1.4,
                         ),
@@ -143,7 +143,7 @@ class _SecurityTipsBannerState extends State<SecurityTipsBanner>
                   ),
                 ),
                 const SizedBox(width: 6),
-                Icon(Icons.chevron_right_rounded, size: 16, color: accent.withOpacity(0.5)),
+                Icon(Icons.chevron_right_rounded, size: 16, color: accent.withValues(alpha: 0.5)),
               ],
             ),
           ),

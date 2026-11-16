@@ -358,4 +358,763 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'साइबर क्राइम संपर्क';
+
+  @override
+  String get navHome => 'होम';
+
+  @override
+  String get navScanner => 'स्कैनर';
+
+  @override
+  String get navAlerts => 'अलर्ट';
+
+  @override
+  String get navReports => 'रिपोर्ट';
+
+  @override
+  String get navAiCoach => 'एआई कोच';
+
+  @override
+  String get secThreat => 'खतरे की पहचान';
+
+  @override
+  String get secEmergency => 'आपातकाल और SOS';
+
+  @override
+  String get secIdentity => 'पहचान और गोपनीयता';
+
+  @override
+  String get secFamily => 'परिवार की सुरक्षा';
+
+  @override
+  String get secDevice => 'डिवाइस सुरक्षा';
+
+  @override
+  String get secReports => 'रिपोर्ट और जानकारी';
+
+  @override
+  String get secAccount => 'खाता';
+
+  @override
+  String get menuLinkScanner => 'लिंक स्कैनर';
+
+  @override
+  String get menuMessageAnalyzer => 'संदेश विश्लेषक';
+
+  @override
+  String get menuWifi => 'वाई-फाई सुरक्षा';
+
+  @override
+  String get menuAppRisk => 'ऐप जोखिम स्कैनर';
+
+  @override
+  String get menuPackageMonitor => 'पैकेज मॉनिटर';
+
+  @override
+  String get menuCommunityScams => 'सामुदायिक घोटाले';
+
+  @override
+  String get menuPoliceCall => 'पुलिस वीडियो कॉल';
+
+  @override
+  String get menuFir => 'एफआईआर ड्राफ्ट';
+
+  @override
+  String get menuCallRecorder => 'कॉल रिकॉर्डर';
+
+  @override
+  String get menuEmergencyShare => 'आपातकालीन साझा';
+
+  @override
+  String get menuComplaintEmail => 'शिकायत ईमेल';
+
+  @override
+  String get menuAppInstall => 'ऐप इंस्टॉल मॉनिटर';
+
+  @override
+  String get menuClone => 'क्लोन डिटेक्टर';
+
+  @override
+  String get menuElderly => 'बुजुर्ग सुरक्षा';
+
+  @override
+  String get menuBanking => 'बैंकिंग सुरक्षा';
+
+  @override
+  String get menuBankOtp => 'बैंक OTP मॉनिटर';
+
+  @override
+  String get menuVpn => 'वीपीएन मॉनिटर';
+
+  @override
+  String get menuRemote => 'रिमोट डिटेक्टर';
+
+  @override
+  String get menuScreenRec => 'स्क्रीन रिकॉर्डिंग पहचान';
+
+  @override
+  String get menuJobMsg => 'नौकरी / संदेश विश्लेषक';
+
+  @override
+  String get menuDeviceScan => 'डिवाइस स्कैन';
+
+  @override
+  String get menuConsent => 'सहमति प्रबंधक';
+
+  @override
+  String get menuSecurityReports => 'सुरक्षा रिपोर्ट';
+
+  @override
+  String get menuCyberTips => 'साइबर सुझाव';
+
+  @override
+  String get menuProfile => 'मेरी प्रोफ़ाइल';
+
+  @override
+  String get menuEmergencyContacts => 'आपातकालीन संपर्क';
+
+  @override
+  String get familyTitle => 'परिवार सुरक्षा डैशबोर्ड';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'परिवार ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'बच्चे ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'निमंत्रण ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name आपको परिवार के रूप में जोड़ना चाहते हैं';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'स्वीकार करने पर $name आपके सुरक्षा अलर्ट देख सकेंगे।';
+  }
+
+  @override
+  String get inviteNoShare => 'स्वीकार करने से आपके अलर्ट साझा नहीं होते।';
+
+  @override
+  String get accept => 'स्वीकार करें';
+
+  @override
+  String get decline => 'अस्वीकार करें';
+
+  @override
+  String get noInvites =>
+      'कोई लंबित निमंत्रण नहीं। जब कोई आपको परिवार में जोड़ेगा, तो आप यहीं तय करेंगे कि वे आपके अलर्ट देख सकते हैं या नहीं।';
+
+  @override
+  String get consentLinked => 'जुड़ा हुआ';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'जुड़ा हुआ - $count अपठित';
+  }
+
+  @override
+  String get consentDeclined => 'अस्वीकृत';
+
+  @override
+  String get consentPending => 'स्वीकृति की प्रतीक्षा';
+
+  @override
+  String get noAlerts => 'कोई अलर्ट नहीं';
+
+  @override
+  String get youAreSafe => 'आप सुरक्षित हैं!';
+
+  @override
+  String get panicTitle => 'पैनिक अलर्ट';
+
+  @override
+  String get panicBody =>
+      'यह आपके आपातकालीन संपर्कों को संदेश भेजेगा और एक गंभीर अलर्ट दर्ज करेगा (आपके स्वीकृत परिवार के सदस्य इसे देख सकते हैं)। क्या आप निश्चित हैं?';
+
+  @override
+  String get sendAlert => 'अलर्ट भेजें';
+
+  @override
+  String get panicSent =>
+      'पैनिक अलर्ट भेजा गया! आपातकालीन संपर्कों को सूचित किया गया।';
+
+  @override
+  String get menuScamCalls => 'स्कैम कॉल';
+
+  @override
+  String get menuOtpVault => 'ओटीपी वॉल्ट';
+
+  @override
+  String get scamIntro =>
+      'कोई कॉल संदिग्ध लगी? नंबर रिपोर्ट करें: SecureShield उसे स्कोर करता है, चेतावनी देता है और ब्लॉक करने देता है।';
+
+  @override
+  String get scamCallerNumber => 'कॉल करने वाले का नंबर';
+
+  @override
+  String get scamCallLength => 'कॉल की अवधि (मिनट)';
+
+  @override
+  String get scamWhatAsked => 'उन्होंने क्या माँगा? (वैकल्पिक)';
+
+  @override
+  String get scamReportBtn => 'यह कॉल रिपोर्ट करें';
+
+  @override
+  String get scamEnterNumber => 'कॉल करने वाले का फ़ोन नंबर दर्ज करें';
+
+  @override
+  String get scamReportFailed =>
+      'कॉल रिपोर्ट नहीं हो सका। अपना कनेक्शन जाँचें।';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'जोखिम स्कोर $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - ब्लॉक किया गया';
+
+  @override
+  String get scamYourReports => 'आपकी रिपोर्ट';
+
+  @override
+  String get scamNoReports => 'अभी तक कोई कॉल रिपोर्ट नहीं हुई।';
+
+  @override
+  String get scamBlockBtn => 'ब्लॉक करें';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number ब्लॉक किया गया';
+  }
+
+  @override
+  String get scamBlockFailed => 'नंबर ब्लॉक नहीं हो सका';
+
+  @override
+  String get vaultTitle => 'ओटीपी वॉल्ट';
+
+  @override
+  String get vaultLocked => 'ओटीपी वॉल्ट लॉक है';
+
+  @override
+  String get vaultLockedBody =>
+      'फ़िंगरप्रिंट, चेहरे या डिवाइस पिन से अनलॉक करें। यदि आपके फ़ोन में स्क्रीन लॉक नहीं है, तो वॉल्ट के लिए एक सेट करें।';
+
+  @override
+  String get vaultUnlock => 'अनलॉक करें';
+
+  @override
+  String get vaultReason => 'अपना ओटीपी वॉल्ट अनलॉक करें';
+
+  @override
+  String get vaultHideArchived => 'संग्रहीत छुपाएँ';
+
+  @override
+  String get vaultShowArchived => 'संग्रहीत दिखाएँ';
+
+  @override
+  String get vaultNoArchived => 'कोई संग्रहीत ओटीपी नहीं';
+
+  @override
+  String get vaultEmpty =>
+      'अभी कोई ओटीपी सहेजा नहीं गया।\nबैंक ओटीपी मॉनिटर द्वारा पकड़े गए बैंक ओटीपी यहाँ दिखेंगे।';
+
+  @override
+  String get vaultCopy => 'कॉपी करें';
+
+  @override
+  String get vaultArchive => 'संग्रहीत करें';
+
+  @override
+  String get vaultUnarchive => 'संग्रह से हटाएँ';
+
+  @override
+  String get vaultDelete => 'हटाएँ';
+
+  @override
+  String get vpnBlockingActive =>
+      'ज्ञात दुर्भावनापूर्ण नेटवर्क से कनेक्शन ब्लॉक किए जा रहे हैं';
+
+  @override
+  String get vpnNoBlocked => 'अभी तक कोई ब्लॉक किया गया कनेक्शन प्रयास नहीं';
+
+  @override
+  String get vpnTapToStart => 'निगरानी शुरू करने के लिए शील्ड दबाएँ';
+
+  @override
+  String get gEdit => 'संपादित करें';
+
+  @override
+  String get gClose => 'बंद करें';
+
+  @override
+  String get gRemove => 'हटाएँ';
+
+  @override
+  String get gShare => 'साझा करें';
+
+  @override
+  String get gPlay => 'चलाएँ';
+
+  @override
+  String get gReset => 'रीसेट';
+
+  @override
+  String get gSave => 'सहेजें';
+
+  @override
+  String get gCopy => 'कॉपी करें';
+
+  @override
+  String get gDone => 'हो गया';
+
+  @override
+  String get gOpenSettings => 'सेटिंग्स खोलें';
+
+  @override
+  String get gVerified => 'सत्यापित';
+
+  @override
+  String get gUpload => 'अपलोड';
+
+  @override
+  String get gClear => 'साफ़ करें';
+
+  @override
+  String get gApply => 'लागू करें';
+
+  @override
+  String get gReport => 'रिपोर्ट करें';
+
+  @override
+  String get gTitle => 'शीर्षक';
+
+  @override
+  String get gDelete => 'हटाएँ';
+
+  @override
+  String get profMy => 'मेरी प्रोफ़ाइल';
+
+  @override
+  String get profSaved => 'प्रोफ़ाइल सहेजी गई!';
+
+  @override
+  String get profChangeEmail =>
+      'प्रोफ़ाइल में कोई भी बदलाव होने पर आपको स्वचालित सुरक्षा ईमेल भेजा जाता है।';
+
+  @override
+  String get profEmailAddr => 'ईमेल पता';
+
+  @override
+  String get profSelectState => 'राज्य चुनें';
+
+  @override
+  String get profPin => 'पिन कोड';
+
+  @override
+  String get profContactRemoved => 'संपर्क हटाया गया';
+
+  @override
+  String get profFullName => 'पूरा नाम *';
+
+  @override
+  String get profRelationship => 'संबंध (जैसे पिता, मित्र)';
+
+  @override
+  String get profPhone => 'फ़ोन नंबर';
+
+  @override
+  String get profContactsInfo =>
+      'आपातकाल में इन संपर्कों को सूचित किया जाएगा और वे ईमेल या व्हाट्सऐप पर घटना रिपोर्ट पा सकते हैं।';
+
+  @override
+  String get profAddContact => 'संपर्क जोड़ें';
+
+  @override
+  String get profNoContacts => 'कोई आपातकालीन संपर्क नहीं';
+
+  @override
+  String get profNoContactsBody =>
+      'विश्वसनीय परिवारजनों या मित्रों को जोड़ें जिन्हें आपातकाल या साइबर घटना की स्थिति में सूचित किया जाएगा।';
+
+  @override
+  String get profRemoveContact => 'संपर्क हटाएँ';
+
+  @override
+  String get welLogin => 'लॉगिन';
+
+  @override
+  String get welRegister => 'पंजीकरण';
+
+  @override
+  String get welShareEvidence => 'सबूत साझा करें';
+
+  @override
+  String get welCyberContacts => 'साइबर संपर्क';
+
+  @override
+  String get welSendEmailReport => 'ईमेल रिपोर्ट भेजें';
+
+  @override
+  String get welWhatsappMissing => 'व्हाट्सऐप इंस्टॉल नहीं है';
+
+  @override
+  String get welNoEmailApp => 'इस डिवाइस पर कोई ईमेल ऐप नहीं मिला';
+
+  @override
+  String get welProtected => 'सुरक्षित';
+
+  @override
+  String get welAiPowered => 'एआई-संचालित';
+
+  @override
+  String get welEnterprise => 'एंटरप्राइज़ साइबर सुरक्षा';
+
+  @override
+  String get welEncrypted => 'एन्क्रिप्टेड';
+
+  @override
+  String get welOfflineFirst => 'ऑफ़लाइन-प्रथम';
+
+  @override
+  String get wifiLocOff => 'लोकेशन सेवाएँ बंद';
+
+  @override
+  String get wifiRiskFactors => 'जोखिम कारक:';
+
+  @override
+  String get wifiNoRiskFactors => 'कोई विशेष जोखिम कारक नहीं मिला।';
+
+  @override
+  String get wifiSafety => 'वाई-फाई सुरक्षा';
+
+  @override
+  String get wifiRescan => 'फिर से स्कैन करें';
+
+  @override
+  String get wifiLocPermReq => 'लोकेशन अनुमति आवश्यक';
+
+  @override
+  String get wifiLocDisabled => 'लोकेशन सेवाएँ अक्षम';
+
+  @override
+  String get wifiNotConnected => 'किसी वाई-फाई नेटवर्क से कनेक्ट नहीं है';
+
+  @override
+  String get wifiConnected => 'कनेक्टेड';
+
+  @override
+  String get wifiCheck => 'जाँचें';
+
+  @override
+  String get wifiNoNearby => 'आसपास कोई नेटवर्क नहीं मिला';
+
+  @override
+  String get wifiScanNearby => 'आसपास स्कैन करें';
+
+  @override
+  String get wifiTips => 'सार्वजनिक वाई-फाई सुरक्षा सुझाव';
+
+  @override
+  String get srSaved => 'रिकॉर्डिंग सफलतापूर्वक सहेजी गई।';
+
+  @override
+  String get srDenied => 'अनुमति अस्वीकृत। कृपया स्क्रीन कैप्चर की अनुमति दें।';
+
+  @override
+  String get srDeleteQ => 'रिकॉर्डिंग हटाएँ?';
+
+  @override
+  String get srTitle => 'स्क्रीन रिकॉर्डर';
+
+  @override
+  String get srRefresh => 'रिकॉर्डिंग रिफ्रेश करें';
+
+  @override
+  String get srPurpose => 'उद्देश्य';
+
+  @override
+  String get srTapStart => 'स्क्रीन रिकॉर्ड करना शुरू करने के लिए दबाएँ';
+
+  @override
+  String get srPast => 'पिछली रिकॉर्डिंग';
+
+  @override
+  String get srNone => 'अभी कोई रिकॉर्डिंग नहीं';
+
+  @override
+  String get srTapRecordAbove => 'स्क्रीन कैप्चर करने के लिए ऊपर RECORD दबाएँ';
+
+  @override
+  String get srTapPlay => 'चलाने के लिए दबाएँ';
+
+  @override
+  String get setDeviceSafety => 'डिवाइस सुरक्षा सारांश';
+
+  @override
+  String get setDark => 'गहरा';
+
+  @override
+  String get setLight => 'हल्का';
+
+  @override
+  String get setRemoteDetector => 'रिमोट कंट्रोल डिटेक्टर';
+
+  @override
+  String get setPermManager => 'अनुमति प्रबंधक';
+
+  @override
+  String get setVpnMonitor => 'वीपीएन ट्रैफ़िक मॉनिटर';
+
+  @override
+  String get setDeveloper => 'डेवलपर';
+
+  @override
+  String get setServerUrl => 'सर्वर यूआरएल';
+
+  @override
+  String get setServerReset => 'सर्वर यूआरएल स्वतः पहचाने मान पर रीसेट हुआ';
+
+  @override
+  String get cmSms => 'एसएमएस एक्सेस';
+
+  @override
+  String get cmCamera => 'कैमरा';
+
+  @override
+  String get cmMic => 'माइक्रोफ़ोन';
+
+  @override
+  String get cmLocation => 'स्थान';
+
+  @override
+  String get cmPhoneState => 'फ़ोन की स्थिति';
+
+  @override
+  String get cmStorageMedia => 'स्टोरेज (मीडिया)';
+
+  @override
+  String get cmNotifications => 'सूचनाएँ';
+
+  @override
+  String get cmUsageStats => 'उपयोग आँकड़े';
+
+  @override
+  String get cmUsageStatsAccess => 'उपयोग आँकड़ों की पहुँच';
+
+  @override
+  String get cmAppPermissions => 'ऐप अनुमतियाँ';
+
+  @override
+  String get cmCritical => 'अत्यंत महत्वपूर्ण';
+
+  @override
+  String get cmGrant => 'अनुमति दें';
+
+  @override
+  String get esTitle => 'आपातकालीन साझा';
+
+  @override
+  String get esIntro =>
+      'रिकॉर्डिंग तुरंत विश्वसनीय संपर्कों के साथ साझा करें या सुरक्षित रूप से अपलोड करें।';
+
+  @override
+  String get esWhatsapp => 'व्हाट्सऐप / एसएमएस से साझा करें';
+
+  @override
+  String get esEmail => 'ईमेल से साझा करें';
+
+  @override
+  String get esReport1930 => '1930 (साइबर अपराध) को रिपोर्ट करें';
+
+  @override
+  String get esPoliceCells => 'स्थानीय पुलिस साइबर सेल';
+
+  @override
+  String get esFamily => 'परिवार के संपर्कों के साथ साझा करें';
+
+  @override
+  String get esSecureUpload => 'सुरक्षित अपलोड + समाप्त होने वाला लिंक';
+
+  @override
+  String get es24h => '24 घंटे का डाउनलोड लिंक बनाएँ';
+
+  @override
+  String get esUploaded => 'अपलोड सफल! लिंक 24 घंटे में समाप्त होगा';
+
+  @override
+  String get esCopyLink => 'लिंक कॉपी करें';
+
+  @override
+  String get esShareLink => 'लिंक साझा करें';
+
+  @override
+  String get esUploadGet => 'अपलोड करें और लिंक पाएँ';
+
+  @override
+  String get csReport => 'स्कैम की रिपोर्ट करें';
+
+  @override
+  String get csType => 'स्कैम का प्रकार';
+
+  @override
+  String get csTitleReq => 'शीर्षक *';
+
+  @override
+  String get csDescReq => 'विवरण *';
+
+  @override
+  String get csUrl => 'स्कैम यूआरएल (वैकल्पिक)';
+
+  @override
+  String get csCity => 'आपका शहर (वैकल्पिक)';
+
+  @override
+  String get csTitle => 'सामुदायिक स्कैम अलर्ट';
+
+  @override
+  String get csFilterCity => 'शहर के अनुसार फ़िल्टर करें';
+
+  @override
+  String get csReportBtn => 'स्कैम रिपोर्ट करें';
+
+  @override
+  String get csBeFirst => 'अपने समुदाय को चेतावनी देने वाले पहले व्यक्ति बनें';
+
+  @override
+  String get csFilterByCity => 'शहर के अनुसार फ़िल्टर करें';
+
+  @override
+  String get csCityHint => 'शहर (जैसे मुंबई)';
+
+  @override
+  String get fbBothReq => 'कृपया प्रेषक और संदेश दोनों दें।';
+
+  @override
+  String get fbTitle => 'फर्जी बैंक एसएमएस डिटेक्टर';
+
+  @override
+  String get fbVerify => 'भरोसा करने से पहले जाँचें';
+
+  @override
+  String get fbSender => 'प्रेषक';
+
+  @override
+  String get fbBody => 'संदेश';
+
+  @override
+  String get fbPaste => 'चिपकाएँ';
+
+  @override
+  String get fbCheck => 'प्रामाणिकता जाँचें';
+
+  @override
+  String get fbWhy => 'यह निर्णय क्यों';
+
+  @override
+  String get fbNext => 'अनुशंसित अगले कदम';
+
+  @override
+  String get lsEnterUrl => 'कृपया स्कैन करने के लिए यूआरएल दर्ज करें';
+
+  @override
+  String get lsTitle => 'लिंक स्कैनर';
+
+  @override
+  String get lsEnterToScan => 'स्कैन करने के लिए यूआरएल दर्ज करें';
+
+  @override
+  String get lsRecent => 'हाल के स्कैन';
+
+  @override
+  String get lsCopied => 'यूआरएल कॉपी हुआ';
+
+  @override
+  String get lsRisk => 'जोखिम स्कोर';
+
+  @override
+  String get evAdd => 'सबूत जोड़ें';
+
+  @override
+  String get evDescOpt => 'विवरण (वैकल्पिक)';
+
+  @override
+  String get evUploaded => 'सबूत अपलोड हुआ';
+
+  @override
+  String get evOpen => 'खोलें या साझा करें';
+
+  @override
+  String get evDownloadFailed =>
+      'यह सबूत डाउनलोड नहीं हो सका। कनेक्शन जाँचें और फिर कोशिश करें।';
+
+  @override
+  String get evFileGone => 'यह फ़ाइल अब सर्वर पर उपलब्ध नहीं है।';
+
+  @override
+  String get evEmpty => 'साक्ष्य लॉकर खाली है';
+
+  @override
+  String get evEmptyBody => 'स्क्रीनशॉट, ऑडियो और दस्तावेज़ यहाँ सहेजें';
+
+  @override
+  String get evDeleteQ => 'सबूत हटाएँ?';
+
+  @override
+  String get evCannotUndo => 'यह कार्रवाई पूर्ववत नहीं की जा सकती।';
+
+  @override
+  String get menuScreenRecorder => 'स्क्रीन रिकॉर्डर';
+
+  @override
+  String get srdTitle => 'स्क्रीन रिकॉर्डिंग डिटेक्टर';
+
+  @override
+  String get srdUnsupported => 'इस एंड्रॉइड संस्करण पर समर्थित नहीं';
+
+  @override
+  String get srdUnsupportedBody =>
+      'एंड्रॉइड 15 से ही कोई ऐप जान सकता है कि उसकी स्क्रीन रिकॉर्ड हो रही है। आपके फ़ोन पर यह जाँच संभव नहीं है, इसलिए SecureShield नहीं बता सकता कि कोई दूसरा ऐप स्क्रीन रिकॉर्ड कर रहा है या नहीं।';
+
+  @override
+  String get srdIdle => 'रिकॉर्ड नहीं हो रही';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield की स्क्रीन अभी किसी स्क्रीन रिकॉर्डिंग में दिखाई नहीं दे रहीं।';
+
+  @override
+  String get srdActive => 'स्क्रीन रिकॉर्ड हो रही है';
+
+  @override
+  String get srdActiveBody =>
+      'कोई SecureShield की स्क्रीन रिकॉर्ड कर रहा है। यदि आपने शुरू नहीं किया, तो इसे रोकें और OTP या बैंक स्क्रीन न खोलें।';
+
+  @override
+  String get srdScope =>
+      'यह केवल SecureShield की अपनी स्क्रीन पर लागू होता है (एंड्रॉइड की सीमा)। यह दूसरे ऐप्स की रिकॉर्डिंग नहीं देख सकता।';
+
+  @override
+  String get srdLog => 'यह सत्र';
+
+  @override
+  String get srdNoEvents => 'अब तक कोई रिकॉर्डिंग नहीं मिली।';
+
+  @override
+  String get srdStarted => 'रिकॉर्डिंग शुरू हुई';
+
+  @override
+  String get srdStopped => 'रिकॉर्डिंग रुकी';
 }

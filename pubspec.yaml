@@ -30,6 +30,7 @@ dependencies:
 
   # Auth & security
   local_auth: ^2.3.0
+  google_sign_in: ^6.2.2
 
   # Permissions
   permission_handler: ^11.3.1
@@ -39,7 +40,6 @@ dependencies:
   package_info_plus: ^8.0.3
 
   # App scanning
-  installed_apps: ^1.4.2
 
   # Wi-Fi scanning
   wifi_scan: ^0.4.1
@@ -58,6 +58,10 @@ dependencies:
 
   # Charts
   fl_chart: ^0.69.0
+
+  # Markdown rendering for AI Coach responses
+  flutter_markdown: ^0.7.4
+  markdown: ^7.2.2
 
   # File handling
   image_picker: ^1.1.2
@@ -80,6 +84,12 @@ dependencies:
 
   # Icons
   cupertino_icons: ^1.0.8
+
+  # QR scanner — UPI/URL safety verification
+  mobile_scanner: ^5.2.3
+
+  # OCR — Fake payment screenshot verifier (Google MLKit, on-device)
+  google_mlkit_text_recognition: ^0.13.0
 
 dev_dependencies:
   flutter_test:

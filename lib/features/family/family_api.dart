@@ -35,6 +35,21 @@ class FamilyApi {
     return response.data as Map<String, dynamic>;
   }
 
+  /// Invitations other people sent to ME (consent is required before they can see my alerts).
+  Future<List<dynamic>> getInvitations() async {
+    final response = await _client.dio.get('/family/invitations');
+    return response.data as List<dynamic>;
+  }
+
+  Future<void> answerInvitation(String id, {required bool accept}) async {
+    await _client.dio.post('/family/invitations/$id/${accept ? 'accept' : 'decline'}');
+  }
+
+  Future<Map<String, dynamic>> getDashboard() async {
+    final response = await _client.dio.get('/family/dashboard');
+    return response.data as Map<String, dynamic>;
+  }
+
   Future<void> removeMember(String memberId) async {
     await _client.dio.delete('${AppConstants.familyMembers}/$memberId');
   }

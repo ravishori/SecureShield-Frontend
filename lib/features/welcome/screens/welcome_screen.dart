@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
+import '../../../core/widgets/premium/premium.dart';
 import '../../../core/widgets/security_tips_banner.dart';
 import '../../../features/auth/auth_provider.dart';
+import '../../banking_protection/widgets/banking_threat_strip.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Feature card model
@@ -40,6 +44,10 @@ class WelcomeScreen extends ConsumerWidget {
     final isLoggedIn = ref.watch(authProvider.select((s) => s.isAuthenticated));
     final cards = _buildCards(context, ref, isLoggedIn);
 
+    // Banking-threat correlator result (shared across screens). Renders
+    // nothing when the device is clean OR while the scan is in flight.
+    final threatReport = ref.watch(bankingThreatReportProvider);
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: SafeArea(
@@ -47,6 +55,16 @@ class WelcomeScreen extends ConsumerWidget {
           slivers: [
             // ── App header ────────────────────────────────────────────────
             SliverToBoxAdapter(child: _Header(isLoggedIn: isLoggedIn)),
+
+            // ── Banking-threat alert (post device-security check) ─────────
+            // Sits at the very top of the scroll content so users see any
+            // active threat the moment they open SecureShield.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 4, bottom: 4),
+                child: BankingThreatStrip(report: threatReport),
+              ),
+            ),
 
             // ── Animated security tips banner ─────────────────────────────
             const SliverToBoxAdapter(
@@ -88,14 +106,14 @@ class WelcomeScreen extends ConsumerWidget {
         ),
         _CardData(
           icon:     Icons.person_rounded,
-          title:    'My Profile',
+          title:    AppLocalizations.of(context).profMy,
           subtitle: 'Edit details & emergency contacts',
           color:    const Color(0xFF69F0AE),
           action:   () => context.push('/profile'),
         ),
         _CardData(
           icon:      Icons.logout_rounded,
-          title:     'Logout',
+          title:     AppLocalizations.of(context).logout,
           subtitle:  'Sign out of your account',
           color:     AppTheme.errorColor,
           fullWidth: true,
@@ -107,21 +125,21 @@ class WelcomeScreen extends ConsumerWidget {
       getStartedCards.addAll([
         _CardData(
           icon:     Icons.lock_open_rounded,
-          title:    'Login',
+          title:    AppLocalizations.of(context).welLogin,
           subtitle: 'Access your security reports',
           color:    AppTheme.accent,
           action:   () => context.push('/login'),
         ),
         _CardData(
           icon:     Icons.person_add_rounded,
-          title:    'Register',
+          title:    AppLocalizations.of(context).welRegister,
           subtitle: 'Create your free account',
           color:    const Color(0xFF69F0AE),
           action:   () => context.push('/register'),
         ),
         _CardData(
           icon:      Icons.radar_rounded,
-          title:     'Scan My Mobile',
+          title:     AppLocalizations.of(context).welcomeScanTitle,
           subtitle:  'Check your phone for threats in 30 seconds',
           color:     AppTheme.success,
           badge:     'RECOMMENDED',
@@ -136,28 +154,28 @@ class WelcomeScreen extends ConsumerWidget {
       'safetyTools': [
         _CardData(
           icon:     Icons.tips_and_updates_rounded,
-          title:    'Cyber Safety Tips',
+          title:    AppLocalizations.of(context).welcomeTipsTitle,
           subtitle: 'Daily fraud prevention guides',
           color:    const Color(0xFFCE93D8),
           action:   () => context.push('/tips'),
         ),
         _CardData(
           icon:     Icons.sos_rounded,
-          title:    'SOS Emergency',
+          title:    AppLocalizations.of(context).welcomeSosTitle,
           subtitle: 'Report cyber crime instantly',
           color:    AppTheme.errorColor,
           action:   () => _showSosDialog(context),
         ),
         _CardData(
           icon:     Icons.video_call_rounded,
-          title:    'Share Evidence',
+          title:    AppLocalizations.of(context).welShareEvidence,
           subtitle: 'Send fraud video via WhatsApp',
           color:    const Color(0xFF25D366),
           action:   () => _shareOnWhatsApp(context),
         ),
         _CardData(
           icon:     Icons.contacts_rounded,
-          title:    'Cyber Contacts',
+          title:    AppLocalizations.of(context).welCyberContacts,
           subtitle: 'Helplines & reporting portals',
           color:    const Color(0xFF7986CB),
           action:   () => context.push('/contacts'),
@@ -166,7 +184,7 @@ class WelcomeScreen extends ConsumerWidget {
       'support': [
         _CardData(
           icon:      Icons.email_rounded,
-          title:     'Send Email Report',
+          title:     AppLocalizations.of(context).welSendEmailReport,
           subtitle:  'Email the cyber crime cell directly',
           color:     const Color(0xFF4FC3F7),
           fullWidth: true,
@@ -184,10 +202,10 @@ class WelcomeScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(children: [
-          Icon(Icons.logout_rounded, color: AppTheme.errorColor, size: 22),
-          SizedBox(width: 10),
-          Text('Logout', style: TextStyle(color: AppTheme.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+        title: Row(children: [
+          const Icon(Icons.logout_rounded, color: AppTheme.errorColor, size: 22),
+          const SizedBox(width: 10),
+          Text(AppLocalizations.of(context).logout, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
         ]),
         content: const Text(
           'Are you sure you want to logout?\nYour session will be ended.',
@@ -196,7 +214,7 @@ class WelcomeScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.accent)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: AppTheme.accent)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -205,7 +223,7 @@ class WelcomeScreen extends ConsumerWidget {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w700)),
+            child: Text(AppLocalizations.of(context).logout, style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -237,7 +255,7 @@ class WelcomeScreen extends ConsumerWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('WhatsApp is not installed')),
+        SnackBar(content: Text(AppLocalizations.of(context).welWhatsappMissing)),
       );
     }
   }
@@ -263,7 +281,7 @@ class WelcomeScreen extends ConsumerWidget {
       await launchUrl(uri);
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No email app found on this device')),
+        SnackBar(content: Text(AppLocalizations.of(context).welNoEmailApp)),
       );
     }
   }
@@ -299,6 +317,8 @@ class WelcomeScreen extends ConsumerWidget {
 // ────────────────────────────────────────────────────────────────────────────
 // App header — shows logged-in indicator when authenticated
 // ────────────────────────────────────────────────────────────────────────────
+/// Premium welcome header — animated AI shield on the left, brand + tagline
+/// stacked on the right. Sits on a radial-glow gradient for the SOC feel.
 class _Header extends StatelessWidget {
   final bool isLoggedIn;
   const _Header({required this.isLoggedIn});
@@ -306,73 +326,152 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0D1547), Color(0xFF0A0E27)],
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          center: const Alignment(-0.3, -0.6),
+          radius: 1.4,
+          colors: [
+            const Color(0xFF00C2FF).withValues(alpha: 0.22),
+            const Color(0xFF8B5CF6).withValues(alpha: 0.10),
+            AppTheme.background,
+          ],
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 52, height: 52,
-            decoration: BoxDecoration(
-              color: AppTheme.primary,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.accent.withOpacity(0.3),
-                  blurRadius: 14,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: const Icon(Icons.security_rounded, size: 30, color: AppTheme.accent),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'SecureShield AI',
-                  style: TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-                Text(
-                  'Your Personal Cyber Safety Assistant',
-                  style: TextStyle(
-                    color: AppTheme.accent.withOpacity(0.8),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Auth status badge
+          // Status row: top-of-app "Active" pill or nothing when signed out
           if (isLoggedIn)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.success.withOpacity(0.4)),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.verified_rounded, size: 12, color: AppTheme.success),
-                  SizedBox(width: 4),
-                  Text('Active', style: TextStyle(color: AppTheme.success, fontSize: 10, fontWeight: FontWeight.w700)),
-                ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppTheme.success.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: AppTheme.success.withValues(alpha: 0.45)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.verified_rounded, size: 12, color: AppTheme.success),
+                    const SizedBox(width: 4),
+                    Text(AppLocalizations.of(context).welProtected,
+                      style: const TextStyle(
+                        color: AppTheme.success,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+          const SizedBox(height: 4),
+
+          // Hero row: animated shield + brand
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 128,
+                height: 128,
+                child: AnimatedShield(size: 74, icon: Icons.shield_rounded),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00C2FF), Color(0xFF8B5CF6)],
+                            ),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(AppLocalizations.of(context).welAiPowered,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text('SecureShield',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(AppLocalizations.of(context).welEnterprise,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFFB8C2D1),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _trustRow(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _trustRow() {
+    return const Row(
+      children: [
+        _TrustPill(icon: Icons.lock_rounded,       label: 'Encrypted'),
+        SizedBox(width: 6),
+        _TrustPill(icon: Icons.cloud_off_rounded,  label: 'Offline-first'),
+      ],
+    );
+  }
+}
+
+class _TrustPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _TrustPill({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: const Color(0xFF00E5FF)),
+          const SizedBox(width: 4),
+          Text(label,
+            style: const TextStyle(
+              color: Color(0xFFB8C2D1),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
+          ),
         ],
       ),
     );
@@ -460,10 +559,10 @@ class _FeatureCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: data.color.withOpacity(0.25)),
+          border: Border.all(color: data.color.withValues(alpha: 0.25)),
           boxShadow: [
             BoxShadow(
-              color: data.color.withOpacity(0.08),
+              color: data.color.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -489,7 +588,7 @@ class _HalfWidthContent extends StatelessWidget {
         Container(
           width: 48, height: 48,
           decoration: BoxDecoration(
-            color: data.color.withOpacity(0.12),
+            color: data.color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(13),
           ),
           child: Icon(data.icon, color: data.color, size: 26),
@@ -517,7 +616,7 @@ class _FullWidthContent extends StatelessWidget {
         Container(
           width: 56, height: 56,
           decoration: BoxDecoration(
-            color: data.color.withOpacity(0.12),
+            color: data.color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Icon(data.icon, color: data.color, size: 30),
@@ -540,9 +639,9 @@ class _FullWidthContent extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: data.color.withOpacity(0.2),
+                        color: data.color.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: data.color.withOpacity(0.5)),
+                        border: Border.all(color: data.color.withValues(alpha: 0.5)),
                       ),
                       child: Text(data.badge!,
                         style: TextStyle(color: data.color, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 0.3)),
@@ -556,7 +655,7 @@ class _FullWidthContent extends StatelessWidget {
             ],
           ),
         ),
-        Icon(Icons.arrow_forward_ios_rounded, size: 14, color: data.color.withOpacity(0.6)),
+        Icon(Icons.arrow_forward_ios_rounded, size: 14, color: data.color.withValues(alpha: 0.6)),
       ],
     );
   }
@@ -576,10 +675,10 @@ class _SosSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(color: AppTheme.textSecondary.withOpacity(0.4), borderRadius: BorderRadius.circular(2))),
+            decoration: BoxDecoration(color: AppTheme.textSecondary.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2))),
           const Icon(Icons.sos_rounded, color: AppTheme.errorColor, size: 44),
           const SizedBox(height: 12),
-          const Text('Emergency Contacts', style: TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context).menuEmergencyContacts, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           _sosTile('1930', 'National Cyber Crime Helpline', Icons.phone_rounded, AppTheme.errorColor),
           _sosTile('100',  'Police Emergency',              Icons.local_police_rounded, AppTheme.accent),
@@ -595,7 +694,7 @@ class _SosSheet extends StatelessWidget {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
         child: Icon(icon, color: color, size: 22),
       ),
       title: Text(label, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13)),

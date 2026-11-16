@@ -118,12 +118,12 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [safetyColor.withOpacity(0.2), AppTheme.cardColor],
+                  colors: [safetyColor.withValues(alpha: 0.2), AppTheme.cardColor],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: safetyColor.withOpacity(0.4)),
+                border: Border.all(color: safetyColor.withValues(alpha: 0.4)),
               ),
               child: Column(
                 children: [
@@ -138,17 +138,17 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Cyber Safety Score', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+                          const Text('Cyber Safety Score', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
                           Row(
                             children: [
-                              Text('${safetyScore.toStringAsFixed(0)}', style: TextStyle(color: safetyColor, fontSize: 48, fontWeight: FontWeight.bold, height: 1)),
+                              Text(safetyScore.toStringAsFixed(0), style: TextStyle(color: safetyColor, fontSize: 48, fontWeight: FontWeight.bold, height: 1)),
                               const Text('/100', style: TextStyle(color: AppTheme.textSecondary, fontSize: 18)),
                             ],
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                             decoration: BoxDecoration(
-                              color: safetyColor.withOpacity(0.2),
+                              color: safetyColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(safetyLabel, style: TextStyle(color: safetyColor, fontWeight: FontWeight.bold, fontSize: 12)),
@@ -174,7 +174,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
                         : safetyScore >= 40
                             ? 'Some risks detected. Review recommendations below.'
                             : 'Immediate attention needed. Follow the tips below.',
-                    style: TextStyle(color: safetyColor.withOpacity(0.8), fontSize: 12),
+                    style: TextStyle(color: safetyColor.withValues(alpha: 0.8), fontSize: 12),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -189,7 +189,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
               physics: const NeverScrollableScrollPhysics(),
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 2.2,
+              childAspectRatio: 1.9,
               children: [
                 _statCard('Threats', '$threats', Icons.warning, AppTheme.errorColor),
                 _statCard('Apps Scanned', '$apps', Icons.apps, AppTheme.accent),
@@ -257,7 +257,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
               decoration: BoxDecoration(
                 color: AppTheme.cardColor,
                 borderRadius: BorderRadius.circular(10),
-                border: Border(left: BorderSide(color: AppTheme.accent, width: 3)),
+                border: const Border(left: BorderSide(color: AppTheme.accent, width: 3)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,9 +309,9 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: trendColor.withOpacity(0.1),
+                color: trendColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: trendColor.withOpacity(0.4)),
+                border: Border.all(color: trendColor.withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
@@ -354,7 +354,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: false,
-                      getDrawingHorizontalLine: (_) => FlLine(color: AppTheme.accent.withOpacity(0.1), strokeWidth: 1),
+                      getDrawingHorizontalLine: (_) => FlLine(color: AppTheme.accent.withValues(alpha: 0.1), strokeWidth: 1),
                     ),
                     titlesData: FlTitlesData(
                       leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -384,7 +384,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
                         isCurved: true,
                         color: AppTheme.accent,
                         barWidth: 3,
-                        belowBarData: BarAreaData(show: true, color: AppTheme.accent.withOpacity(0.1)),
+                        belowBarData: BarAreaData(show: true, color: AppTheme.accent.withValues(alpha: 0.1)),
                         dotData: const FlDotData(show: true),
                       ),
                     ],
@@ -422,22 +422,40 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
 
   Widget _statCard(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(color: AppTheme.cardColor, borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
             child: Icon(icon, color: color, size: 18),
           ),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
-              Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
-            ],
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold, height: 1.1),
+                    maxLines: 1,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10, height: 1.1),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

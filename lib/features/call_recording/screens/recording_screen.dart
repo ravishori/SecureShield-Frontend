@@ -144,9 +144,9 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.warning.withOpacity(0.12),
+                  color: AppTheme.warning.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppTheme.warning.withOpacity(0.4)),
+                  border: Border.all(color: AppTheme.warning.withValues(alpha: 0.4)),
                 ),
                 child: Row(
                   children: [
@@ -157,7 +157,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
                         'Android 9+ restricts system call audio. '
                         'This records microphone audio only.',
                         style: TextStyle(
-                            color: AppTheme.warning.withOpacity(0.9),
+                            color: AppTheme.warning.withValues(alpha: 0.9),
                             fontSize: 12),
                       ),
                     ),
@@ -170,9 +170,9 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.success.withOpacity(0.12),
+                    color: AppTheme.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppTheme.success.withOpacity(0.4)),
+                    border: Border.all(color: AppTheme.success.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     children: [
@@ -181,7 +181,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
                       Text(
                         'Active call detected',
                         style: TextStyle(
-                            color: AppTheme.success.withOpacity(0.9),
+                            color: AppTheme.success.withValues(alpha: 0.9),
                             fontSize: 12),
                       ),
                     ],
@@ -277,7 +277,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
                 '⚠ Ensure all parties consent. Check local laws before recording.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: AppTheme.textSecondary.withOpacity(0.6),
+                    color: AppTheme.textSecondary.withValues(alpha: 0.6),
                     fontSize: 11),
               ),
 
@@ -315,14 +315,14 @@ class _RecordingBadge extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppTheme.errorColor
-                  .withOpacity(0.4 + 0.6 * controller.value),
+                  .withValues(alpha: 0.4 + 0.6 * controller.value),
             ),
           ),
           const SizedBox(width: 4),
           Text(
             'REC',
             style: TextStyle(
-              color: AppTheme.errorColor.withOpacity(0.7 + 0.3 * controller.value),
+              color: AppTheme.errorColor.withValues(alpha: 0.7 + 0.3 * controller.value),
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
@@ -411,7 +411,7 @@ class _WaveformVisualiserState extends State<_WaveformVisualiser>
                   end: Alignment.topCenter,
                   colors: [
                     AppTheme.accent,
-                    AppTheme.accent.withOpacity(0.5),
+                    AppTheme.accent.withValues(alpha: 0.5),
                   ],
                 ),
               ),
@@ -449,11 +449,11 @@ class _MicButton extends StatelessWidget {
         height: 88,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           border: Border.all(color: color, width: 2.5),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -500,14 +500,14 @@ class _ControlButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: color.withOpacity(0.12),
-              border: Border.all(color: color.withOpacity(0.5)),
+              color: color.withValues(alpha: 0.12),
+              border: Border.all(color: color.withValues(alpha: 0.5)),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 4),
           Text(label,
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
         ],
       ),
     );

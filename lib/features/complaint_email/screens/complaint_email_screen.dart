@@ -95,9 +95,9 @@ class _ComplaintEmailScreenState extends ConsumerState<ComplaintEmailScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppTheme.accent.withOpacity(0.08),
+                  color: AppTheme.accent.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTheme.accent.withOpacity(0.3)),
+                  border: Border.all(color: AppTheme.accent.withValues(alpha: 0.3)),
                 ),
                 child: const Row(
                   children: [
@@ -214,7 +214,7 @@ class _ComplaintEmailScreenState extends ConsumerState<ComplaintEmailScreen> {
                   decoration: BoxDecoration(
                     color: AppTheme.cardColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.accent.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.accent.withValues(alpha: 0.2)),
                   ),
                   child: SelectableText(
                     _generatedEmail,
@@ -226,7 +226,7 @@ class _ComplaintEmailScreenState extends ConsumerState<ComplaintEmailScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.warning.withOpacity(0.1),
+                    color: AppTheme.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Text(

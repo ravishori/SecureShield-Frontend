@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/verdict/verdict_response.dart';
 
 class MessageAnalyzerApi {
   final _client = DioClient();
@@ -17,6 +18,18 @@ class MessageAnalyzerApi {
     });
     return response.data as Map<String, dynamic>;
   }
+
+  /// Same request as [analyzeMessage], with the additive shared verdict parsed (null if absent or malformed).
+  Future<VerdictResponse> analyzeMessageWithVerdict({
+    required String messageText,
+    String? sender,
+    bool useAi = true,
+  }) async =>
+      VerdictResponse.from(await analyzeMessage(messageText: messageText, sender: sender, useAi: useAi));
+
+  /// Same request as [checkJobOffer], with the additive shared verdict parsed (null if absent or malformed).
+  Future<VerdictResponse> checkJobOfferWithVerdict({required String jobText, bool useAi = true}) async =>
+      VerdictResponse.from(await checkJobOffer(jobText: jobText, useAi: useAi));
 
   Future<Map<String, dynamic>> checkJobOffer({
     required String jobText,

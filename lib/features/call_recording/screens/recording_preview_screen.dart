@@ -270,8 +270,8 @@ class _RecordingPreviewScreenState
                         thumbColor: AppTheme.accent,
                         activeTrackColor: AppTheme.accent,
                         inactiveTrackColor:
-                            AppTheme.accent.withOpacity(0.2),
-                        overlayColor: AppTheme.accent.withOpacity(0.1),
+                            AppTheme.accent.withValues(alpha: 0.2),
+                        overlayColor: AppTheme.accent.withValues(alpha: 0.1),
                         thumbShape: const RoundSliderThumbShape(
                             enabledThumbRadius: 6),
                       ),
@@ -305,7 +305,7 @@ class _RecordingPreviewScreenState
                         height: 60,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppTheme.accent.withOpacity(0.15),
+                          color: AppTheme.accent.withValues(alpha: 0.15),
                           border: Border.all(color: AppTheme.accent, width: 2),
                         ),
                         child: Icon(
@@ -328,15 +328,15 @@ class _RecordingPreviewScreenState
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 decoration: BoxDecoration(
-                  color: AppTheme.success.withOpacity(0.1),
+                  color: AppTheme.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border:
-                      Border.all(color: AppTheme.success.withOpacity(0.3)),
+                      Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.lock_rounded,
                         color: AppTheme.success, size: 14),
                     SizedBox(width: 6),

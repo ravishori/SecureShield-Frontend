@@ -358,4 +358,763 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cyberCrimeContacts => 'Cyber Crime Contacts';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navScanner => 'Scanner';
+
+  @override
+  String get navAlerts => 'Alerts';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navAiCoach => 'AI Coach';
+
+  @override
+  String get secThreat => 'Threat Detection';
+
+  @override
+  String get secEmergency => 'Emergency & SOS';
+
+  @override
+  String get secIdentity => 'Identity & Privacy';
+
+  @override
+  String get secFamily => 'Family Safety';
+
+  @override
+  String get secDevice => 'Device Security';
+
+  @override
+  String get secReports => 'Reports & Insights';
+
+  @override
+  String get secAccount => 'Account';
+
+  @override
+  String get menuLinkScanner => 'Link Scanner';
+
+  @override
+  String get menuMessageAnalyzer => 'Message Analyzer';
+
+  @override
+  String get menuWifi => 'Wi-Fi Safety';
+
+  @override
+  String get menuAppRisk => 'App Risk Scanner';
+
+  @override
+  String get menuPackageMonitor => 'Package Monitor';
+
+  @override
+  String get menuCommunityScams => 'Community Scams';
+
+  @override
+  String get menuPoliceCall => 'Police Video Call';
+
+  @override
+  String get menuFir => 'FIR Draft';
+
+  @override
+  String get menuCallRecorder => 'Call Recorder';
+
+  @override
+  String get menuEmergencyShare => 'Emergency Share';
+
+  @override
+  String get menuComplaintEmail => 'Complaint Email';
+
+  @override
+  String get menuAppInstall => 'App Install Monitor';
+
+  @override
+  String get menuClone => 'Clone Detector';
+
+  @override
+  String get menuElderly => 'Elderly Protection';
+
+  @override
+  String get menuBanking => 'Banking Protection';
+
+  @override
+  String get menuBankOtp => 'Bank OTP Monitor';
+
+  @override
+  String get menuVpn => 'VPN Monitor';
+
+  @override
+  String get menuRemote => 'Remote Detector';
+
+  @override
+  String get menuScreenRec => 'Screen Rec Detect';
+
+  @override
+  String get menuJobMsg => 'Job / Msg Analyzer';
+
+  @override
+  String get menuDeviceScan => 'Device Scan';
+
+  @override
+  String get menuConsent => 'Consent Manager';
+
+  @override
+  String get menuSecurityReports => 'Security Reports';
+
+  @override
+  String get menuCyberTips => 'Cyber Tips';
+
+  @override
+  String get menuProfile => 'My Profile';
+
+  @override
+  String get menuEmergencyContacts => 'Emergency Contacts';
+
+  @override
+  String get familyTitle => 'Family Safety Dashboard';
+
+  @override
+  String familyTabFamily(int count) {
+    return 'Family ($count)';
+  }
+
+  @override
+  String familyTabKids(int count) {
+    return 'Kids ($count)';
+  }
+
+  @override
+  String familyTabInvites(int count) {
+    return 'Invites ($count)';
+  }
+
+  @override
+  String inviteTitle(String name) {
+    return '$name wants to add you as family';
+  }
+
+  @override
+  String inviteSharesAlerts(String name) {
+    return 'If you accept, $name will be able to see your security alerts.';
+  }
+
+  @override
+  String get inviteNoShare => 'Accepting does not share your alerts.';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get noInvites =>
+      'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.';
+
+  @override
+  String get consentLinked => 'Linked';
+
+  @override
+  String consentLinkedUnread(int count) {
+    return 'Linked - $count unread';
+  }
+
+  @override
+  String get consentDeclined => 'Declined';
+
+  @override
+  String get consentPending => 'Waiting for approval';
+
+  @override
+  String get noAlerts => 'No alerts';
+
+  @override
+  String get youAreSafe => 'You are safe!';
+
+  @override
+  String get panicTitle => 'Panic Alert';
+
+  @override
+  String get panicBody =>
+      'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?';
+
+  @override
+  String get sendAlert => 'SEND ALERT';
+
+  @override
+  String get panicSent => 'Panic alert sent! Emergency contacts notified.';
+
+  @override
+  String get menuScamCalls => 'Scam Calls';
+
+  @override
+  String get menuOtpVault => 'OTP Vault';
+
+  @override
+  String get scamIntro =>
+      'Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.';
+
+  @override
+  String get scamCallerNumber => 'Caller number';
+
+  @override
+  String get scamCallLength => 'Call length (minutes)';
+
+  @override
+  String get scamWhatAsked => 'What did they ask for? (optional)';
+
+  @override
+  String get scamReportBtn => 'Report this call';
+
+  @override
+  String get scamEnterNumber => 'Enter the caller\'s phone number';
+
+  @override
+  String get scamReportFailed =>
+      'Could not report the call. Check your connection.';
+
+  @override
+  String scamRiskScore(int score) {
+    return 'Risk score $score/100';
+  }
+
+  @override
+  String get scamBlockedSuffix => ' - blocked';
+
+  @override
+  String get scamYourReports => 'Your reports';
+
+  @override
+  String get scamNoReports => 'No reported calls yet.';
+
+  @override
+  String get scamBlockBtn => 'Block';
+
+  @override
+  String scamNumberBlocked(String number) {
+    return '$number blocked';
+  }
+
+  @override
+  String get scamBlockFailed => 'Could not block the number';
+
+  @override
+  String get vaultTitle => 'OTP Vault';
+
+  @override
+  String get vaultLocked => 'OTP Vault is locked';
+
+  @override
+  String get vaultLockedBody =>
+      'Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.';
+
+  @override
+  String get vaultUnlock => 'Unlock';
+
+  @override
+  String get vaultReason => 'Unlock your OTP vault';
+
+  @override
+  String get vaultHideArchived => 'Hide archived';
+
+  @override
+  String get vaultShowArchived => 'Show archived';
+
+  @override
+  String get vaultNoArchived => 'No archived OTPs';
+
+  @override
+  String get vaultEmpty =>
+      'No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.';
+
+  @override
+  String get vaultCopy => 'Copy';
+
+  @override
+  String get vaultArchive => 'Archive';
+
+  @override
+  String get vaultUnarchive => 'Unarchive';
+
+  @override
+  String get vaultDelete => 'Delete';
+
+  @override
+  String get vpnBlockingActive =>
+      'Blocking connections to known-malicious networks';
+
+  @override
+  String get vpnNoBlocked => 'No blocked connection attempts yet';
+
+  @override
+  String get vpnTapToStart => 'Tap shield to start monitoring';
+
+  @override
+  String get gEdit => 'Edit';
+
+  @override
+  String get gClose => 'Close';
+
+  @override
+  String get gRemove => 'Remove';
+
+  @override
+  String get gShare => 'Share';
+
+  @override
+  String get gPlay => 'Play';
+
+  @override
+  String get gReset => 'Reset';
+
+  @override
+  String get gSave => 'Save';
+
+  @override
+  String get gCopy => 'Copy';
+
+  @override
+  String get gDone => 'Done';
+
+  @override
+  String get gOpenSettings => 'Open Settings';
+
+  @override
+  String get gVerified => 'Verified';
+
+  @override
+  String get gUpload => 'Upload';
+
+  @override
+  String get gClear => 'Clear';
+
+  @override
+  String get gApply => 'Apply';
+
+  @override
+  String get gReport => 'Report';
+
+  @override
+  String get gTitle => 'Title';
+
+  @override
+  String get gDelete => 'Delete';
+
+  @override
+  String get profMy => 'My Profile';
+
+  @override
+  String get profSaved => 'Profile Saved!';
+
+  @override
+  String get profChangeEmail =>
+      'Any profile changes trigger an automated security email to you.';
+
+  @override
+  String get profEmailAddr => 'Email Address';
+
+  @override
+  String get profSelectState => 'Select State';
+
+  @override
+  String get profPin => 'PIN Code';
+
+  @override
+  String get profContactRemoved => 'Contact removed';
+
+  @override
+  String get profFullName => 'Full Name *';
+
+  @override
+  String get profRelationship => 'Relationship (e.g. Father, Friend)';
+
+  @override
+  String get profPhone => 'Phone Number';
+
+  @override
+  String get profContactsInfo =>
+      'These contacts will be notified in emergencies and can receive incident reports via Email or WhatsApp.';
+
+  @override
+  String get profAddContact => 'Add Contact';
+
+  @override
+  String get profNoContacts => 'No Emergency Contacts';
+
+  @override
+  String get profNoContactsBody =>
+      'Add trusted family members or friends who will be notified in case of an emergency or cyber incident.';
+
+  @override
+  String get profRemoveContact => 'Remove Contact';
+
+  @override
+  String get welLogin => 'Login';
+
+  @override
+  String get welRegister => 'Register';
+
+  @override
+  String get welShareEvidence => 'Share Evidence';
+
+  @override
+  String get welCyberContacts => 'Cyber Contacts';
+
+  @override
+  String get welSendEmailReport => 'Send Email Report';
+
+  @override
+  String get welWhatsappMissing => 'WhatsApp is not installed';
+
+  @override
+  String get welNoEmailApp => 'No email app found on this device';
+
+  @override
+  String get welProtected => 'PROTECTED';
+
+  @override
+  String get welAiPowered => 'AI-POWERED';
+
+  @override
+  String get welEnterprise => 'Enterprise Cyber Protection';
+
+  @override
+  String get welEncrypted => 'Encrypted';
+
+  @override
+  String get welOfflineFirst => 'Offline-first';
+
+  @override
+  String get wifiLocOff => 'Location Services Off';
+
+  @override
+  String get wifiRiskFactors => 'Risk Factors:';
+
+  @override
+  String get wifiNoRiskFactors => 'No specific risk factors identified.';
+
+  @override
+  String get wifiSafety => 'Wi-Fi Safety';
+
+  @override
+  String get wifiRescan => 'Rescan';
+
+  @override
+  String get wifiLocPermReq => 'Location Permission Required';
+
+  @override
+  String get wifiLocDisabled => 'Location Services Disabled';
+
+  @override
+  String get wifiNotConnected => 'Not connected to any Wi-Fi network';
+
+  @override
+  String get wifiConnected => 'CONNECTED';
+
+  @override
+  String get wifiCheck => 'Check';
+
+  @override
+  String get wifiNoNearby => 'No nearby networks found';
+
+  @override
+  String get wifiScanNearby => 'Scan Nearby';
+
+  @override
+  String get wifiTips => 'Public Wi-Fi Safety Tips';
+
+  @override
+  String get srSaved => 'Recording saved successfully.';
+
+  @override
+  String get srDenied => 'Permission denied. Please allow screen capture.';
+
+  @override
+  String get srDeleteQ => 'Delete Recording?';
+
+  @override
+  String get srTitle => 'Screen Recorder';
+
+  @override
+  String get srRefresh => 'Refresh recordings';
+
+  @override
+  String get srPurpose => 'Purpose';
+
+  @override
+  String get srTapStart => 'Tap to start recording your screen';
+
+  @override
+  String get srPast => 'Past Recordings';
+
+  @override
+  String get srNone => 'No recordings yet';
+
+  @override
+  String get srTapRecordAbove => 'Tap RECORD above to capture your screen';
+
+  @override
+  String get srTapPlay => 'Tap to Play';
+
+  @override
+  String get setDeviceSafety => 'DEVICE SAFETY SUMMARY';
+
+  @override
+  String get setDark => 'Dark';
+
+  @override
+  String get setLight => 'Light';
+
+  @override
+  String get setRemoteDetector => 'Remote Control Detector';
+
+  @override
+  String get setPermManager => 'Permission Manager';
+
+  @override
+  String get setVpnMonitor => 'VPN Traffic Monitor';
+
+  @override
+  String get setDeveloper => 'Developer';
+
+  @override
+  String get setServerUrl => 'Server URL';
+
+  @override
+  String get setServerReset => 'Server URL reset to auto-detected value';
+
+  @override
+  String get cmSms => 'SMS Access';
+
+  @override
+  String get cmCamera => 'Camera';
+
+  @override
+  String get cmMic => 'Microphone';
+
+  @override
+  String get cmLocation => 'Location';
+
+  @override
+  String get cmPhoneState => 'Phone State';
+
+  @override
+  String get cmStorageMedia => 'Storage (Media)';
+
+  @override
+  String get cmNotifications => 'Notifications';
+
+  @override
+  String get cmUsageStats => 'Usage Stats';
+
+  @override
+  String get cmUsageStatsAccess => 'Usage Stats Access';
+
+  @override
+  String get cmAppPermissions => 'App Permissions';
+
+  @override
+  String get cmCritical => 'CRITICAL';
+
+  @override
+  String get cmGrant => 'Grant';
+
+  @override
+  String get esTitle => 'Emergency Share';
+
+  @override
+  String get esIntro =>
+      'Share recording immediately with trusted contacts or upload securely.';
+
+  @override
+  String get esWhatsapp => 'Share via WhatsApp / SMS';
+
+  @override
+  String get esEmail => 'Share via Email';
+
+  @override
+  String get esReport1930 => 'Report to 1930 (Cybercrime)';
+
+  @override
+  String get esPoliceCells => 'Local Police Cyber Cells';
+
+  @override
+  String get esFamily => 'Share with Family Contacts';
+
+  @override
+  String get esSecureUpload => 'Secure Upload + Expiring Link';
+
+  @override
+  String get es24h => 'Generate a 24-hour download link';
+
+  @override
+  String get esUploaded => 'Upload successful! Link expires in 24h';
+
+  @override
+  String get esCopyLink => 'Copy Link';
+
+  @override
+  String get esShareLink => 'Share Link';
+
+  @override
+  String get esUploadGet => 'Upload & Get Link';
+
+  @override
+  String get csReport => 'Report a Scam';
+
+  @override
+  String get csType => 'Scam Type';
+
+  @override
+  String get csTitleReq => 'Title *';
+
+  @override
+  String get csDescReq => 'Description *';
+
+  @override
+  String get csUrl => 'Scam URL (optional)';
+
+  @override
+  String get csCity => 'Your City (optional)';
+
+  @override
+  String get csTitle => 'Community Scam Alerts';
+
+  @override
+  String get csFilterCity => 'Filter by city';
+
+  @override
+  String get csReportBtn => 'Report Scam';
+
+  @override
+  String get csBeFirst => 'Be the first to warn your community';
+
+  @override
+  String get csFilterByCity => 'Filter by City';
+
+  @override
+  String get csCityHint => 'City (e.g. Mumbai)';
+
+  @override
+  String get fbBothReq =>
+      'Please provide both the sender and the message body.';
+
+  @override
+  String get fbTitle => 'Fake Bank SMS Detector';
+
+  @override
+  String get fbVerify => 'Verify before you trust';
+
+  @override
+  String get fbSender => 'Sender';
+
+  @override
+  String get fbBody => 'Message body';
+
+  @override
+  String get fbPaste => 'Paste';
+
+  @override
+  String get fbCheck => 'Check authenticity';
+
+  @override
+  String get fbWhy => 'Why this verdict';
+
+  @override
+  String get fbNext => 'Recommended next steps';
+
+  @override
+  String get lsEnterUrl => 'Please enter a URL to scan';
+
+  @override
+  String get lsTitle => 'Link Scanner';
+
+  @override
+  String get lsEnterToScan => 'Enter URL to scan';
+
+  @override
+  String get lsRecent => 'Recent Scans';
+
+  @override
+  String get lsCopied => 'URL copied';
+
+  @override
+  String get lsRisk => 'Risk Score';
+
+  @override
+  String get evAdd => 'Add Evidence';
+
+  @override
+  String get evDescOpt => 'Description (optional)';
+
+  @override
+  String get evUploaded => 'Evidence uploaded';
+
+  @override
+  String get evOpen => 'Open or share';
+
+  @override
+  String get evDownloadFailed =>
+      'Could not download this evidence. Check your connection and try again.';
+
+  @override
+  String get evFileGone => 'This file is no longer available on the server.';
+
+  @override
+  String get evEmpty => 'Evidence Locker is empty';
+
+  @override
+  String get evEmptyBody => 'Store screenshots, audio, and documents here';
+
+  @override
+  String get evDeleteQ => 'Delete Evidence?';
+
+  @override
+  String get evCannotUndo => 'This action cannot be undone.';
+
+  @override
+  String get menuScreenRecorder => 'Screen Recorder';
+
+  @override
+  String get srdTitle => 'Screen Recording Detector';
+
+  @override
+  String get srdUnsupported => 'Not supported on this Android version';
+
+  @override
+  String get srdUnsupportedBody =>
+      'Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.';
+
+  @override
+  String get srdIdle => 'Not being recorded';
+
+  @override
+  String get srdIdleBody =>
+      'SecureShield screens are not visible in any screen recording right now.';
+
+  @override
+  String get srdActive => 'SCREEN IS BEING RECORDED';
+
+  @override
+  String get srdActiveBody =>
+      'Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.';
+
+  @override
+  String get srdScope =>
+      'This only covers SecureShield\'s own screens (an Android limit). It cannot see recordings of other apps.';
+
+  @override
+  String get srdLog => 'This session';
+
+  @override
+  String get srdNoEvents => 'No recording detected so far.';
+
+  @override
+  String get srdStarted => 'Recording started';
+
+  @override
+  String get srdStopped => 'Recording stopped';
 }

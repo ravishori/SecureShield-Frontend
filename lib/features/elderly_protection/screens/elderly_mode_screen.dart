@@ -31,12 +31,15 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
   }
 
   void _syncControllersFrom(ElderlyConfig cfg) {
-    if (_guardianNameCtrl.text.isEmpty && cfg.guardianName != null)
+    if (_guardianNameCtrl.text.isEmpty && cfg.guardianName != null) {
       _guardianNameCtrl.text = cfg.guardianName!;
-    if (_guardianPhoneCtrl.text.isEmpty && cfg.guardianPhone != null)
+    }
+    if (_guardianPhoneCtrl.text.isEmpty && cfg.guardianPhone != null) {
       _guardianPhoneCtrl.text = cfg.guardianPhone!;
-    if (_guardianEmailCtrl.text.isEmpty && cfg.guardianEmail != null)
+    }
+    if (_guardianEmailCtrl.text.isEmpty && cfg.guardianEmail != null) {
       _guardianEmailCtrl.text = cfg.guardianEmail!;
+    }
   }
 
   Future<void> _save() async {
@@ -106,12 +109,12 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: cfg.enabled
-              ? [const Color(0xFF9C27B0).withOpacity(0.85), const Color(0xFF7B1FA2).withOpacity(0.5)]
+              ? [const Color(0xFF9C27B0).withValues(alpha: 0.85), const Color(0xFF7B1FA2).withValues(alpha: 0.5)]
               : [AppTheme.cardColor, AppTheme.cardColor],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: cfg.enabled ? const Color(0xFF9C27B0) : AppTheme.textSecondary.withOpacity(0.2)),
+          color: cfg.enabled ? const Color(0xFF9C27B0) : AppTheme.textSecondary.withValues(alpha: 0.2)),
       ),
       child: Column(children: [
         Icon(Icons.elderly, size: 52,
@@ -143,7 +146,7 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
               ref.read(elderlyConfigProvider.notifier).update(updated);
               ref.read(elderlyConfigProvider.notifier).save(updated);
             },
-            activeColor: Colors.white,
+            activeThumbColor: Colors.white,
             activeTrackColor: const Color(0xFF9C27B0),
           ),
         ),
@@ -213,7 +216,7 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: AppTheme.accent.withOpacity(0.15),
+                color: AppTheme.accent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6)),
               child: Text('${cfg.alertThreshold}/100',
                   style: const TextStyle(color: AppTheme.accent, fontSize: 12,
@@ -227,7 +230,7 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
             value: cfg.alertThreshold.toDouble(),
             min: 10, max: 90, divisions: 8,
             activeColor: AppTheme.accent,
-            inactiveColor: AppTheme.accent.withOpacity(0.2),
+            inactiveColor: AppTheme.accent.withValues(alpha: 0.2),
             onChanged: (v) => ref.read(elderlyConfigProvider.notifier)
                 .update(cfg.copyWith(alertThreshold: v.round())),
           ),
@@ -298,7 +301,7 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
           hintStyle:  const TextStyle(color: AppTheme.textSecondary),
           enabledBorder:  OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: AppTheme.textSecondary.withOpacity(0.3))),
+              borderSide: BorderSide(color: AppTheme.textSecondary.withValues(alpha: 0.3))),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: AppTheme.accent)),
@@ -313,6 +316,6 @@ class _ElderlyModeScreenState extends ConsumerState<ElderlyModeScreen> {
     leading: Icon(icon, color: color, size: 22),
     title:   Text(title, style: const TextStyle(color: AppTheme.textPrimary, fontSize: 14)),
     subtitle: Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
-    trailing: Switch(value: value, onChanged: onChanged, activeColor: color),
+    trailing: Switch(value: value, onChanged: onChanged, activeThumbColor: color),
   );
 }

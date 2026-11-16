@@ -2,9 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme.dart';
+import '../../../core/services/fraud_alert_policy.dart';
 import '../../../core/services/notification_service.dart';
 import '../../../core/security/fraud_keyword_engine.dart';
+import '../../../core/utils/safe_error.dart';
+import '../../../core/verdict/verdict_response.dart';
 import '../message_analyzer_api.dart';
+import '../widgets/message_result_view.dart';
 
 class MessageAnalyzerScreen extends StatefulWidget {
   const MessageAnalyzerScreen({super.key});
@@ -159,6 +163,20 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
 
   // ── Analysis ───────────────────────────────────────────────────────────────
 
+  /// Privacy: a safe summary only. The message text is never put in a notification (lock screen, shade, watch).
+  /// A notification failure must never hide the analysis result.
+  Future<void> _maybeNotify(FraudAlertDecision decision, FraudAnalysis analysis) async {
+    if (!decision.notify) return;
+    try {
+      await NotificationService.showFraudAlert(
+        fraudType: analysis.category == FraudCategory.unknown ? 'Scam message' : analysis.category.label,
+        matchedCount: analysis.matchedKeywords.length,
+      );
+    } catch (e) {
+      logSafeError('MessageAnalyzer.notify', e);
+    }
+  }
+
   Future<void> _analyzeMessage() async {
     if (_messageCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -173,28 +191,29 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
     try {
       final messageText = _messageCtrl.text.trim();
 
-      // Check for fraud keywords offline first
+      // The server verdict is authoritative; the keyword engine is only an offline fallback (see fraud_alert_policy.dart).
       final fraudAnalysis = FraudKeywordEngine.analyze(messageText);
-
-      // Trigger notification if fraud is detected
-      if (fraudAnalysis.suspicionScore > 0.5) {
-        await NotificationService.showFraudAlert(
-          fraudType: fraudAnalysis.category?.label ?? 'Unknown Fraud',
-          message: messageText.length > 100 ? '${messageText.substring(0, 97)}...' : messageText,
-          matchedKeywords: fraudAnalysis.matchedKeywords.join(', '),
+      final Map<String, dynamic> result;
+      try {
+        result = await _api.analyzeMessage(
+          messageText: messageText,
+          sender: _senderCtrl.text.trim().isEmpty ? null : _senderCtrl.text.trim(),
         );
+      } catch (_) {
+        await _maybeNotify(decideOffline(matchedKeywordCount: fraudAnalysis.matchedKeywords.length), fraudAnalysis);
+        rethrow;
       }
-
-      final result = await _api.analyzeMessage(
-        messageText: messageText,
-        sender: _senderCtrl.text.trim().isEmpty ? null : _senderCtrl.text.trim(),
+      await _maybeNotify(
+        decideFromServer(verdict: VerdictResponse.from(result).verdict, legacyRiskScore: result['risk_score']),
+        fraudAnalysis,
       );
       if (mounted) setState(() { _messageResult = result; _analyzing = false; });
     } catch (e) {
+      logSafeError('MessageAnalyzer', e);
       if (mounted) {
         setState(() => _analyzing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
+          SnackBar(content: Text(safeErrorMessage(e, prefix: 'Could not analyze the message')), backgroundColor: AppTheme.errorColor),
         );
       }
     }
@@ -367,34 +386,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
 
   // ── Result builders ────────────────────────────────────────────────────────
 
-  Widget _buildMessageResult(Map<String, dynamic> result) {
-    final riskLevel = result['risk_level'] as String? ?? 'unknown';
-    final isSafe = result['is_safe'] as bool? ?? true;
-    final color = _riskColor(riskLevel);
-    final sv = result['sender_validation'] as Map<String, dynamic>?;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _resultHeader(
-          icon: isSafe ? Icons.check_circle : Icons.warning_amber,
-          title: isSafe ? 'Message Appears Safe' : 'Suspicious Message!',
-          subtitle: 'Risk Level: ${riskLevel.replaceAll('_', ' ').toUpperCase()}',
-          color: color,
-        ),
-        const SizedBox(height: 12),
-
-        // ── TRAI Sender Validation card ──────────────────────────────
-        if (sv != null) _SenderValidationCard(data: sv),
-
-        if (result['explanation'] != null && (result['explanation'] as String).isNotEmpty)
-          _resultCard('Analysis', result['explanation'] as String, Icons.analytics_outlined),
-        if (result['action'] != null && (result['action'] as String).isNotEmpty)
-          _resultCard('What To Do', result['action'] as String, Icons.task_alt),
-        _redFlagsList(result['red_flags'] as List? ?? []),
-      ],
-    );
-  }
+  Widget _buildMessageResult(Map<String, dynamic> result) => MessageResultView(result: result);
 
   Widget _buildJobResult(Map<String, dynamic> result) {
     final isFake = result['is_fake'] as bool?;
@@ -451,7 +443,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
                 SizedBox(height: 6),
                 Text(
                   'Legitimate employers never ask for money. If asked for registration/training fee — it is 100% a scam.',
-                  style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
+                  style: TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
                 ),
               ],
             ),
@@ -477,7 +469,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
+              style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
             ),
           ),
         ],
@@ -552,7 +544,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
           const SizedBox(height: 6),
           Text(
             content,
-            style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 13, height: 1.4),
+            style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 13, height: 1.4),
           ),
         ],
       ),
@@ -594,7 +586,7 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
                 Expanded(
                   child: Text(
                     f.toString(),
-                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12),
+                    style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12),
                   ),
                 ),
               ],
@@ -604,12 +596,6 @@ class _MessageAnalyzerScreenState extends State<MessageAnalyzerScreen>
       ),
     );
   }
-
-  Color _riskColor(String level) => switch (level) {
-        'critical' || 'high_risk_scam' => AppTheme.errorColor,
-        'high' || 'suspicious_message' || 'medium' || 'potentially_suspicious' => AppTheme.warning,
-        _ => AppTheme.success,
-      };
 
   InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
@@ -729,163 +715,6 @@ class _ScreenshotRow extends StatelessWidget {
             ],
           ),
         ],
-      ],
-    );
-  }
-}
-
-// ── TRAI Sender Validation Card ────────────────────────────────────────────────
-class _SenderValidationCard extends StatelessWidget {
-  final Map<String, dynamic> data;
-  const _SenderValidationCard({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final verdict = data['verdict'] as String? ?? 'UNKNOWN';
-    final isRegistered = data['is_registered'] as bool?;
-    final senderIdDisplay = data['sender_id'] as String? ?? data['header'] as String? ?? '—';
-    final entityName = data['principal_entity_name'] as String?;
-    final tspName = data['tsp_name'] as String?;
-    final lsaName = data['lsa_name'] as String?;
-    final verdictDetail = data['verdict_detail'] as String? ?? '';
-
-    final (Color color, IconData icon, String label) = switch (verdict) {
-      'REGISTERED' => (AppTheme.success, Icons.verified, 'TRAI Registered'),
-      'UNREGISTERED' => (AppTheme.errorColor, Icons.gpp_bad, 'Not in TRAI Registry'),
-      'PHONE_NUMBER' => (AppTheme.warning, Icons.phone_android, 'Personal Phone Number'),
-      _ => (AppTheme.textSecondary, Icons.help_outline, 'Unknown Sender'),
-    };
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header row
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
-            child: Row(
-              children: [
-                Icon(Icons.sim_card, size: 16, color: color),
-                const SizedBox(width: 6),
-                const Expanded(
-                  child: Text(
-                    'TRAI Sender Verification',
-                    style: TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  constraints: const BoxConstraints(maxWidth: 160),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, size: 12, color: color),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(height: 1, color: Colors.white10),
-
-          // Sender ID
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _infoRow('Sender ID', senderIdDisplay,
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'monospace',
-                      fontSize: 13,
-                    )),
-
-                if (entityName != null) ...[
-                  const SizedBox(height: 6),
-                  _infoRow('Registered Entity', entityName),
-                ],
-
-                if (tspName != null || lsaName != null) ...[
-                  const SizedBox(height: 6),
-                  _infoRow(
-                    'Network',
-                    [if (tspName != null) tspName, if (lsaName != null) lsaName].join(' · '),
-                  ),
-                ],
-
-                const SizedBox(height: 8),
-                Text(
-                  verdictDetail,
-                  style: TextStyle(
-                    color: isRegistered == true
-                        ? AppTheme.success
-                        : isRegistered == false
-                            ? AppTheme.errorColor
-                            : AppTheme.warning,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _infoRow(String label, String value, {TextStyle? style}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 110,
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: style ??
-                const TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: 12,
-                ),
-          ),
-        ),
       ],
     );
   }

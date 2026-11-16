@@ -1,6 +1,8 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../alerts_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -12,8 +14,9 @@ class AlertsScreen extends StatefulWidget {
 class _AlertsScreenState extends State<AlertsScreen> {
   final _api = AlertsApi();
   List<dynamic> _alerts = [];
+  // ignore: unused_field
   int _total = 0;
-  int _page = 1;
+  final int _page = 1;
   bool _loading = true;
 
   @override
@@ -43,10 +46,10 @@ class _AlertsScreenState extends State<AlertsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Panic Alert', style: TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
-        content: const Text(
-          'This will send an emergency alert to your family members and log a critical alert. Are you sure?',
-          style: TextStyle(color: const Color.fromARGB(222, 255, 255, 255)),
+        title: Text(AppLocalizations.of(context).panicTitle, style: const TextStyle(color: AppTheme.errorColor, fontWeight: FontWeight.bold)),
+        content: Text(
+          AppLocalizations.of(context).panicBody,
+          style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255)),
         ),
         actions: [
           TextButton(
@@ -62,8 +65,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 await _load();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Panic alert sent! Emergency contacts notified.'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context).panicSent),
                       backgroundColor: AppTheme.errorColor,
                     ),
                   );
@@ -71,12 +74,12 @@ class _AlertsScreenState extends State<AlertsScreen> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed: $e'), backgroundColor: AppTheme.errorColor),
+                    SnackBar(content: Text(safeErrorMessage(e, prefix: 'Failed')), backgroundColor: AppTheme.errorColor),
                   );
                 }
               }
             },
-            child: const Text('SEND ALERT'),
+            child: Text(AppLocalizations.of(context).sendAlert),
           ),
         ],
       ),
@@ -101,8 +104,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     children: [
                       const Icon(Icons.check_circle, size: 64, color: AppTheme.success),
                       const SizedBox(height: 16),
-                      const Text('No alerts', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
-                      const Text('You are safe!', style: TextStyle(color: Colors.white70)),
+                      Text(AppLocalizations.of(context).noAlerts, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
+                      Text(AppLocalizations.of(context).youAreSafe, style: const TextStyle(color: Colors.white70)),
                     ],
                   ),
                 )
@@ -165,7 +168,7 @@ class _AlertCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border(left: BorderSide(color: color, width: 3)),
           boxShadow: isRead ? [] : [
-            BoxShadow(color: color.withOpacity(0.1), blurRadius: 8),
+            BoxShadow(color: color.withValues(alpha: 0.1), blurRadius: 8),
           ],
         ),
         child: Row(
@@ -174,9 +177,9 @@ class _AlertCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withOpacity(0.4), width: 1),
+                border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
               ),
               child: Icon(icon, color: color, size: 20),
             ),
@@ -208,7 +211,7 @@ class _AlertCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     alert['message'] as String? ?? '',
-                    style: const TextStyle(color: const Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
+                    style: const TextStyle(color: Color.fromARGB(222, 255, 255, 255), fontSize: 12, height: 1.4),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -216,9 +219,9 @@ class _AlertCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: color.withOpacity(0.5), width: 1),
+                      border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
                     ),
                     child: Text(
                       severity.toUpperCase(),

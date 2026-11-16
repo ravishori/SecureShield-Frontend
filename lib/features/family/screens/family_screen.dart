@@ -1,6 +1,12 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/security/banking_threat_correlator.dart';
+import '../../../core/security/banking_threat_provider.dart';
 import '../../../core/theme.dart';
+import '../../banking_protection/widgets/banking_threat_strip.dart';
 import '../family_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class FamilyScreen extends StatefulWidget {
   const FamilyScreen({super.key});
@@ -12,13 +18,15 @@ class FamilyScreen extends StatefulWidget {
 class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderStateMixin {
   final _api = FamilyApi();
   List<dynamic> _members = [];
+  List<dynamic> _invitations = [];
+  Map<String, dynamic> _dashboard = {};
   bool _loading = true;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _load();
   }
 
@@ -32,7 +40,22 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
     setState(() => _loading = true);
     try {
       final members = await _api.getMembers();
-      if (mounted) setState(() { _members = members; _loading = false; });
+      var invitations = <dynamic>[];
+      var dashboard = <String, dynamic>{};
+      try {
+        invitations = await _api.getInvitations();
+        dashboard = await _api.getDashboard();
+      } catch (_) {
+        // Older servers without the consent API: the member list still works.
+      }
+      if (mounted) {
+        setState(() {
+          _members = members;
+          _invitations = invitations;
+          _dashboard = dashboard;
+          _loading = false;
+        });
+      }
     } catch (e) {
       if (mounted) setState(() => _loading = false);
     }
@@ -96,7 +119,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text('Child profiles have additional safety features enabled by default.', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
@@ -145,7 +168,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
                     );
                   }
                 } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(safeErrorMessage(e))));
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -167,15 +190,16 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Family Safety Dashboard'),
+        title: Text(AppLocalizations.of(context).familyTitle),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppTheme.accent,
           labelColor: AppTheme.accent,
           unselectedLabelColor: AppTheme.textSecondary,
           tabs: [
-            Tab(icon: const Icon(Icons.family_restroom), text: 'Family (${adults.length})'),
-            Tab(icon: const Icon(Icons.child_care), text: 'Kids (${children.length})'),
+            Tab(icon: const Icon(Icons.family_restroom), text: AppLocalizations.of(context).familyTabFamily(adults.length)),
+            Tab(icon: const Icon(Icons.child_care), text: AppLocalizations.of(context).familyTabKids(children.length)),
+            Tab(icon: const Icon(Icons.mail_outline), text: AppLocalizations.of(context).familyTabInvites(_invitations.length)),
           ],
         ),
         actions: [
@@ -191,13 +215,88 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.accent))
-          : TabBarView(
-              controller: _tabController,
+          : Column(
               children: [
-                _buildMemberList(adults, isChildTab: false),
-                _buildChildList(children),
+                // ── Guardian alert strip ─────────────────────────────────
+                // When threats are present, this warns the family member /
+                // guardian that their primary device is currently exposed,
+                // which is critical for elderly-protection scenarios where
+                // the guardian is reviewing their parent's account remotely.
+                const _FamilyThreatAlert(),
+
+                // ── Original tab content ────────────────────────────────
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildMemberList(adults, isChildTab: false),
+                      _buildChildList(children),
+                      _buildInvitations(),
+                    ],
+                  ),
+                ),
               ],
             ),
+    );
+  }
+
+  Widget _buildInvitations() {
+    if (_invitations.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Text(
+            'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppTheme.textSecondary),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _invitations.length,
+      itemBuilder: (context, i) {
+        final inv = _invitations[i] as Map<String, dynamic>;
+        final who = (inv['inviter_name'] as String?) ?? 'Someone';
+        return Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(AppLocalizations.of(context).inviteTitle(who),
+                    style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(
+                  inv['can_view_alerts'] == true ? AppLocalizations.of(context).inviteSharesAlerts(who) : AppLocalizations.of(context).inviteNoShare,
+                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        await _api.answerInvitation(inv['id'] as String, accept: false);
+                        await _load();
+                      },
+                      child: Text(AppLocalizations.of(context).decline),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _api.answerInvitation(inv['id'] as String, accept: true);
+                        await _load();
+                      },
+                      child: Text(AppLocalizations.of(context).accept),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -239,7 +338,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          color: const Color(0xFF7C4DFF).withOpacity(0.1),
+          color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
           child: const Row(children: [
             Icon(Icons.shield, color: Color(0xFF7C4DFF), size: 18),
             SizedBox(width: 8),
@@ -304,6 +403,7 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
               spacing: 6,
               runSpacing: 4,
               children: [
+                _consentBadge(member),
                 if (member['can_view_alerts'] == true) _badge(Icons.notifications, 'Alerts', AppTheme.accent),
                 if (member['can_trigger_panic'] == true) _badge(Icons.sos, 'Panic', AppTheme.errorColor),
                 if (isChild) _badge(Icons.child_care, 'Child Profile', const Color(0xFF7C4DFF)),
@@ -317,13 +417,30 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
     );
   }
 
+  Widget _consentBadge(Map<String, dynamic> member) {
+    final status = member['consent_status'] as String? ?? 'pending';
+    final dash = (_dashboard['members'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .where((m) => m['member_id'] == member['id'])
+        .toList();
+    final unread = dash.isEmpty ? 0 : (dash.first['unread_alerts'] as int? ?? 0);
+    switch (status) {
+      case 'accepted':
+        return _badge(Icons.verified_user, unread > 0 ? AppLocalizations.of(context).consentLinkedUnread(unread) : AppLocalizations.of(context).consentLinked, AppTheme.success);
+      case 'declined':
+        return _badge(Icons.block, AppLocalizations.of(context).consentDeclined, AppTheme.errorColor);
+      default:
+        return _badge(Icons.hourglass_top, AppLocalizations.of(context).consentPending, AppTheme.warning);
+    }
+  }
+
   Widget _badge(IconData icon, String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -331,6 +448,67 @@ class _FamilyScreenState extends State<FamilyScreen> with SingleTickerProviderSt
           Icon(icon, size: 10, color: color),
           const SizedBox(width: 3),
           Text(label, style: TextStyle(color: color, fontSize: 9)),
+        ],
+      ),
+    );
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Family-screen specific threat alert
+//
+// FamilyScreen is a plain StatefulWidget (not Consumer), so we wrap the
+// banking-threat strip in a small Consumer here. Also adds a guardian-
+// context preface — guardians monitoring an elderly parent need to know
+// that the parent's device may be compromised RIGHT NOW.
+// ────────────────────────────────────────────────────────────────────────────
+class _FamilyThreatAlert extends ConsumerWidget {
+  const _FamilyThreatAlert();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final report = ref.watch(bankingThreatReportProvider);
+    if (report == null || !report.hasThreats) return const SizedBox.shrink();
+
+    final cs = Theme.of(context).colorScheme;
+    final isCritical = report.level == BankingThreatLevel.critical;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Guardian-context preface
+          Row(
+            children: [
+              Icon(
+                Icons.shield_moon_outlined,
+                size: 14,
+                color: cs.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  isCritical
+                      ? 'Active threats on this device — your family members are at risk:'
+                      : 'Caution recommended for family banking activity:',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          BankingThreatStrip(
+            report: report,
+            margin: EdgeInsets.zero,
+          ),
         ],
       ),
     );

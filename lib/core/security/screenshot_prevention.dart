@@ -1,123 +1,116 @@
-// Add to MainActivity.kt in android/app/src/main/kotlin/.../MainActivity.kt:
-// override fun onCreate(savedInstanceState: Bundle?) {
-//     super.onCreate(savedInstanceState)
-//     MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "secureshield/window_flags")
-//         .setMethodCallHandler { call, result ->
-//             when (call.method) {
-//                 "addFlags" -> { window.addFlags(call.argument<Int>("flags")!!); result.success(null) }
-//                 "clearFlags" -> { window.clearFlags(call.argument<Int>("flags")!!); result.success(null) }
-//                 else -> result.notImplemented()
-//             }
-//         }
-// }
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Controls Android's FLAG_SECURE window flag to prevent screenshots and
-/// screen recording of sensitive UI.
+/// Controls Android's FLAG_SECURE window flag, which blocks screenshots, the recents-screen thumbnail and
+/// screen capture of the app's window (a protected window is blank in screen recordings).
 ///
-/// Requires the corresponding MethodChannel handler to be registered in
-/// MainActivity.kt (see the comment block at the top of this file).
+/// The Kotlin side is `MainActivity.kt` (channel `secureshield/window_flags`, methods `enableSecure`,
+/// `disableSecure`, `isSecure`). `test/core/screenshot_prevention_test.dart` fails if the method names used
+/// here stop matching the Kotlin source.
 ///
-/// Usage:
-///   // Enable at sensitive screens
-///   await ScreenshotPrevention.enable();
+/// Several protected screens can be on the navigation stack at once, so the flag is reference counted: it is
+/// set when the first holder appears and cleared only when the last holder is gone. It is re-applied when
+/// the app returns to the foreground in case the activity was recreated.
 ///
-///   // Disable when leaving sensitive screens
-///   await ScreenshotPrevention.disable();
+/// Limits (Android): it does not stop a photo of the screen, accessibility services or a rooted/instrumented
+/// device from reading the window, and it protects only this app's window.
 ///
-///   // Or wrap a widget tree:
-///   ScreenshotPrevention.protect(child: MySecretWidget())
+/// Usage: `ScreenshotPrevention.protect(child: SomeSensitiveScreen())`.
 class ScreenshotPrevention {
   ScreenshotPrevention._();
 
-  static const _channel = MethodChannel('secureshield/window_flags');
+  static MethodChannel _channel = const MethodChannel('secureshield/window_flags');
 
-  // Android FLAG_SECURE = 0x00002000 = 8192
-  static const _flagSecure = 8192;
+  static int _holders = 0;
+  // Platform calls are applied strictly in order so a fast navigate-away cannot leave the flag set.
+  static Future<void>? _chain;
 
-  // ---------------------------------------------------------------------------
-  // Enable / disable
-  // ---------------------------------------------------------------------------
+  /// Number of widgets currently asking for protection.
+  @visibleForTesting
+  static int get holders => _holders;
 
-  /// Apply FLAG_SECURE to the current Activity window on Android.
-  ///
-  /// Silently no-ops on non-Android platforms or if the channel is unavailable.
-  static Future<void> enable() async {
-    if (!defaultTargetPlatform.isAndroid) return;
+  @visibleForTesting
+  static void resetForTesting({MethodChannel? channel}) {
+    _holders = 0;
+    _chain = null;
+    _channel = channel ?? const MethodChannel('secureshield/window_flags');
+  }
+
+  static bool get _supported => defaultTargetPlatform == TargetPlatform.android;
+
+  static Future<void> _apply(String method) {
+    _chain = (_chain ?? Future<void>.value()).then((_) async {
+      if (!_supported) return;
+      try {
+        await _channel.invokeMethod<void>(method);
+      } catch (e) {
+        debugPrint('[ScreenshotPrevention] $method failed: ${e.runtimeType}');
+      }
+    });
+    return _chain!;
+  }
+
+  static Future<void> get _queue => _chain ?? Future<void>.value();
+
+  /// Registers one holder; the first holder turns FLAG_SECURE on.
+  static Future<void> enable() {
+    _holders++;
+    return _holders == 1 ? _apply('enableSecure') : _queue;
+  }
+
+  /// Releases one holder; FLAG_SECURE is cleared only when none remain.
+  static Future<void> disable() {
+    if (_holders == 0) return _queue;
+    _holders--;
+    return _holders == 0 ? _apply('disableSecure') : _queue;
+  }
+
+  /// Re-asserts the flag if any holder exists (called when the app resumes).
+  static Future<void> reapply() => _holders > 0 ? _apply('enableSecure') : _queue;
+
+  /// Whether the window currently carries FLAG_SECURE (null when the platform cannot say).
+  static Future<bool?> isSecure() async {
+    if (!_supported) return null;
     try {
-      await _channel.invokeMethod('addFlags', {'flags': _flagSecure});
-      debugPrint('[ScreenshotPrevention] FLAG_SECURE enabled.');
-    } catch (e) {
-      debugPrint('[ScreenshotPrevention] enable() failed (is MainActivity wired?): $e');
+      return await _channel.invokeMethod<bool>('isSecure');
+    } catch (_) {
+      return null;
     }
   }
 
-  /// Remove FLAG_SECURE from the current Activity window on Android.
-  ///
-  /// Silently no-ops on non-Android platforms or if the channel is unavailable.
-  static Future<void> disable() async {
-    if (!defaultTargetPlatform.isAndroid) return;
-    try {
-      await _channel.invokeMethod('clearFlags', {'flags': _flagSecure});
-      debugPrint('[ScreenshotPrevention] FLAG_SECURE disabled.');
-    } catch (e) {
-      debugPrint('[ScreenshotPrevention] disable() failed: $e');
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Widget wrapper
-  // ---------------------------------------------------------------------------
-
-  /// Wraps [child] in a widget that enables FLAG_SECURE when the widget is
-  /// first built and disables it when the widget is disposed.
-  ///
-  /// Use this on screens that display OTP codes, evidence, AI conversations,
-  /// or any other sensitive content.
-  ///
-  /// Example:
-  ///   return ScreenshotPrevention.protect(child: OtpVaultScreen());
-  static Widget protect({required Widget child}) {
-    return _ScreenshotProtectedWrapper(child: child);
-  }
+  /// Wraps [child] so FLAG_SECURE is held while the widget is in the tree.
+  static Widget protect({required Widget child}) => _ScreenshotProtected(child: child);
 }
 
-// ---------------------------------------------------------------------------
-// Internal StatefulWidget that manages FLAG_SECURE lifecycle
-// ---------------------------------------------------------------------------
-class _ScreenshotProtectedWrapper extends StatefulWidget {
+class _ScreenshotProtected extends StatefulWidget {
   final Widget child;
-  const _ScreenshotProtectedWrapper({required this.child});
+  const _ScreenshotProtected({required this.child});
 
   @override
-  State<_ScreenshotProtectedWrapper> createState() =>
-      _ScreenshotProtectedWrapperState();
+  State<_ScreenshotProtected> createState() => _ScreenshotProtectedState();
 }
 
-class _ScreenshotProtectedWrapperState
-    extends State<_ScreenshotProtectedWrapper> {
+class _ScreenshotProtectedState extends State<_ScreenshotProtected> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     ScreenshotPrevention.enable();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) ScreenshotPrevention.reapply();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     ScreenshotPrevention.disable();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => widget.child;
-}
-
-// ---------------------------------------------------------------------------
-// Extension helper
-// ---------------------------------------------------------------------------
-extension on TargetPlatform {
-  bool get isAndroid => this == TargetPlatform.android;
 }

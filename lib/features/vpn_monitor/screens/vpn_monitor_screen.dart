@@ -1,7 +1,9 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
 import '../vpn_monitor_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class VpnMonitorScreen extends ConsumerStatefulWidget {
   const VpnMonitorScreen({super.key});
@@ -34,15 +36,32 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
 
   Future<void> _toggle() async {
     final isOn = ref.read(vpnStateProvider);
-    if (isOn) {
-      await ref.read(vpnStateProvider.notifier).stop();
-    } else {
-      final ok = await ref.read(vpnStateProvider.notifier).start();
-      if (!ok && mounted) {
+    try {
+      if (isOn) {
+        await ref.read(vpnStateProvider.notifier).stop();
+      } else {
+        final result = await ref.read(vpnStateProvider.notifier).start();
+        if (!result.started && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppTheme.errorColor,
+              duration: const Duration(seconds: 5),
+              content: Text(
+                result.errorMessage ??
+                    'VPN permission denied. Grant it in the system dialog.',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Last-resort: should never happen because the service never throws,
+      // but guarantees the UI never crashes from a toggle.
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             backgroundColor: AppTheme.errorColor,
-            content: Text('VPN permission denied. Grant it in the system dialog.'),
+            content: Text(safeErrorMessage(e, prefix: 'Unexpected error')),
           ),
         );
       }
@@ -84,13 +103,13 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                isOn ? AppTheme.success.withOpacity(0.8) : AppTheme.primary,
-                isOn ? AppTheme.success.withOpacity(0.4) : AppTheme.primary.withOpacity(0.6),
+                isOn ? AppTheme.success.withValues(alpha: 0.8) : AppTheme.primary,
+                isOn ? AppTheme.success.withValues(alpha: 0.4) : AppTheme.primary.withValues(alpha: 0.6),
               ]),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: (isOn ? AppTheme.success : AppTheme.accent).withOpacity(0.3),
+                  color: (isOn ? AppTheme.success : AppTheme.accent).withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -107,7 +126,7 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                       height: 72,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         border: Border.all(color: Colors.white30, width: 2),
                       ),
                       child: Icon(
@@ -134,8 +153,8 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                       const SizedBox(height: 4),
                       Text(
                         isOn
-                            ? 'Watching all outbound connections'
-                            : 'Tap shield to start monitoring',
+                            ? AppLocalizations.of(context).vpnBlockingActive
+                            : AppLocalizations.of(context).vpnTapToStart,
                         style: const TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                       if (isOn && allLog.isNotEmpty) ...[
@@ -143,9 +162,9 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                         Row(children: [
                           _chip('${allLog.length}', 'Total', Colors.white30),
                           const SizedBox(width: 8),
-                          _chip('$threats', 'Threats', AppTheme.warning.withOpacity(0.6)),
+                          _chip('$threats', 'Threats', AppTheme.warning.withValues(alpha: 0.6)),
                           const SizedBox(width: 8),
-                          _chip('$malicious', 'Malicious', AppTheme.errorColor.withOpacity(0.7)),
+                          _chip('$malicious', 'Malicious', AppTheme.errorColor.withValues(alpha: 0.7)),
                         ]),
                       ],
                     ],
@@ -154,7 +173,7 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                 Switch(
                   value: isOn,
                   onChanged: (_) => _toggle(),
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor: Colors.white30,
                 ),
               ],
@@ -184,10 +203,9 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                   ]),
                   SizedBox(height: 8),
                   Text(
-                    '• Creates a local VPN tunnel — no traffic leaves your device\n'
-                    '• Only destination IP addresses are inspected (not your data)\n'
-                    '• Detects connections to known malicious domains\n'
-                    '• Alerts you about spyware, phishing, and C2 servers',
+                    '• Only traffic to known-malicious network ranges is routed into a local VPN tunnel; everything else uses your normal connection\n'
+                    '• A connection attempt to such a range is blocked and reported (only the destination address is read, never your data)\n'
+                    '• Domain-name based detection is not available in this mode',
                     style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.6),
                   ),
                 ],
@@ -200,10 +218,10 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Live Connections',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppTheme.textPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -216,13 +234,13 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: _showOnlyThreats
-                            ? AppTheme.errorColor.withOpacity(0.2)
+                            ? AppTheme.errorColor.withValues(alpha: 0.2)
                             : AppTheme.cardColor,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _showOnlyThreats
                               ? AppTheme.errorColor
-                              : AppTheme.textSecondary.withOpacity(0.3),
+                              : AppTheme.textSecondary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -246,10 +264,10 @@ class _VpnMonitorScreenState extends ConsumerState<VpnMonitorScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.wifi_tethering, size: 56,
-                            color: AppTheme.accent.withOpacity(0.3)),
+                            color: AppTheme.accent.withValues(alpha: 0.3)),
                           const SizedBox(height: 12),
-                          const Text('Waiting for connections...',
-                            style: TextStyle(color: AppTheme.textSecondary)),
+                          Text(AppLocalizations.of(context).vpnNoBlocked,
+                            style: const TextStyle(color: AppTheme.textSecondary)),
                         ],
                       ),
                     )
@@ -343,7 +361,7 @@ class _TrafficCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

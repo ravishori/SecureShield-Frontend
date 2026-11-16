@@ -3,6 +3,31 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants.dart';
 import '../app_config.dart';
 
+/// True if the Dio error is a low-level network/connection failure that
+/// could be cured by re-resolving the backend host (e.g. dev IP changed,
+/// backend bound to wrong interface, phone moved Wi-Fi networks).
+bool _isConnectionFailure(DioException e) {
+  switch (e.type) {
+    case DioExceptionType.connectionTimeout:
+    case DioExceptionType.connectionError:
+    case DioExceptionType.sendTimeout:
+      return true;
+    case DioExceptionType.unknown:
+      final msg = e.message ?? '';
+      return msg.contains('SocketException') ||
+             msg.contains('Connection refused') ||
+             msg.contains('Network is unreachable') ||
+             msg.contains('Failed host lookup') ||
+             msg.contains('No route to host');
+    default:
+      return false;
+  }
+}
+
+/// Prevent redetect+retry loops — only re-probe once per request.
+bool _isRedetectRetry(RequestOptions opts) =>
+    opts.extra['_redetectRetry'] == true;
+
 /// Central HTTP client for SecureShield AI.
 ///
 /// Features:
@@ -46,35 +71,74 @@ class DioClient {
           return handler.next(options);
         },
 
-        // ── Auto-refresh JWT on 401 ───────────────────────────────────────
+        // ── Auto-refresh JWT on 401 + auto-redetect on connection failure
         onError: (error, handler) async {
-          if (error.response?.statusCode == 401) {
-            final refreshToken =
-                await _storage.read(key: AppConstants.refreshTokenKey);
-            if (refreshToken != null) {
+          // ─ 1. Connection-level failures → re-probe backend, retry once ─
+          if (_isConnectionFailure(error) && !_isRedetectRetry(error.requestOptions)) {
+            try {
+              final swapped = await AppConfig.redetect();
+              if (swapped) {
+                // Mark this request so we don't loop forever.
+                final retryOpts = error.requestOptions
+                  ..baseUrl = AppConstants.baseUrl
+                  ..extra['_redetectRetry'] = true;
+                final retryResp = await dio.fetch(retryOpts);
+                return handler.resolve(retryResp);
+              }
+            } catch (_) {/* fall through to the original error */}
+          }
+
+          // ─ 2. JWT auto-refresh on 401 ──────────────────────────────────
+          // Refresh tokens are single-use (the server revokes the whole login if one is replayed),
+          // so concurrent 401s must share ONE refresh call and the new refresh token must be stored.
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.extra['retried'] != true) {
+            final newToken = await _refreshAccessToken();
+            if (newToken != null) {
               try {
-                final response = await Dio().post(
-                  '${AppConstants.baseUrl}${AppConstants.refreshToken}',
-                  data: {'refresh_token': refreshToken},
-                );
-                final newToken = response.data['access_token'];
-                await _storage.write(
-                  key: AppConstants.accessTokenKey,
-                  value: newToken,
-                );
                 error.requestOptions.headers['Authorization'] =
                     'Bearer $newToken';
+                error.requestOptions.extra['retried'] = true;
                 final retryResponse = await dio.fetch(error.requestOptions);
                 return handler.resolve(retryResponse);
-              } catch (_) {
-                await _storage.deleteAll();
-              }
+              } catch (_) {/* fall through to the original error */}
             }
           }
           return handler.next(error);
         },
       ),
     );
+  }
+
+  static Future<String?>? _refreshInFlight;
+
+  Future<String?> _refreshAccessToken() {
+    return _refreshInFlight ??= _doRefresh().whenComplete(() => _refreshInFlight = null);
+  }
+
+  Future<String?> _doRefresh() async {
+    final refreshToken = await _storage.read(key: AppConstants.refreshTokenKey);
+    if (refreshToken == null) return null;
+    try {
+      final response = await Dio().post(
+        '${AppConstants.baseUrl}${AppConstants.refreshToken}',
+        data: {'refresh_token': refreshToken},
+      );
+      final access = response.data['access_token'] as String;
+      final newRefresh = response.data['refresh_token'] as String?;
+      await _storage.write(key: AppConstants.accessTokenKey, value: access);
+      if (newRefresh != null) {
+        await _storage.write(key: AppConstants.refreshTokenKey, value: newRefresh);
+      }
+      return access;
+    } on DioException catch (e) {
+      // Only a definitive rejection ends the session; a flaky network must not log the user out.
+      final code = e.response?.statusCode;
+      if (code == 401 || code == 400) await _storage.deleteAll();
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Invalidate the singleton so it's recreated with a new base URL.
@@ -133,7 +197,6 @@ extension DioErrorMessage on DioException {
         return 'SSL certificate error. Please contact support.';
 
       case DioExceptionType.unknown:
-      default:
         // Catch network-unreachable OS errors
         final msg = message ?? '';
         if (msg.contains('SocketException') ||
@@ -146,10 +209,15 @@ extension DioErrorMessage on DioException {
     }
   }
 
-  /// Pull the "error" or "detail" field from the server JSON response body.
+  /// Pull a user-facing message from the server JSON response body.
+  ///
+  /// Priority: `detail` first (FastAPI convention + this app's custom error
+  /// middleware puts the *specific* message here, e.g. "An account with this
+  /// email already exists"), then `error` (the generic friendly version like
+  /// "Conflict — the resource already exists"), then `message`.
   String? _extractServerMessage(dynamic data) {
     if (data is Map) {
-      return (data['error'] ?? data['detail'])?.toString();
+      return (data['detail'] ?? data['error'] ?? data['message'])?.toString();
     }
     return null;
   }

@@ -76,7 +76,7 @@ class BiometricService {
           useErrorDialogs: true,
         ),
       );
-    } on PlatformException catch (e) {
+    } on PlatformException {
       // e.g. NotAvailable, NotEnrolled, LockedOut
       return false;
     } catch (_) {

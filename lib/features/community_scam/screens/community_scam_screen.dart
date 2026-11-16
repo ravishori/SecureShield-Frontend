@@ -1,6 +1,8 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../community_scam_api.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 class CommunityScamScreen extends StatefulWidget {
   const CommunityScamScreen({super.key});
@@ -69,16 +71,16 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
         builder: (ctx, setStateDlg) => AlertDialog(
           backgroundColor: AppTheme.surface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Report a Scam', style: TextStyle(color: AppTheme.textPrimary)),
+          title: Text(AppLocalizations.of(context).csReport, style: const TextStyle(color: AppTheme.textPrimary)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
-                  value: selectedType,
+                  initialValue: selectedType,
                   dropdownColor: AppTheme.surface,
                   style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(labelText: 'Scam Type', labelStyle: TextStyle(color: AppTheme.textSecondary)),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).csType, labelStyle: const TextStyle(color: AppTheme.textSecondary)),
                   items: scamTypes.map((t) => DropdownMenuItem<String>(
                     value: t['value'],
                     child: Text(t['label']!),
@@ -87,24 +89,24 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                 ),
                 const SizedBox(height: 8),
                 TextField(controller: titleCtrl, style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(labelText: 'Title *', labelStyle: TextStyle(color: AppTheme.textSecondary))),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).csTitleReq, labelStyle: const TextStyle(color: AppTheme.textSecondary))),
                 const SizedBox(height: 8),
                 TextField(controller: descCtrl, maxLines: 3, style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(labelText: 'Description *', labelStyle: TextStyle(color: AppTheme.textSecondary))),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).csDescReq, labelStyle: const TextStyle(color: AppTheme.textSecondary))),
                 const SizedBox(height: 8),
                 TextField(controller: phoneCtrl, style: const TextStyle(color: AppTheme.textPrimary), keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(labelText: 'Scammer\'s Phone (optional)', labelStyle: TextStyle(color: AppTheme.textSecondary))),
                 const SizedBox(height: 8),
                 TextField(controller: urlCtrl, style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(labelText: 'Scam URL (optional)', labelStyle: TextStyle(color: AppTheme.textSecondary))),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).csUrl, labelStyle: const TextStyle(color: AppTheme.textSecondary))),
                 const SizedBox(height: 8),
                 TextField(controller: cityCtrl, style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(labelText: 'Your City (optional)', labelStyle: TextStyle(color: AppTheme.textSecondary))),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).csCity, labelStyle: const TextStyle(color: AppTheme.textSecondary))),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary))),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: AppTheme.textSecondary))),
             ElevatedButton(
               onPressed: () async {
                 if (titleCtrl.text.trim().isEmpty || descCtrl.text.trim().isEmpty) return;
@@ -125,11 +127,11 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                     );
                   }
                 } catch (e) {
-                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(safeErrorMessage(e))));
                 }
               },
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorColor),
-              child: const Text('Report'),
+              child: Text(AppLocalizations.of(context).gReport),
             ),
           ],
         ),
@@ -141,12 +143,12 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Community Scam Alerts'),
+        title: Text(AppLocalizations.of(context).csTitle),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_alt_outlined, color: AppTheme.accent),
+            icon: const Icon(Icons.filter_alt_outlined, color: AppTheme.accent),
             onPressed: _showFilterDialog,
-            tooltip: 'Filter by city',
+            tooltip: AppLocalizations.of(context).csFilterCity,
           ),
         ],
         bottom: TabBar(
@@ -164,7 +166,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
         onPressed: _showReportDialog,
         backgroundColor: AppTheme.errorColor,
         icon: const Icon(Icons.add_alert),
-        label: const Text('Report Scam'),
+        label: Text(AppLocalizations.of(context).csReportBtn),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.accent))
@@ -189,7 +191,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
             Text(_filterCity != null ? 'No scams reported in $_filterCity yet' : 'No scams reported yet',
               style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16)),
             const SizedBox(height: 8),
-            const Text('Be the first to warn your community', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+            Text(AppLocalizations.of(context).csBeFirst, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
           ],
         ),
       );
@@ -225,15 +227,15 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppTheme.errorColor.withOpacity(0.1),
+                    color: AppTheme.errorColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: AppTheme.errorColor.withOpacity(0.4)),
+                    border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.4)),
                   ),
-                  child: Text(typeLabel, style: TextStyle(color: AppTheme.errorColor, fontSize: 10, fontWeight: FontWeight.bold)),
+                  child: Text(typeLabel, style: const TextStyle(color: AppTheme.errorColor, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
                 if (isVerified) ...[
                   const SizedBox(width: 6),
-                  Icon(Icons.verified, color: AppTheme.accent, size: 14),
+                  const Icon(Icons.verified, color: AppTheme.accent, size: 14),
                   const Text(' Verified', style: TextStyle(color: AppTheme.accent, fontSize: 10)),
                 ],
                 const Spacer(),
@@ -267,7 +269,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
                     await _load();
                   },
                   child: Row(children: [
-                    Icon(Icons.thumb_up_outlined, color: AppTheme.accent, size: 14),
+                    const Icon(Icons.thumb_up_outlined, color: AppTheme.accent, size: 14),
                     const SizedBox(width: 4),
                     Text('$upvotes helpful', style: const TextStyle(color: AppTheme.accent, fontSize: 12)),
                   ]),
@@ -291,11 +293,11 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Filter by City', style: TextStyle(color: AppTheme.textPrimary)),
+        title: Text(AppLocalizations.of(context).csFilterByCity, style: const TextStyle(color: AppTheme.textPrimary)),
         content: TextField(
           controller: ctrl,
           style: const TextStyle(color: AppTheme.textPrimary),
-          decoration: const InputDecoration(labelText: 'City (e.g. Mumbai)', labelStyle: TextStyle(color: AppTheme.textSecondary)),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context).csCityHint, labelStyle: const TextStyle(color: AppTheme.textSecondary)),
         ),
         actions: [
           TextButton(
@@ -304,7 +306,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
               Navigator.pop(ctx);
               _load();
             },
-            child: const Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text(AppLocalizations.of(context).gClear, style: const TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -312,7 +314,7 @@ class _CommunityScamScreenState extends State<CommunityScamScreen>
               Navigator.pop(ctx);
               _load();
             },
-            child: const Text('Apply'),
+            child: Text(AppLocalizations.of(context).gApply),
           ),
         ],
       ),

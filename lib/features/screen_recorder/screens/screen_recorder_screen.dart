@@ -1,3 +1,4 @@
+import 'package:secureshield_app/l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import 'package:video_player/video_player.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme.dart';
 import '../screen_recorder_service.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main screen
@@ -54,19 +56,27 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
       await ref.read(recordingsProvider.notifier).load();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             backgroundColor: AppTheme.success,
-            content: Text('Recording saved successfully.'),
+            content: Text(AppLocalizations.of(context).srSaved),
           ),
         );
       }
     } else {
       final ok = await notifier.startRecording();
-      if (!ok && mounted) {
+      if (!mounted) return;
+      final r = notifier.lastStart;
+      if (!ok) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppTheme.errorColor,
+            content: Text(r?.error ?? AppLocalizations.of(context).srDenied),
+          ),
+        );
+      } else if (r != null && !r.microphone) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: AppTheme.errorColor,
-            content: Text('Permission denied. Please allow screen capture.'),
+            content: Text('Recording the screen without microphone audio (microphone permission not granted).'),
           ),
         );
       }
@@ -89,7 +99,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Share failed: $e'),
+          SnackBar(content: Text(safeErrorMessage(e, prefix: 'Share failed')),
             backgroundColor: AppTheme.errorColor),
         );
       }
@@ -102,7 +112,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: Theme.of(ctx).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Recording?'),
+        title: Text(AppLocalizations.of(context).srDeleteQ),
         content: Text(
           'Delete "${_fileName(file)}"?\nThis cannot be undone.',
           style: const TextStyle(color: AppTheme.textSecondary),
@@ -110,15 +120,15 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel',
-              style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text(AppLocalizations.of(context).cancel,
+              style: const TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.errorColor),
-            child: const Text('Delete',
-              style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context).gDelete,
+              style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -156,12 +166,12 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Screen Recorder'),
+        title: Text(AppLocalizations.of(context).srTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(recordingsProvider.notifier).load(),
-            tooltip: 'Refresh recordings',
+            tooltip: AppLocalizations.of(context).srRefresh,
           ),
         ],
       ),
@@ -177,19 +187,19 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                 color: AppTheme.cardColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(children: [
-                    Icon(Icons.info_outline, color: AppTheme.accent, size: 18),
-                    SizedBox(width: 8),
-                    Text('Purpose', style: TextStyle(
+                    const Icon(Icons.info_outline, color: AppTheme.accent, size: 18),
+                    const SizedBox(width: 8),
+                    Text(AppLocalizations.of(context).srPurpose, style: const TextStyle(
                       color: AppTheme.textPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 14)),
                   ]),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     'Record your screen as evidence when dealing with scammers, '
                     'documenting fraud, or reporting suspicious activity. '
                     'Recordings include audio from your microphone.',
@@ -279,9 +289,9 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                         ],
                       ),
                     )
-                  : const Text(
-                      'Tap to start recording your screen',
-                      style: TextStyle(
+                  : Text(
+                      AppLocalizations.of(context).srTapStart,
+                      style: const TextStyle(
                         color: AppTheme.textSecondary, fontSize: 13)),
             ),
             const SizedBox(height: 28),
@@ -319,7 +329,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                 const Icon(Icons.video_library,
                   color: AppTheme.accent, size: 16),
                 const SizedBox(width: 6),
-                const Text('Past Recordings', style: TextStyle(
+                Text(AppLocalizations.of(context).srPast, style: const TextStyle(
                   color: AppTheme.textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: 15)),
@@ -340,17 +350,17 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                   color: AppTheme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Column(
+                child: Column(
                   children: [
-                    Icon(Icons.videocam_off,
+                    const Icon(Icons.videocam_off,
                       size: 44, color: AppTheme.textSecondary),
-                    SizedBox(height: 10),
-                    Text('No recordings yet',
-                      style: TextStyle(
+                    const SizedBox(height: 10),
+                    Text(AppLocalizations.of(context).srNone,
+                      style: const TextStyle(
                         color: AppTheme.textSecondary, fontSize: 13)),
-                    SizedBox(height: 4),
-                    Text('Tap RECORD above to capture your screen',
-                      style: TextStyle(
+                    const SizedBox(height: 4),
+                    Text(AppLocalizations.of(context).srTapRecordAbove,
+                      style: const TextStyle(
                         color: AppTheme.textSecondary, fontSize: 11),
                       textAlign: TextAlign.center),
                   ],
@@ -404,8 +414,8 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                         color: Colors.white, size: 38),
                     ),
                     const SizedBox(height: 10),
-                    const Text('Tap to Play',
-                      style: TextStyle(
+                    Text(AppLocalizations.of(context).srTapPlay,
+                      style: const TextStyle(
                         color: Colors.white70, fontSize: 12)),
                   ],
                 ),
@@ -465,7 +475,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                   icon: const Icon(Icons.play_circle_outline,
                     color: AppTheme.accent, size: 26),
                   onPressed: () => _playRecording(file),
-                  tooltip: 'Play',
+                  tooltip: AppLocalizations.of(context).gPlay,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -475,7 +485,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                   icon: const Icon(Icons.share,
                     color: AppTheme.textSecondary, size: 22),
                   onPressed: () => _shareRecording(file),
-                  tooltip: 'Share',
+                  tooltip: AppLocalizations.of(context).gShare,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -485,7 +495,7 @@ class _ScreenRecorderScreenState extends ConsumerState<ScreenRecorderScreen>
                   icon: const Icon(Icons.delete_outline,
                     color: AppTheme.errorColor, size: 22),
                   onPressed: () => _deleteRecording(file),
-                  tooltip: 'Delete',
+                  tooltip: AppLocalizations.of(context).gDelete,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -569,7 +579,7 @@ class _VideoPlayerScreenState extends State<_VideoPlayerScreen> {
           IconButton(
             icon: const Icon(Icons.share, color: Colors.white),
             onPressed: _share,
-            tooltip: 'Share',
+            tooltip: AppLocalizations.of(context).gShare,
           ),
         ],
       ),

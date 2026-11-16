@@ -64,10 +64,10 @@ class PackageMonitorScreen extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                Row(children: [
-                  const Icon(Icons.sensors, color: AppTheme.accent, size: 20),
-                  const SizedBox(width: 8),
-                  const Expanded(
+                const Row(children: [
+                  Icon(Icons.sensors, color: AppTheme.accent, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
                     child: Text(
                       'Monitoring app installations in real-time. '
                       'Unknown-source installs are flagged as high risk.',
@@ -110,7 +110,7 @@ class PackageMonitorScreen extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppTheme.errorColor.withOpacity(0.15),
+                      color: AppTheme.errorColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -134,7 +134,7 @@ class PackageMonitorScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.app_registration,
-                          size: 64, color: AppTheme.textSecondary.withOpacity(0.3)),
+                          size: 64, color: AppTheme.textSecondary.withValues(alpha: 0.3)),
                         const SizedBox(height: 16),
                         const Text('No app installs detected yet',
                           style: TextStyle(color: AppTheme.textSecondary, fontSize: 15)),
@@ -195,14 +195,14 @@ class _InstallCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: isHigh ? Border.all(color: AppTheme.errorColor.withOpacity(0.5)) : null,
+        border: isHigh ? Border.all(color: AppTheme.errorColor.withValues(alpha: 0.5)) : null,
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -238,7 +238,7 @@ class _InstallCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.12),
+                  color: color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Text(

@@ -6,6 +6,7 @@ import '../../../core/theme.dart';
 import '../../../core/security/device_scanner_service.dart';
 import '../../../core/security/app_risk_engine.dart';
 import '../scan_provider.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Scan phase definitions
@@ -137,7 +138,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
 
               // ── Header ──────────────────────────────────────────────────
               Text(
-                'Device Security Scan',
+                AppLocalizations.of(context).scanTitle,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: AppTheme.accent,
                       fontWeight: FontWeight.bold,
@@ -194,7 +195,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.accent.withOpacity(0.4),
+                              color: AppTheme.accent.withValues(alpha: 0.4),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
@@ -223,7 +224,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                     '$_appsFound apps found',
                     key: ValueKey(_appsFound),
                     style: TextStyle(
-                      color: AppTheme.accent.withOpacity(0.9),
+                      color: AppTheme.accent.withValues(alpha: 0.9),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -244,12 +245,12 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? AppTheme.accent.withOpacity(0.08)
+                        ? AppTheme.accent.withValues(alpha: 0.08)
                         : AppTheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isActive
-                          ? AppTheme.accent.withOpacity(0.5)
+                          ? AppTheme.accent.withValues(alpha: 0.5)
                           : Colors.transparent,
                     ),
                   ),
@@ -281,7 +282,7 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                         ),
                       ),
                       if (isActive)
-                        SizedBox(
+                        const SizedBox(
                           width: 14,
                           height: 14,
                           child: CircularProgressIndicator(
@@ -300,13 +301,13 @@ class _DeviceScanScreenState extends ConsumerState<DeviceScanScreen>
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppTheme.errorColor.withOpacity(0.1),
+                    color: AppTheme.errorColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.errorColor.withOpacity(0.4)),
+                    border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.4)),
                   ),
                   child: Column(
                     children: [
-                      Text('Scan failed', style: TextStyle(color: AppTheme.errorColor)),
+                      const Text('Scan failed', style: TextStyle(color: AppTheme.errorColor)),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: () {
@@ -365,7 +366,7 @@ class _Ring extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: AppTheme.accent.withOpacity(opacity),
+            color: AppTheme.accent.withValues(alpha: opacity),
             width: 1.5,
           ),
         ),
@@ -383,9 +384,9 @@ class _RadarSweepPainter extends CustomPainter {
 
     final gradient = SweepGradient(
       colors: [
-        const Color(0xFF00E5FF).withOpacity(0),
-        const Color(0xFF00E5FF).withOpacity(0.35),
-        const Color(0xFF00E5FF).withOpacity(0),
+        const Color(0xFF00E5FF).withValues(alpha: 0),
+        const Color(0xFF00E5FF).withValues(alpha: 0.35),
+        const Color(0xFF00E5FF).withValues(alpha: 0),
       ],
       stops: const [0.0, 0.25, 0.30],
       startAngle: -pi / 2,

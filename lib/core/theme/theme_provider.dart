@@ -27,6 +27,7 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async 
 /// Theme state containing the selected theme and related configuration
 class ThemeState {
   /// Default timestamp for initial state
+  // ignore: unused_field
   static final DateTime _defaultTime = DateTime(2024, 1, 1);
 
   /// The currently selected theme
@@ -44,23 +45,17 @@ class ThemeState {
     DateTime? lastChanged,
   }) : lastChanged = lastChanged ?? DateTime(2024, 1, 1);
 
-  /// Convenience getter - returns true if theme has dark background
-  bool get isDark => themeType == AppThemeType.dark ||
-      themeType == AppThemeType.cybersecurity;
+  /// True for themes with a dark surface (bg brightness = dark).
+  bool get isDark => themeType.isDark;
 
-  /// Convenience getter - returns true if theme is accessibility-focused
-  bool get isAccessible => themeType == AppThemeType.seniorCitizen ||
-      themeType == AppThemeType.cybersecurity;
+  /// True for themes that come pre-tuned for accessibility (currently only
+  /// High Contrast). Regular themes can still be paired with the orthogonal
+  /// Accessibility Mode toggle for the same benefits.
+  bool get isAccessible => themeType == AppThemeType.highContrast;
 
-  /// Returns the ThemeMode for MaterialApp
-  ThemeMode get themeMode {
-    if (themeType == AppThemeType.light) {
-      return ThemeMode.light;
-    } else if (isDark) {
-      return ThemeMode.dark;
-    }
-    return ThemeMode.system;
-  }
+  /// Returns the ThemeMode for MaterialApp.
+  ThemeMode get themeMode =>
+      themeType == AppThemeType.corporateLight ? ThemeMode.light : ThemeMode.dark;
 
   /// Copy with modifications
   ThemeState copyWith({
@@ -91,37 +86,47 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   static const String _prefKeyTheme = 'app_theme_type';
   static const String _prefKeyLastChanged = 'app_theme_last_changed';
 
-  /// Initialize with default theme
+  /// Initialize with the new default theme (Defender Blue).
   ThemeNotifier(this.prefs)
-      : super(ThemeState(themeType: AppThemeType.dark)) {
+      : super(ThemeState(themeType: AppThemeType.defenderBlue)) {
     _loadTheme();
   }
 
-  /// Load theme from persistent storage asynchronously
+  /// Load theme from SharedPreferences.
+  ///
+  /// Includes MIGRATION for legacy stored keys — users who last used the
+  /// old themes (dark / light / cybersecurity / seniorCitizen / natureGreen)
+  /// will be transparently upgraded to the closest new equivalent.
   Future<void> _loadTheme() async {
     try {
-      final savedTheme = prefs.getString(_prefKeyTheme);
+      final savedTheme  = prefs.getString(_prefKeyTheme);
       final lastChanged = prefs.getString(_prefKeyLastChanged);
 
-      AppThemeType themeType = AppThemeType.dark;
+      AppThemeType themeType = AppThemeType.defenderBlue;
       DateTime? changedTime;
 
       if (savedTheme != null) {
-        try {
-          themeType = AppThemeType.values.firstWhere(
-            (t) => t.name == savedTheme,
-          );
-          if (lastChanged != null) {
-            changedTime = DateTime.parse(lastChanged);
+        // `fromLegacyKey` handles BOTH old and new keys, so calling it here
+        // means we don't need a separate migration pass.
+        final migrated = AppThemeType.fromLegacyKey(savedTheme);
+        if (migrated != null) {
+          themeType = migrated;
+          if (migrated.storageKey != savedTheme) {
+            // Persist the migrated key so we don't do this lookup again.
+            await prefs.setString(_prefKeyTheme, migrated.storageKey);
+            debugPrint(
+                'Migrated legacy theme "$savedTheme" → "${migrated.storageKey}"');
           }
-        } catch (e) {
-          // Ignore parsing errors, use default
-          debugPrint('Error loading theme: $e');
+        } else {
+          debugPrint('Unknown saved theme "$savedTheme" — falling back to default');
+        }
+        if (lastChanged != null) {
+          changedTime = DateTime.tryParse(lastChanged);
         }
       }
 
       state = ThemeState(
-        themeType: themeType,
+        themeType:   themeType,
         lastChanged: changedTime ?? state.lastChanged,
       );
     } catch (e) {
@@ -153,9 +158,11 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     }
   }
 
-  /// Toggle between light and dark themes
+  /// Toggle between the flagship light and dark themes.
   Future<void> toggleTheme() async {
-    final next = state.isDark ? AppThemeType.light : AppThemeType.dark;
+    final next = state.isDark
+        ? AppThemeType.corporateLight
+        : AppThemeType.defenderBlue;
     await setTheme(next);
   }
 
@@ -166,9 +173,9 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     await setTheme(AppThemeType.values[nextIndex]);
   }
 
-  /// Reset to default theme (dark)
+  /// Reset to default theme (Defender Blue).
   Future<void> resetToDefault() async {
-    await setTheme(AppThemeType.dark);
+    await setTheme(AppThemeType.defenderBlue);
   }
 
   /// Get all available themes
@@ -212,6 +219,115 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
 class ThemeStorage {
   static late SharedPreferences prefs;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACCESSIBILITY MODE — orthogonal to theme selection.
+//
+// A user can pick Enterprise Dark *and* turn on Accessibility Mode; the
+// accessibility settings (larger fonts, ≥48dp targets, reduced motion,
+// higher-contrast text) layer on top of whatever theme they chose. This
+// follows Microsoft/Apple/Google's separation of "look" from "assistive
+// controls" and lets users get accessibility without being restricted to
+// one hard-coded palette.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Accessibility mode preferences — persisted separately from the theme.
+class AccessibilityMode {
+  /// Larger typography across the app (approx 15–20% up).
+  final bool largerText;
+
+  /// Minimum 56 dp touch targets, extra padding on cards/buttons.
+  final bool largerTouchTargets;
+
+  /// Boost text contrast (text tertiary → text primary, disable overlays).
+  final bool higherContrast;
+
+  /// Cut idle animations (grid drift, pulses) for motion-sensitive users.
+  final bool reduceMotion;
+
+  const AccessibilityMode({
+    this.largerText         = false,
+    this.largerTouchTargets = false,
+    this.higherContrast     = false,
+    this.reduceMotion       = false,
+  });
+
+  /// Convenience: is ANY accessibility feature on?
+  bool get isActive =>
+      largerText || largerTouchTargets || higherContrast || reduceMotion;
+
+  AccessibilityMode copyWith({
+    bool? largerText,
+    bool? largerTouchTargets,
+    bool? higherContrast,
+    bool? reduceMotion,
+  }) =>
+      AccessibilityMode(
+        largerText:         largerText         ?? this.largerText,
+        largerTouchTargets: largerTouchTargets ?? this.largerTouchTargets,
+        higherContrast:     higherContrast     ?? this.higherContrast,
+        reduceMotion:       reduceMotion       ?? this.reduceMotion,
+      );
+}
+
+/// StateNotifier managing the accessibility mode preferences.
+class AccessibilityModeNotifier extends StateNotifier<AccessibilityMode> {
+  final SharedPreferences prefs;
+
+  static const _kLargerText     = 'a11y_larger_text';
+  static const _kLargerTargets  = 'a11y_larger_targets';
+  static const _kHigherContrast = 'a11y_higher_contrast';
+  static const _kReduceMotion   = 'a11y_reduce_motion';
+
+  AccessibilityModeNotifier(this.prefs) : super(const AccessibilityMode()) {
+    _load();
+  }
+
+  void _load() {
+    state = AccessibilityMode(
+      largerText:         prefs.getBool(_kLargerText)     ?? false,
+      largerTouchTargets: prefs.getBool(_kLargerTargets)  ?? false,
+      higherContrast:     prefs.getBool(_kHigherContrast) ?? false,
+      reduceMotion:       prefs.getBool(_kReduceMotion)   ?? false,
+    );
+  }
+
+  Future<void> setLargerText(bool v) async {
+    state = state.copyWith(largerText: v);
+    await prefs.setBool(_kLargerText, v);
+  }
+
+  Future<void> setLargerTouchTargets(bool v) async {
+    state = state.copyWith(largerTouchTargets: v);
+    await prefs.setBool(_kLargerTargets, v);
+  }
+
+  Future<void> setHigherContrast(bool v) async {
+    state = state.copyWith(higherContrast: v);
+    await prefs.setBool(_kHigherContrast, v);
+  }
+
+  Future<void> setReduceMotion(bool v) async {
+    state = state.copyWith(reduceMotion: v);
+    await prefs.setBool(_kReduceMotion, v);
+  }
+
+  Future<void> disableAll() async {
+    state = const AccessibilityMode();
+    await Future.wait([
+      prefs.setBool(_kLargerText,     false),
+      prefs.setBool(_kLargerTargets,  false),
+      prefs.setBool(_kHigherContrast, false),
+      prefs.setBool(_kReduceMotion,   false),
+    ]);
+  }
+}
+
+/// Provider for reading + updating accessibility mode from anywhere.
+final accessibilityModeProvider =
+    StateNotifierProvider<AccessibilityModeNotifier, AccessibilityMode>((ref) {
+  return AccessibilityModeNotifier(ThemeStorage.prefs);
+});
 
 // Alternative synchronous provider (for testing)
 final themeTypeProvider = Provider<AppThemeType>((ref) {

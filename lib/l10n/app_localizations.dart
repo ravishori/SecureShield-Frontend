@@ -783,6 +783,1458 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cyber Crime Contacts'**
   String get cyberCrimeContacts;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner'**
+  String get navScanner;
+
+  /// No description provided for @navAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get navAlerts;
+
+  /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// No description provided for @navAiCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Coach'**
+  String get navAiCoach;
+
+  /// No description provided for @secThreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Threat Detection'**
+  String get secThreat;
+
+  /// No description provided for @secEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency & SOS'**
+  String get secEmergency;
+
+  /// No description provided for @secIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity & Privacy'**
+  String get secIdentity;
+
+  /// No description provided for @secFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Safety'**
+  String get secFamily;
+
+  /// No description provided for @secDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Security'**
+  String get secDevice;
+
+  /// No description provided for @secReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & Insights'**
+  String get secReports;
+
+  /// No description provided for @secAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get secAccount;
+
+  /// No description provided for @menuLinkScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Scanner'**
+  String get menuLinkScanner;
+
+  /// No description provided for @menuMessageAnalyzer.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Analyzer'**
+  String get menuMessageAnalyzer;
+
+  /// No description provided for @menuWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Safety'**
+  String get menuWifi;
+
+  /// No description provided for @menuAppRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'App Risk Scanner'**
+  String get menuAppRisk;
+
+  /// No description provided for @menuPackageMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Monitor'**
+  String get menuPackageMonitor;
+
+  /// No description provided for @menuCommunityScams.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Scams'**
+  String get menuCommunityScams;
+
+  /// No description provided for @menuPoliceCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Police Video Call'**
+  String get menuPoliceCall;
+
+  /// No description provided for @menuFir.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR Draft'**
+  String get menuFir;
+
+  /// No description provided for @menuCallRecorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Recorder'**
+  String get menuCallRecorder;
+
+  /// No description provided for @menuEmergencyShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Share'**
+  String get menuEmergencyShare;
+
+  /// No description provided for @menuComplaintEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Email'**
+  String get menuComplaintEmail;
+
+  /// No description provided for @menuAppInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'App Install Monitor'**
+  String get menuAppInstall;
+
+  /// No description provided for @menuClone.
+  ///
+  /// In en, this message translates to:
+  /// **'Clone Detector'**
+  String get menuClone;
+
+  /// No description provided for @menuElderly.
+  ///
+  /// In en, this message translates to:
+  /// **'Elderly Protection'**
+  String get menuElderly;
+
+  /// No description provided for @menuBanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Banking Protection'**
+  String get menuBanking;
+
+  /// No description provided for @menuBankOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank OTP Monitor'**
+  String get menuBankOtp;
+
+  /// No description provided for @menuVpn.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Monitor'**
+  String get menuVpn;
+
+  /// No description provided for @menuRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Detector'**
+  String get menuRemote;
+
+  /// No description provided for @menuScreenRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Rec Detect'**
+  String get menuScreenRec;
+
+  /// No description provided for @menuJobMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Job / Msg Analyzer'**
+  String get menuJobMsg;
+
+  /// No description provided for @menuDeviceScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Scan'**
+  String get menuDeviceScan;
+
+  /// No description provided for @menuConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent Manager'**
+  String get menuConsent;
+
+  /// No description provided for @menuSecurityReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Reports'**
+  String get menuSecurityReports;
+
+  /// No description provided for @menuCyberTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Tips'**
+  String get menuCyberTips;
+
+  /// No description provided for @menuProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get menuProfile;
+
+  /// No description provided for @menuEmergencyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contacts'**
+  String get menuEmergencyContacts;
+
+  /// No description provided for @familyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Safety Dashboard'**
+  String get familyTitle;
+
+  /// No description provided for @familyTabFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family ({count})'**
+  String familyTabFamily(int count);
+
+  /// No description provided for @familyTabKids.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids ({count})'**
+  String familyTabKids(int count);
+
+  /// No description provided for @familyTabInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'Invites ({count})'**
+  String familyTabInvites(int count);
+
+  /// No description provided for @inviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to add you as family'**
+  String inviteTitle(String name);
+
+  /// No description provided for @inviteSharesAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'If you accept, {name} will be able to see your security alerts.'**
+  String inviteSharesAlerts(String name);
+
+  /// No description provided for @inviteNoShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting does not share your alerts.'**
+  String get inviteNoShare;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @noInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.'**
+  String get noInvites;
+
+  /// No description provided for @consentLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked'**
+  String get consentLinked;
+
+  /// No description provided for @consentLinkedUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked - {count} unread'**
+  String consentLinkedUnread(int count);
+
+  /// No description provided for @consentDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get consentDeclined;
+
+  /// No description provided for @consentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for approval'**
+  String get consentPending;
+
+  /// No description provided for @noAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts'**
+  String get noAlerts;
+
+  /// No description provided for @youAreSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'You are safe!'**
+  String get youAreSafe;
+
+  /// No description provided for @panicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Panic Alert'**
+  String get panicTitle;
+
+  /// No description provided for @panicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?'**
+  String get panicBody;
+
+  /// No description provided for @sendAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND ALERT'**
+  String get sendAlert;
+
+  /// No description provided for @panicSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Panic alert sent! Emergency contacts notified.'**
+  String get panicSent;
+
+  /// No description provided for @menuScamCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam Calls'**
+  String get menuScamCalls;
+
+  /// No description provided for @menuOtpVault.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault'**
+  String get menuOtpVault;
+
+  /// No description provided for @scamIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.'**
+  String get scamIntro;
+
+  /// No description provided for @scamCallerNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Caller number'**
+  String get scamCallerNumber;
+
+  /// No description provided for @scamCallLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Call length (minutes)'**
+  String get scamCallLength;
+
+  /// No description provided for @scamWhatAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'What did they ask for? (optional)'**
+  String get scamWhatAsked;
+
+  /// No description provided for @scamReportBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this call'**
+  String get scamReportBtn;
+
+  /// No description provided for @scamEnterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the caller\'s phone number'**
+  String get scamEnterNumber;
+
+  /// No description provided for @scamReportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not report the call. Check your connection.'**
+  String get scamReportFailed;
+
+  /// No description provided for @scamRiskScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk score {score}/100'**
+  String scamRiskScore(int score);
+
+  /// No description provided for @scamBlockedSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' - blocked'**
+  String get scamBlockedSuffix;
+
+  /// No description provided for @scamYourReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reports'**
+  String get scamYourReports;
+
+  /// No description provided for @scamNoReports.
+  ///
+  /// In en, this message translates to:
+  /// **'No reported calls yet.'**
+  String get scamNoReports;
+
+  /// No description provided for @scamBlockBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get scamBlockBtn;
+
+  /// No description provided for @scamNumberBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} blocked'**
+  String scamNumberBlocked(String number);
+
+  /// No description provided for @scamBlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not block the number'**
+  String get scamBlockFailed;
+
+  /// No description provided for @vaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault'**
+  String get vaultTitle;
+
+  /// No description provided for @vaultLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Vault is locked'**
+  String get vaultLocked;
+
+  /// No description provided for @vaultLockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.'**
+  String get vaultLockedBody;
+
+  /// No description provided for @vaultUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get vaultUnlock;
+
+  /// No description provided for @vaultReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your OTP vault'**
+  String get vaultReason;
+
+  /// No description provided for @vaultHideArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide archived'**
+  String get vaultHideArchived;
+
+  /// No description provided for @vaultShowArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Show archived'**
+  String get vaultShowArchived;
+
+  /// No description provided for @vaultNoArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived OTPs'**
+  String get vaultNoArchived;
+
+  /// No description provided for @vaultEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.'**
+  String get vaultEmpty;
+
+  /// No description provided for @vaultCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get vaultCopy;
+
+  /// No description provided for @vaultArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get vaultArchive;
+
+  /// No description provided for @vaultUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get vaultUnarchive;
+
+  /// No description provided for @vaultDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get vaultDelete;
+
+  /// No description provided for @vpnBlockingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocking connections to known-malicious networks'**
+  String get vpnBlockingActive;
+
+  /// No description provided for @vpnNoBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'No blocked connection attempts yet'**
+  String get vpnNoBlocked;
+
+  /// No description provided for @vpnTapToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap shield to start monitoring'**
+  String get vpnTapToStart;
+
+  /// No description provided for @gEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get gEdit;
+
+  /// No description provided for @gClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get gClose;
+
+  /// No description provided for @gRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get gRemove;
+
+  /// No description provided for @gShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get gShare;
+
+  /// No description provided for @gPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get gPlay;
+
+  /// No description provided for @gReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get gReset;
+
+  /// No description provided for @gSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get gSave;
+
+  /// No description provided for @gCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get gCopy;
+
+  /// No description provided for @gDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get gDone;
+
+  /// No description provided for @gOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get gOpenSettings;
+
+  /// No description provided for @gVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get gVerified;
+
+  /// No description provided for @gUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get gUpload;
+
+  /// No description provided for @gClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get gClear;
+
+  /// No description provided for @gApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get gApply;
+
+  /// No description provided for @gReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get gReport;
+
+  /// No description provided for @gTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get gTitle;
+
+  /// No description provided for @gDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get gDelete;
+
+  /// No description provided for @profMy.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get profMy;
+
+  /// No description provided for @profSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Saved!'**
+  String get profSaved;
+
+  /// No description provided for @profChangeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Any profile changes trigger an automated security email to you.'**
+  String get profChangeEmail;
+
+  /// No description provided for @profEmailAddr.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get profEmailAddr;
+
+  /// No description provided for @profSelectState.
+  ///
+  /// In en, this message translates to:
+  /// **'Select State'**
+  String get profSelectState;
+
+  /// No description provided for @profPin.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Code'**
+  String get profPin;
+
+  /// No description provided for @profContactRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact removed'**
+  String get profContactRemoved;
+
+  /// No description provided for @profFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name *'**
+  String get profFullName;
+
+  /// No description provided for @profRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship (e.g. Father, Friend)'**
+  String get profRelationship;
+
+  /// No description provided for @profPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get profPhone;
+
+  /// No description provided for @profContactsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'These contacts will be notified in emergencies and can receive incident reports via Email or WhatsApp.'**
+  String get profContactsInfo;
+
+  /// No description provided for @profAddContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Contact'**
+  String get profAddContact;
+
+  /// No description provided for @profNoContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'No Emergency Contacts'**
+  String get profNoContacts;
+
+  /// No description provided for @profNoContactsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add trusted family members or friends who will be notified in case of an emergency or cyber incident.'**
+  String get profNoContactsBody;
+
+  /// No description provided for @profRemoveContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Contact'**
+  String get profRemoveContact;
+
+  /// No description provided for @welLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get welLogin;
+
+  /// No description provided for @welRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get welRegister;
+
+  /// No description provided for @welShareEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Evidence'**
+  String get welShareEvidence;
+
+  /// No description provided for @welCyberContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Contacts'**
+  String get welCyberContacts;
+
+  /// No description provided for @welSendEmailReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email Report'**
+  String get welSendEmailReport;
+
+  /// No description provided for @welWhatsappMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp is not installed'**
+  String get welWhatsappMissing;
+
+  /// No description provided for @welNoEmailApp.
+  ///
+  /// In en, this message translates to:
+  /// **'No email app found on this device'**
+  String get welNoEmailApp;
+
+  /// No description provided for @welProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'PROTECTED'**
+  String get welProtected;
+
+  /// No description provided for @welAiPowered.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-POWERED'**
+  String get welAiPowered;
+
+  /// No description provided for @welEnterprise.
+  ///
+  /// In en, this message translates to:
+  /// **'Enterprise Cyber Protection'**
+  String get welEnterprise;
+
+  /// No description provided for @welEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted'**
+  String get welEncrypted;
+
+  /// No description provided for @welOfflineFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline-first'**
+  String get welOfflineFirst;
+
+  /// No description provided for @wifiLocOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Services Off'**
+  String get wifiLocOff;
+
+  /// No description provided for @wifiRiskFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Factors:'**
+  String get wifiRiskFactors;
+
+  /// No description provided for @wifiNoRiskFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'No specific risk factors identified.'**
+  String get wifiNoRiskFactors;
+
+  /// No description provided for @wifiSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Safety'**
+  String get wifiSafety;
+
+  /// No description provided for @wifiRescan.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan'**
+  String get wifiRescan;
+
+  /// No description provided for @wifiLocPermReq.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Permission Required'**
+  String get wifiLocPermReq;
+
+  /// No description provided for @wifiLocDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Services Disabled'**
+  String get wifiLocDisabled;
+
+  /// No description provided for @wifiNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected to any Wi-Fi network'**
+  String get wifiNotConnected;
+
+  /// No description provided for @wifiConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED'**
+  String get wifiConnected;
+
+  /// No description provided for @wifiCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get wifiCheck;
+
+  /// No description provided for @wifiNoNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'No nearby networks found'**
+  String get wifiNoNearby;
+
+  /// No description provided for @wifiScanNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Nearby'**
+  String get wifiScanNearby;
+
+  /// No description provided for @wifiTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Wi-Fi Safety Tips'**
+  String get wifiTips;
+
+  /// No description provided for @srSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording saved successfully.'**
+  String get srSaved;
+
+  /// No description provided for @srDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied. Please allow screen capture.'**
+  String get srDenied;
+
+  /// No description provided for @srDeleteQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Recording?'**
+  String get srDeleteQ;
+
+  /// No description provided for @srTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Recorder'**
+  String get srTitle;
+
+  /// No description provided for @srRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh recordings'**
+  String get srRefresh;
+
+  /// No description provided for @srPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose'**
+  String get srPurpose;
+
+  /// No description provided for @srTapStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start recording your screen'**
+  String get srTapStart;
+
+  /// No description provided for @srPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Recordings'**
+  String get srPast;
+
+  /// No description provided for @srNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No recordings yet'**
+  String get srNone;
+
+  /// No description provided for @srTapRecordAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap RECORD above to capture your screen'**
+  String get srTapRecordAbove;
+
+  /// No description provided for @srTapPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Play'**
+  String get srTapPlay;
+
+  /// No description provided for @setDeviceSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'DEVICE SAFETY SUMMARY'**
+  String get setDeviceSafety;
+
+  /// No description provided for @setDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get setDark;
+
+  /// No description provided for @setLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get setLight;
+
+  /// No description provided for @setRemoteDetector.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Control Detector'**
+  String get setRemoteDetector;
+
+  /// No description provided for @setPermManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Manager'**
+  String get setPermManager;
+
+  /// No description provided for @setVpnMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'VPN Traffic Monitor'**
+  String get setVpnMonitor;
+
+  /// No description provided for @setDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get setDeveloper;
+
+  /// No description provided for @setServerUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get setServerUrl;
+
+  /// No description provided for @setServerReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL reset to auto-detected value'**
+  String get setServerReset;
+
+  /// No description provided for @cmSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS Access'**
+  String get cmSms;
+
+  /// No description provided for @cmCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get cmCamera;
+
+  /// No description provided for @cmMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone'**
+  String get cmMic;
+
+  /// No description provided for @cmLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get cmLocation;
+
+  /// No description provided for @cmPhoneState.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone State'**
+  String get cmPhoneState;
+
+  /// No description provided for @cmStorageMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage (Media)'**
+  String get cmStorageMedia;
+
+  /// No description provided for @cmNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get cmNotifications;
+
+  /// No description provided for @cmUsageStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Stats'**
+  String get cmUsageStats;
+
+  /// No description provided for @cmUsageStatsAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Stats Access'**
+  String get cmUsageStatsAccess;
+
+  /// No description provided for @cmAppPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'App Permissions'**
+  String get cmAppPermissions;
+
+  /// No description provided for @cmCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'CRITICAL'**
+  String get cmCritical;
+
+  /// No description provided for @cmGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get cmGrant;
+
+  /// No description provided for @esTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Share'**
+  String get esTitle;
+
+  /// No description provided for @esIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Share recording immediately with trusted contacts or upload securely.'**
+  String get esIntro;
+
+  /// No description provided for @esWhatsapp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share via WhatsApp / SMS'**
+  String get esWhatsapp;
+
+  /// No description provided for @esEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Share via Email'**
+  String get esEmail;
+
+  /// No description provided for @esReport1930.
+  ///
+  /// In en, this message translates to:
+  /// **'Report to 1930 (Cybercrime)'**
+  String get esReport1930;
+
+  /// No description provided for @esPoliceCells.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Police Cyber Cells'**
+  String get esPoliceCells;
+
+  /// No description provided for @esFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with Family Contacts'**
+  String get esFamily;
+
+  /// No description provided for @esSecureUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Upload + Expiring Link'**
+  String get esSecureUpload;
+
+  /// No description provided for @es24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a 24-hour download link'**
+  String get es24h;
+
+  /// No description provided for @esUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload successful! Link expires in 24h'**
+  String get esUploaded;
+
+  /// No description provided for @esCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get esCopyLink;
+
+  /// No description provided for @esShareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get esShareLink;
+
+  /// No description provided for @esUploadGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload & Get Link'**
+  String get esUploadGet;
+
+  /// No description provided for @csReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Scam'**
+  String get csReport;
+
+  /// No description provided for @csType.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam Type'**
+  String get csType;
+
+  /// No description provided for @csTitleReq.
+  ///
+  /// In en, this message translates to:
+  /// **'Title *'**
+  String get csTitleReq;
+
+  /// No description provided for @csDescReq.
+  ///
+  /// In en, this message translates to:
+  /// **'Description *'**
+  String get csDescReq;
+
+  /// No description provided for @csUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam URL (optional)'**
+  String get csUrl;
+
+  /// No description provided for @csCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Your City (optional)'**
+  String get csCity;
+
+  /// No description provided for @csTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Scam Alerts'**
+  String get csTitle;
+
+  /// No description provided for @csFilterCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by city'**
+  String get csFilterCity;
+
+  /// No description provided for @csReportBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Scam'**
+  String get csReportBtn;
+
+  /// No description provided for @csBeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to warn your community'**
+  String get csBeFirst;
+
+  /// No description provided for @csFilterByCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by City'**
+  String get csFilterByCity;
+
+  /// No description provided for @csCityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'City (e.g. Mumbai)'**
+  String get csCityHint;
+
+  /// No description provided for @fbBothReq.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide both the sender and the message body.'**
+  String get fbBothReq;
+
+  /// No description provided for @fbTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fake Bank SMS Detector'**
+  String get fbTitle;
+
+  /// No description provided for @fbVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify before you trust'**
+  String get fbVerify;
+
+  /// No description provided for @fbSender.
+  ///
+  /// In en, this message translates to:
+  /// **'Sender'**
+  String get fbSender;
+
+  /// No description provided for @fbBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Message body'**
+  String get fbBody;
+
+  /// No description provided for @fbPaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get fbPaste;
+
+  /// No description provided for @fbCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check authenticity'**
+  String get fbCheck;
+
+  /// No description provided for @fbWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this verdict'**
+  String get fbWhy;
+
+  /// No description provided for @fbNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended next steps'**
+  String get fbNext;
+
+  /// No description provided for @lsEnterUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a URL to scan'**
+  String get lsEnterUrl;
+
+  /// No description provided for @lsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Scanner'**
+  String get lsTitle;
+
+  /// No description provided for @lsEnterToScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter URL to scan'**
+  String get lsEnterToScan;
+
+  /// No description provided for @lsRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Scans'**
+  String get lsRecent;
+
+  /// No description provided for @lsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'URL copied'**
+  String get lsCopied;
+
+  /// No description provided for @lsRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Score'**
+  String get lsRisk;
+
+  /// No description provided for @evAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Evidence'**
+  String get evAdd;
+
+  /// No description provided for @evDescOpt.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get evDescOpt;
+
+  /// No description provided for @evUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence uploaded'**
+  String get evUploaded;
+
+  /// No description provided for @evOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open or share'**
+  String get evOpen;
+
+  /// No description provided for @evDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download this evidence. Check your connection and try again.'**
+  String get evDownloadFailed;
+
+  /// No description provided for @evFileGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is no longer available on the server.'**
+  String get evFileGone;
+
+  /// No description provided for @evEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence Locker is empty'**
+  String get evEmpty;
+
+  /// No description provided for @evEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Store screenshots, audio, and documents here'**
+  String get evEmptyBody;
+
+  /// No description provided for @evDeleteQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Evidence?'**
+  String get evDeleteQ;
+
+  /// No description provided for @evCannotUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get evCannotUndo;
+
+  /// No description provided for @menuScreenRecorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Recorder'**
+  String get menuScreenRecorder;
+
+  /// No description provided for @srdTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Recording Detector'**
+  String get srdTitle;
+
+  /// No description provided for @srdUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported on this Android version'**
+  String get srdUnsupported;
+
+  /// No description provided for @srdUnsupportedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.'**
+  String get srdUnsupportedBody;
+
+  /// No description provided for @srdIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not being recorded'**
+  String get srdIdle;
+
+  /// No description provided for @srdIdleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SecureShield screens are not visible in any screen recording right now.'**
+  String get srdIdleBody;
+
+  /// No description provided for @srdActive.
+  ///
+  /// In en, this message translates to:
+  /// **'SCREEN IS BEING RECORDED'**
+  String get srdActive;
+
+  /// No description provided for @srdActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.'**
+  String get srdActiveBody;
+
+  /// No description provided for @srdScope.
+  ///
+  /// In en, this message translates to:
+  /// **'This only covers SecureShield\'s own screens (an Android limit). It cannot see recordings of other apps.'**
+  String get srdScope;
+
+  /// No description provided for @srdLog.
+  ///
+  /// In en, this message translates to:
+  /// **'This session'**
+  String get srdLog;
+
+  /// No description provided for @srdNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No recording detected so far.'**
+  String get srdNoEvents;
+
+  /// No description provided for @srdStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get srdStarted;
+
+  /// No description provided for @srdStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording stopped'**
+  String get srdStopped;
 }
 
 class _AppLocalizationsDelegate

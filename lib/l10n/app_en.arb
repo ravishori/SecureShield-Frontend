@@ -1,12 +1,13 @@
 {
   "@@locale": "en",
-
   "appName": "SecureShield AI",
-  "@appName": { "description": "App name" },
-
+  "@appName": {
+    "description": "App name"
+  },
   "appTagline": "Your complete cyber safety guardian",
-  "@appTagline": { "description": "App tagline on welcome screen" },
-
+  "@appTagline": {
+    "description": "App tagline on welcome screen"
+  },
   "ok": "OK",
   "cancel": "Cancel",
   "save": "Save",
@@ -17,7 +18,6 @@
   "retry": "Retry",
   "loading": "Loading…",
   "orDivider": "or",
-
   "welcomeTitle": "SecureShield AI",
   "welcomeSubtitle": "Your complete cyber safety guardian",
   "welcomeScanTitle": "Scan My Mobile",
@@ -30,7 +30,6 @@
   "welcomeSosSubtitle": "Report a cybercrime immediately",
   "welcomeShareTitle": "Share on WhatsApp",
   "welcomeShareSubtitle": "Warn friends about cyber scams",
-
   "signIn": "Sign In",
   "signInSubtitle": "Enter your phone number or email to continue",
   "mobileTab": "Mobile",
@@ -47,21 +46,27 @@
   "creatingNewAccount": "Creating new account",
   "loginWithBiometric": "Login with Biometrics",
   "continueWithGoogle": "Continue with Google",
-
   "verifyTitle": "Verify Code",
   "enterVerificationCode": "Enter verification code",
   "codeSentViaSms": "We sent a 6-digit SMS to\n{phone}",
   "@codeSentViaSms": {
-    "placeholders": { "phone": { "type": "String" } }
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
   },
   "codeSentViaEmail": "We sent a 6-digit code to\n{email}",
   "@codeSentViaEmail": {
-    "placeholders": { "email": { "type": "String" } }
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
   },
   "verifyBtn": "Verify Code",
   "verifying": "Verifying…",
   "resendCode": "Resend Code",
-
   "registerTitle": "Create Account",
   "registerSubtitle": "Enter your mobile number to get started.\nWe'll send you a verification code.",
   "mobileNumber": "Mobile Number",
@@ -71,7 +76,6 @@
   "alreadyHaveAccount": "Already have an account?",
   "signInLink": "Sign In",
   "registerInfoNote": "After verifying your number, you'll set up your profile details to complete registration.",
-
   "completeYourProfile": "Complete Your Profile",
   "profileSetupSubtitle": "Fill in your details to activate your SecureShield account",
   "personalInformation": "Personal Information",
@@ -91,7 +95,6 @@
   "saveAndContinue": "Save & Continue",
   "saving": "Saving…",
   "fillThisLater": "Fill this in later",
-
   "settings": "Settings",
   "appearance": "Appearance",
   "appTheme": "App Theme",
@@ -113,15 +116,17 @@
   "cybercrimeHelpline": "Cybercrime Helpline",
   "cybercrimeHelplineNumber": "1930 (India National Cybercrime Helpline)",
   "logout": "Logout",
-
   "profileCompleteness": "Profile Completeness",
   "profileCompletenessPercent": "{percent}% Complete",
   "@profileCompletenessPercent": {
-    "placeholders": { "percent": { "type": "int" } }
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
   },
   "completeProfileBanner": "Complete your profile to unlock all security features",
   "completeProfileBtn": "Complete Profile",
-
   "fieldRequired": "This field is required",
   "invalidEmail": "Enter a valid email address",
   "invalidPhone": "Enter a valid phone number (digits only)",
@@ -134,5 +139,303 @@
   "scanTitle": "Device Security Scan",
   "scanSubtitle": "Checking your device for security threats\nbefore you continue",
   "cyberSafetyTips": "Cyber Safety Tips",
-  "cyberCrimeContacts": "Cyber Crime Contacts"
+  "cyberCrimeContacts": "Cyber Crime Contacts",
+  "navHome": "Home",
+  "navScanner": "Scanner",
+  "navAlerts": "Alerts",
+  "navReports": "Reports",
+  "navAiCoach": "AI Coach",
+  "secThreat": "Threat Detection",
+  "secEmergency": "Emergency & SOS",
+  "secIdentity": "Identity & Privacy",
+  "secFamily": "Family Safety",
+  "secDevice": "Device Security",
+  "secReports": "Reports & Insights",
+  "secAccount": "Account",
+  "menuLinkScanner": "Link Scanner",
+  "menuMessageAnalyzer": "Message Analyzer",
+  "menuWifi": "Wi-Fi Safety",
+  "menuAppRisk": "App Risk Scanner",
+  "menuPackageMonitor": "Package Monitor",
+  "menuCommunityScams": "Community Scams",
+  "menuPoliceCall": "Police Video Call",
+  "menuFir": "FIR Draft",
+  "menuCallRecorder": "Call Recorder",
+  "menuEmergencyShare": "Emergency Share",
+  "menuComplaintEmail": "Complaint Email",
+  "menuAppInstall": "App Install Monitor",
+  "menuClone": "Clone Detector",
+  "menuElderly": "Elderly Protection",
+  "menuBanking": "Banking Protection",
+  "menuBankOtp": "Bank OTP Monitor",
+  "menuVpn": "VPN Monitor",
+  "menuRemote": "Remote Detector",
+  "menuScreenRec": "Screen Rec Detect",
+  "menuJobMsg": "Job / Msg Analyzer",
+  "menuDeviceScan": "Device Scan",
+  "menuConsent": "Consent Manager",
+  "menuSecurityReports": "Security Reports",
+  "menuCyberTips": "Cyber Tips",
+  "menuProfile": "My Profile",
+  "menuEmergencyContacts": "Emergency Contacts",
+  "familyTitle": "Family Safety Dashboard",
+  "familyTabFamily": "Family ({count})",
+  "@familyTabFamily": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabKids": "Kids ({count})",
+  "@familyTabKids": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyTabInvites": "Invites ({count})",
+  "@familyTabInvites": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteTitle": "{name} wants to add you as family",
+  "@inviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharesAlerts": "If you accept, {name} will be able to see your security alerts.",
+  "@inviteSharesAlerts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteNoShare": "Accepting does not share your alerts.",
+  "accept": "Accept",
+  "decline": "Decline",
+  "noInvites": "No pending invitations. When someone adds you as family, you decide here whether they may see your alerts.",
+  "consentLinked": "Linked",
+  "consentLinkedUnread": "Linked - {count} unread",
+  "@consentLinkedUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "consentDeclined": "Declined",
+  "consentPending": "Waiting for approval",
+  "noAlerts": "No alerts",
+  "youAreSafe": "You are safe!",
+  "panicTitle": "Panic Alert",
+  "panicBody": "This will message your emergency contacts and log a critical alert (family members you have approved can see it). Are you sure?",
+  "sendAlert": "SEND ALERT",
+  "panicSent": "Panic alert sent! Emergency contacts notified.",
+  "menuScamCalls": "Scam Calls",
+  "menuOtpVault": "OTP Vault",
+  "scamIntro": "Got a call that felt wrong? Report the number: SecureShield scores it, warns you, and lets you block it.",
+  "scamCallerNumber": "Caller number",
+  "scamCallLength": "Call length (minutes)",
+  "scamWhatAsked": "What did they ask for? (optional)",
+  "scamReportBtn": "Report this call",
+  "scamEnterNumber": "Enter the caller's phone number",
+  "scamReportFailed": "Could not report the call. Check your connection.",
+  "scamRiskScore": "Risk score {score}/100",
+  "@scamRiskScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scamBlockedSuffix": " - blocked",
+  "scamYourReports": "Your reports",
+  "scamNoReports": "No reported calls yet.",
+  "scamBlockBtn": "Block",
+  "scamNumberBlocked": "{number} blocked",
+  "@scamNumberBlocked": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "scamBlockFailed": "Could not block the number",
+  "vaultTitle": "OTP Vault",
+  "vaultLocked": "OTP Vault is locked",
+  "vaultLockedBody": "Unlock with your fingerprint, face or device PIN. If your phone has no screen lock, set one to use the vault.",
+  "vaultUnlock": "Unlock",
+  "vaultReason": "Unlock your OTP vault",
+  "vaultHideArchived": "Hide archived",
+  "vaultShowArchived": "Show archived",
+  "vaultNoArchived": "No archived OTPs",
+  "vaultEmpty": "No OTPs saved yet.\nBank OTPs detected by the Bank OTP Monitor appear here.",
+  "vaultCopy": "Copy",
+  "vaultArchive": "Archive",
+  "vaultUnarchive": "Unarchive",
+  "vaultDelete": "Delete",
+  "vpnBlockingActive": "Blocking connections to known-malicious networks",
+  "vpnNoBlocked": "No blocked connection attempts yet",
+  "vpnTapToStart": "Tap shield to start monitoring",
+  "gEdit": "Edit",
+  "gClose": "Close",
+  "gRemove": "Remove",
+  "gShare": "Share",
+  "gPlay": "Play",
+  "gReset": "Reset",
+  "gSave": "Save",
+  "gCopy": "Copy",
+  "gDone": "Done",
+  "gOpenSettings": "Open Settings",
+  "gVerified": "Verified",
+  "gUpload": "Upload",
+  "gClear": "Clear",
+  "gApply": "Apply",
+  "gReport": "Report",
+  "gTitle": "Title",
+  "gDelete": "Delete",
+  "profMy": "My Profile",
+  "profSaved": "Profile Saved!",
+  "profChangeEmail": "Any profile changes trigger an automated security email to you.",
+  "profEmailAddr": "Email Address",
+  "profSelectState": "Select State",
+  "profPin": "PIN Code",
+  "profContactRemoved": "Contact removed",
+  "profFullName": "Full Name *",
+  "profRelationship": "Relationship (e.g. Father, Friend)",
+  "profPhone": "Phone Number",
+  "profContactsInfo": "These contacts will be notified in emergencies and can receive incident reports via Email or WhatsApp.",
+  "profAddContact": "Add Contact",
+  "profNoContacts": "No Emergency Contacts",
+  "profNoContactsBody": "Add trusted family members or friends who will be notified in case of an emergency or cyber incident.",
+  "profRemoveContact": "Remove Contact",
+  "welLogin": "Login",
+  "welRegister": "Register",
+  "welShareEvidence": "Share Evidence",
+  "welCyberContacts": "Cyber Contacts",
+  "welSendEmailReport": "Send Email Report",
+  "welWhatsappMissing": "WhatsApp is not installed",
+  "welNoEmailApp": "No email app found on this device",
+  "welProtected": "PROTECTED",
+  "welAiPowered": "AI-POWERED",
+  "welEnterprise": "Enterprise Cyber Protection",
+  "welEncrypted": "Encrypted",
+  "welOfflineFirst": "Offline-first",
+  "wifiLocOff": "Location Services Off",
+  "wifiRiskFactors": "Risk Factors:",
+  "wifiNoRiskFactors": "No specific risk factors identified.",
+  "wifiSafety": "Wi-Fi Safety",
+  "wifiRescan": "Rescan",
+  "wifiLocPermReq": "Location Permission Required",
+  "wifiLocDisabled": "Location Services Disabled",
+  "wifiNotConnected": "Not connected to any Wi-Fi network",
+  "wifiConnected": "CONNECTED",
+  "wifiCheck": "Check",
+  "wifiNoNearby": "No nearby networks found",
+  "wifiScanNearby": "Scan Nearby",
+  "wifiTips": "Public Wi-Fi Safety Tips",
+  "srSaved": "Recording saved successfully.",
+  "srDenied": "Permission denied. Please allow screen capture.",
+  "srDeleteQ": "Delete Recording?",
+  "srTitle": "Screen Recorder",
+  "srRefresh": "Refresh recordings",
+  "srPurpose": "Purpose",
+  "srTapStart": "Tap to start recording your screen",
+  "srPast": "Past Recordings",
+  "srNone": "No recordings yet",
+  "srTapRecordAbove": "Tap RECORD above to capture your screen",
+  "srTapPlay": "Tap to Play",
+  "setDeviceSafety": "DEVICE SAFETY SUMMARY",
+  "setDark": "Dark",
+  "setLight": "Light",
+  "setRemoteDetector": "Remote Control Detector",
+  "setPermManager": "Permission Manager",
+  "setVpnMonitor": "VPN Traffic Monitor",
+  "setDeveloper": "Developer",
+  "setServerUrl": "Server URL",
+  "setServerReset": "Server URL reset to auto-detected value",
+  "cmSms": "SMS Access",
+  "cmCamera": "Camera",
+  "cmMic": "Microphone",
+  "cmLocation": "Location",
+  "cmPhoneState": "Phone State",
+  "cmStorageMedia": "Storage (Media)",
+  "cmNotifications": "Notifications",
+  "cmUsageStats": "Usage Stats",
+  "cmUsageStatsAccess": "Usage Stats Access",
+  "cmAppPermissions": "App Permissions",
+  "cmCritical": "CRITICAL",
+  "cmGrant": "Grant",
+  "esTitle": "Emergency Share",
+  "esIntro": "Share recording immediately with trusted contacts or upload securely.",
+  "esWhatsapp": "Share via WhatsApp / SMS",
+  "esEmail": "Share via Email",
+  "esReport1930": "Report to 1930 (Cybercrime)",
+  "esPoliceCells": "Local Police Cyber Cells",
+  "esFamily": "Share with Family Contacts",
+  "esSecureUpload": "Secure Upload + Expiring Link",
+  "es24h": "Generate a 24-hour download link",
+  "esUploaded": "Upload successful! Link expires in 24h",
+  "esCopyLink": "Copy Link",
+  "esShareLink": "Share Link",
+  "esUploadGet": "Upload & Get Link",
+  "csReport": "Report a Scam",
+  "csType": "Scam Type",
+  "csTitleReq": "Title *",
+  "csDescReq": "Description *",
+  "csUrl": "Scam URL (optional)",
+  "csCity": "Your City (optional)",
+  "csTitle": "Community Scam Alerts",
+  "csFilterCity": "Filter by city",
+  "csReportBtn": "Report Scam",
+  "csBeFirst": "Be the first to warn your community",
+  "csFilterByCity": "Filter by City",
+  "csCityHint": "City (e.g. Mumbai)",
+  "fbBothReq": "Please provide both the sender and the message body.",
+  "fbTitle": "Fake Bank SMS Detector",
+  "fbVerify": "Verify before you trust",
+  "fbSender": "Sender",
+  "fbBody": "Message body",
+  "fbPaste": "Paste",
+  "fbCheck": "Check authenticity",
+  "fbWhy": "Why this verdict",
+  "fbNext": "Recommended next steps",
+  "lsEnterUrl": "Please enter a URL to scan",
+  "lsTitle": "Link Scanner",
+  "lsEnterToScan": "Enter URL to scan",
+  "lsRecent": "Recent Scans",
+  "lsCopied": "URL copied",
+  "lsRisk": "Risk Score",
+  "evAdd": "Add Evidence",
+  "evDescOpt": "Description (optional)",
+  "evUploaded": "Evidence uploaded",
+  "evOpen": "Open or share",
+  "evDownloadFailed": "Could not download this evidence. Check your connection and try again.",
+  "evFileGone": "This file is no longer available on the server.",
+  "evEmpty": "Evidence Locker is empty",
+  "evEmptyBody": "Store screenshots, audio, and documents here",
+  "evDeleteQ": "Delete Evidence?",
+  "evCannotUndo": "This action cannot be undone.",
+  "menuScreenRecorder": "Screen Recorder",
+  "srdTitle": "Screen Recording Detector",
+  "srdUnsupported": "Not supported on this Android version",
+  "srdUnsupportedBody": "Android only lets an app learn that its screen is being recorded from Android 15 onwards. On your phone this check is not possible, so SecureShield cannot tell you whether another app is recording the screen.",
+  "srdIdle": "Not being recorded",
+  "srdIdleBody": "SecureShield screens are not visible in any screen recording right now.",
+  "srdActive": "SCREEN IS BEING RECORDED",
+  "srdActiveBody": "Something is recording what SecureShield shows. If you did not start it, stop it and do not open OTPs or bank screens.",
+  "srdScope": "This only covers SecureShield's own screens (an Android limit). It cannot see recordings of other apps.",
+  "srdLog": "This session",
+  "srdNoEvents": "No recording detected so far.",
+  "srdStarted": "Recording started",
+  "srdStopped": "Recording stopped"
 }

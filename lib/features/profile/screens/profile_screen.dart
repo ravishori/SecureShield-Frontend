@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme.dart';
 import '../../../core/data/india_locations.dart';
 import '../../../features/auth/user_api.dart';
 import '../../../features/auth/user_profile_provider.dart';
 import '../profile_api.dart';
+import '../widgets/email_change_dialog.dart';
+import 'package:secureshield_app/l10n/app_localizations.dart';
+import 'package:secureshield_app/core/utils/safe_error.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Profile Screen — edit profile + manage emergency contacts
@@ -38,7 +42,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     final accent = AppTheme.accentOf(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(AppLocalizations.of(context).profMy),
         bottom: TabBar(
           controller: _tabs,
           indicatorColor: accent,
@@ -83,6 +87,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
   String? _selectedCity;
   bool _loading = true;
   bool _saving  = false;
+  // Verification state exactly as the server reports it.
+  bool _emailVerified = false;
+  bool _phoneVerified = false;
 
   final _api = UserApi();
 
@@ -117,6 +124,8 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
           _pinCtrl.text       = user['pin_code']    as String? ?? '';
           _selectedState      = user['state']       as String?;
           _selectedCity       = user['city']        as String?;
+          _emailVerified      = user['email_verified'] == true;
+          _phoneVerified      = user['phone_verified'] == true;
           _loading = false;
         });
       }
@@ -132,14 +141,14 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
       await _api.updateProfile(
         firstName: _firstNameCtrl.text.trim(),
         lastName:  _lastNameCtrl.text.trim(),
-        email:     _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+        // The e-mail address is NOT sent here: it can only be changed with proof of the new address.
         city:      _selectedCity,
         state:     _selectedState,
         pinCode:   _pinCtrl.text.trim().isEmpty ? null : _pinCtrl.text.trim(),
       );
       ref.invalidate(userProfileProvider);
       if (mounted) {
-        _showSuccess('Profile updated! A security notification has been sent to your email.');
+        _showSuccess('Profile updated.');
       }
     } catch (e) {
       if (mounted) _showError('Failed to save: ${e.toString()}');
@@ -161,13 +170,13 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Container(
               width: 64, height: 64,
               decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.12),
+                color: AppTheme.success.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.verified_rounded, color: AppTheme.success, size: 36),
             ),
             const SizedBox(height: 16),
-            Text('Profile Saved!',
+            Text(AppLocalizations.of(context).profSaved,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 17,
@@ -178,7 +187,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Text(msg,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -229,9 +238,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   Container(
                     width: 80, height: 80,
                     decoration: BoxDecoration(
-                      color: accent.withOpacity(0.15),
+                      color: accent.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
-                      border: Border.all(color: accent.withOpacity(0.4), width: 2),
+                      border: Border.all(color: accent.withValues(alpha: 0.4), width: 2),
                     ),
                     child: Icon(Icons.person_rounded, color: accent, size: 42),
                   ),
@@ -249,7 +258,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   const SizedBox(height: 2),
                   Text(
                     _emailCtrl.text.isEmpty ? 'No email set' : _emailCtrl.text,
-                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                   ),
                 ],
               ),
@@ -260,9 +269,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: accent.withOpacity(0.06),
+                color: accent.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: accent.withOpacity(0.2)),
+                border: Border.all(color: accent.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
@@ -270,8 +279,8 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Any profile changes trigger an automated security email to you.',
-                      style: TextStyle(color: onSurf.withOpacity(0.7), fontSize: 11, height: 1.4),
+                      AppLocalizations.of(context).profChangeEmail,
+                      style: TextStyle(color: onSurf.withValues(alpha: 0.7), fontSize: 11, height: 1.4),
                     ),
                   ),
                 ],
@@ -280,14 +289,14 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             const SizedBox(height: 20),
 
             // ── Personal Info ────────────────────────────────────────────────
-            _sectionHeader(accent, Icons.person_outlined, 'Personal Information'),
+            _sectionHeader(accent, Icons.person_outlined, AppLocalizations.of(context).personalInformation),
             const SizedBox(height: 12),
 
             Row(
               children: [
                 Expanded(child: _field(
                   controller: _firstNameCtrl,
-                  label: 'First Name',
+                  label: AppLocalizations.of(context).firstName,
                   icon: Icons.badge_outlined,
                   accent: accent,
                   validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null,
@@ -295,7 +304,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                 const SizedBox(width: 12),
                 Expanded(child: _field(
                   controller: _lastNameCtrl,
-                  label: 'Last Name',
+                  label: AppLocalizations.of(context).lastName,
                   icon: Icons.badge_outlined,
                   accent: accent,
                 )),
@@ -307,55 +316,33 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             _sectionHeader(accent, Icons.contact_mail_outlined, 'Contact Details'),
             const SizedBox(height: 12),
 
-            _field(
-              controller: _emailCtrl,
-              label: 'Email Address',
+            _contactTile(
               icon: Icons.email_outlined,
+              label: AppLocalizations.of(context).profEmailAddr,
+              value: _emailCtrl.text.isEmpty ? 'Not set' : _emailCtrl.text,
+              verified: _emailVerified,
+              actionLabel: 'Change',
+              actionKey: const Key('changeEmailButton'),
+              onAction: _changeEmail,
               accent: accent,
-              keyboardType: TextInputType.emailAddress,
-              hint: 'your@email.com',
-              validator: (v) {
-                if (v != null && v.isNotEmpty && !v.contains('@')) return 'Enter valid email';
-                return null;
-              },
+              onSurf: onSurf,
             ),
             const SizedBox(height: 14),
 
-            // Phone (read-only, shown from backend)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              decoration: BoxDecoration(
-                color: Theme.of(context).inputDecorationTheme.fillColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Theme.of(context).dividerColor),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.phone_outlined, color: accent, size: 18),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Mobile Number', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
-                        const SizedBox(height: 2),
-                        Text(
-                          _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
-                          style: TextStyle(color: onSurf, fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppTheme.textSecondary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Text('Verified', style: TextStyle(color: AppTheme.textSecondary, fontSize: 9, fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
+            // Phone: the badge reflects what the server says; an unverified number cannot be used to sign in.
+            _contactTile(
+              icon: Icons.phone_outlined,
+              label: AppLocalizations.of(context).mobileNumber,
+              value: _phoneCtrl.text.isEmpty ? 'Not set' : _phoneCtrl.text,
+              verified: _phoneVerified,
+              actionLabel: _phoneCtrl.text.isEmpty ? 'Add & verify' : 'Verify',
+              actionKey: const Key('verifyPhoneButton'),
+              onAction: () async {
+                await context.push('/verify-phone');
+                if (mounted) _load();
+              },
+              accent: accent,
+              onSurf: onSurf,
             ),
             const SizedBox(height: 14),
 
@@ -365,9 +352,9 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
 
             // State dropdown
             DropdownButtonFormField<String>(
-              value: _selectedState,
+              initialValue: _selectedState,
               decoration: InputDecoration(
-                labelText: 'State',
+                labelText: AppLocalizations.of(context).selectState,
                 prefixIcon: Icon(Icons.map_outlined, color: accent, size: 18),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -375,15 +362,15 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
                   .map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13))))
                   .toList(),
               onChanged: (v) => setState(() { _selectedState = v; _selectedCity = null; }),
-              hint: const Text('Select State', style: TextStyle(fontSize: 13)),
+              hint: Text(AppLocalizations.of(context).profSelectState, style: const TextStyle(fontSize: 13)),
             ),
             const SizedBox(height: 12),
 
             // City dropdown
             DropdownButtonFormField<String>(
-              value: _selectedCity,
+              initialValue: _selectedCity,
               decoration: InputDecoration(
-                labelText: 'City',
+                labelText: AppLocalizations.of(context).selectCity,
                 prefixIcon: Icon(Icons.location_city_outlined, color: accent, size: 18),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -397,7 +384,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
 
             _field(
               controller: _pinCtrl,
-              label: 'PIN Code',
+              label: AppLocalizations.of(context).profPin,
               icon: Icons.pin_drop_outlined,
               accent: accent,
               keyboardType: TextInputType.number,
@@ -424,6 +411,61 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _changeEmail() async {
+    final changed = await showEmailChangeDialog(context);
+    if (!changed || !mounted) return;
+    ref.invalidate(userProfileProvider);
+    await _load();
+    if (mounted) _showSuccess('Email address changed.');
+  }
+
+  Widget _contactTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool verified,
+    required String actionLabel,
+    required Key actionKey,
+    required Future<void> Function() onAction,
+    required Color accent,
+    required Color onSurf,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).inputDecorationTheme.fillColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).dividerColor),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: accent, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                const SizedBox(height: 2),
+                Text(value, style: TextStyle(color: onSurf, fontSize: 14, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 2),
+                Text(
+                  verified ? 'Verified' : 'Not verified',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: verified ? AppTheme.success : AppTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(key: actionKey, onPressed: onAction, child: Text(actionLabel)),
+        ],
       ),
     );
   }
@@ -459,7 +501,7 @@ class _ProfileTabState extends ConsumerState<_ProfileTab> {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: accent.withOpacity(0.12),
+            color: accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: accent, size: 16),
@@ -506,16 +548,39 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
   }
 
   Future<void> _delete(String id) async {
-    await _api.deleteEmergencyContact(id);
-    _load();
+    try {
+      await _api.deleteEmergencyContact(id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).profContactRemoved),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+      _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(safeErrorMessage(e, prefix: 'Could not delete contact')),
+            backgroundColor: AppTheme.errorColor,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 
-  void _showAddSheet() {
-    final nameCtrl = TextEditingController();
-    final relCtrl  = TextEditingController();
-    final phoneCtrl = TextEditingController();
-    final emailCtrl = TextEditingController();
-    final formKey  = GlobalKey<FormState>();
+  /// Open the bottom-sheet for either creating a new contact (existing=null)
+  /// or editing an existing one (existing=<contact map>).
+  void _showContactSheet({Map<String, dynamic>? existing}) {
+    final isEdit    = existing != null;
+    final nameCtrl  = TextEditingController(text: (existing?['name']         as String?) ?? '');
+    final relCtrl   = TextEditingController(text: (existing?['relationship'] as String?) ?? '');
+    final phoneCtrl = TextEditingController(text: (existing?['phone']        as String?) ?? '');
+    final emailCtrl = TextEditingController(text: (existing?['email']        as String?) ?? '');
+    final formKey   = GlobalKey<FormState>();
     bool saving = false;
 
     showModalBottomSheet<void>(
@@ -542,14 +607,20 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppTheme.errorColor.withOpacity(0.12),
+                            color: AppTheme.errorColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.emergency_rounded, color: AppTheme.errorColor, size: 20),
+                          child: Icon(
+                            isEdit
+                                ? Icons.edit_outlined
+                                : Icons.emergency_rounded,
+                            color: AppTheme.errorColor,
+                            size: 20,
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        const Text('Add Emergency Contact',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(isEdit ? 'Edit Emergency Contact' : 'Add Emergency Contact',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -558,7 +629,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       controller: nameCtrl,
                       textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
-                        labelText: 'Full Name *',
+                        labelText: AppLocalizations.of(context).profFullName,
                         prefixIcon: Icon(Icons.person_outlined, color: accent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
@@ -569,7 +640,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                     TextFormField(
                       controller: relCtrl,
                       decoration: InputDecoration(
-                        labelText: 'Relationship (e.g. Father, Friend)',
+                        labelText: AppLocalizations.of(context).profRelationship,
                         prefixIcon: Icon(Icons.people_outlined, color: accent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
@@ -581,12 +652,12 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       keyboardType: TextInputType.phone,
                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9+\- ]'))],
                       decoration: InputDecoration(
-                        labelText: 'Phone Number',
+                        labelText: AppLocalizations.of(context).profPhone,
                         prefixIcon: Icon(Icons.phone_outlined, color: accent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       validator: (v) {
-                        if ((v == null || v.isEmpty) && emailCtrl.text.isEmpty) {
+                        if ((v == null || v.trim().isEmpty) && emailCtrl.text.trim().isEmpty) {
                           return 'At least one of phone or email is required';
                         }
                         return null;
@@ -598,15 +669,15 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       controller: emailCtrl,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        labelText: 'Email Address',
+                        labelText: AppLocalizations.of(context).profEmailAddr,
                         prefixIcon: Icon(Icons.email_outlined, color: accent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'These contacts will be notified in emergencies and can receive incident reports via Email or WhatsApp.',
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, height: 1.4),
+                      AppLocalizations.of(context).profContactsInfo,
+                      style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10, height: 1.4),
                     ),
                     const SizedBox(height: 18),
                     SizedBox(
@@ -617,27 +688,50 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                           if (!formKey.currentState!.validate()) return;
                           setSheetState(() => saving = true);
                           try {
-                            await _api.addEmergencyContact(
-                              name: nameCtrl.text.trim(),
-                              relationship: relCtrl.text.trim(),
-                              phone: phoneCtrl.text.trim(),
-                              email: emailCtrl.text.trim(),
-                            );
+                            if (isEdit) {
+                              await _api.updateEmergencyContact(
+                                id:           existing['id'] as String,
+                                name:         nameCtrl.text.trim(),
+                                relationship: relCtrl.text.trim(),
+                                phone:        phoneCtrl.text.trim(),
+                                email:        emailCtrl.text.trim(),
+                              );
+                            } else {
+                              await _api.addEmergencyContact(
+                                name:         nameCtrl.text.trim(),
+                                relationship: relCtrl.text.trim(),
+                                phone:        phoneCtrl.text.trim(),
+                                email:        emailCtrl.text.trim(),
+                              );
+                            }
                             if (ctx.mounted) Navigator.pop(ctx);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(isEdit ? 'Contact updated' : 'Contact added'),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
                             _load();
                           } catch (e) {
                             setSheetState(() => saving = false);
                             if (context.mounted) {
+                              // ignore: use_build_context_synchronously (guarded by context.mounted above)
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
+                                SnackBar(content: Text(safeErrorMessage(e)), backgroundColor: AppTheme.errorColor),
                               );
                             }
                           }
                         },
                         icon: saving
                             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Icon(Icons.add_rounded, size: 18),
-                        label: Text(saving ? 'Saving...' : 'Add Contact'),
+                            : Icon(isEdit ? Icons.save_rounded : Icons.add_rounded, size: 18),
+                        label: Text(
+                          saving
+                              ? (isEdit ? 'Saving…' : 'Adding…')
+                              : (isEdit ? 'Save Changes' : 'Add Contact'),
+                        ),
                       ),
                     ),
                   ],
@@ -650,6 +744,9 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
     );
   }
 
+  /// Back-compat shim — older call sites still invoke _showAddSheet().
+  void _showAddSheet() => _showContactSheet();
+
   @override
   Widget build(BuildContext context) {
     final accent = AppTheme.accentOf(context);
@@ -659,7 +756,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
         onPressed: _showAddSheet,
         backgroundColor: AppTheme.errorColor,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('Add Contact', style: TextStyle(color: Colors.white)),
+        label: Text(AppLocalizations.of(context).profAddContact, style: const TextStyle(color: Colors.white)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
@@ -683,13 +780,13 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.errorColor.withOpacity(0.08),
+                color: AppTheme.errorColor.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.emergency_rounded, size: 48, color: AppTheme.errorColor),
             ),
             const SizedBox(height: 20),
-            Text('No Emergency Contacts',
+            Text(AppLocalizations.of(context).profNoContacts,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 18,
@@ -698,9 +795,9 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Add trusted family members or friends who will be notified in case of an emergency or cyber incident.',
+              AppLocalizations.of(context).profNoContactsBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
             ),
           ],
         ),
@@ -721,14 +818,14 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.errorColor.withOpacity(0.15)),
+        border: Border.all(color: AppTheme.errorColor.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.errorColor.withOpacity(0.1),
+              color: AppTheme.errorColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -761,7 +858,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppTheme.errorColor.withOpacity(0.1),
+                          color: AppTheme.errorColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -797,9 +894,36 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
               ],
             ),
           ),
-          IconButton(
-            onPressed: () => _confirmDelete(id, name),
-            icon: const Icon(Icons.delete_outline_rounded, color: AppTheme.errorColor, size: 20),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Edit pencil — opens the same bottom-sheet pre-filled.
+              IconButton(
+                onPressed: () => _showContactSheet(existing: c),
+                tooltip: AppLocalizations.of(context).gEdit,
+                icon: Icon(
+                  Icons.edit_outlined,
+                  color: AppTheme.accentOf(context),
+                  size: 20,
+                ),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              ),
+              const SizedBox(height: 2),
+              IconButton(
+                onPressed: () => _confirmDelete(id, name),
+                tooltip: AppLocalizations.of(context).gDelete,
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppTheme.errorColor,
+                  size: 20,
+                ),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              ),
+            ],
           ),
         ],
       ),
@@ -812,13 +936,13 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
       builder: (ctx) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Remove Contact', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
+        title: Text(AppLocalizations.of(context).profRemoveContact, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
         content: Text('Remove $name from emergency contacts?',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontSize: 13)),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -829,7 +953,7 @@ class _EmergencyContactsTabState extends State<_EmergencyContactsTab> {
               backgroundColor: AppTheme.errorColor,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Remove'),
+            child: Text(AppLocalizations.of(context).gRemove),
           ),
         ],
       ),

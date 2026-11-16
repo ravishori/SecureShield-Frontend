@@ -15,7 +15,7 @@ abstract class AppSnackBar {
         ? AppTheme.errorColor
         : success
             ? AppTheme.success
-            : AppTheme.accentOf(context).withOpacity(0.85);
+            : AppTheme.accentOf(context).withValues(alpha: 0.85);
 
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
